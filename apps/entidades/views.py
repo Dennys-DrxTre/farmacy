@@ -4,3 +4,6 @@ from django.views.generic import TemplateView
 
 class vista(TemplateView):
     template_name = 'base/base.html'
+
+class landing(TemplateView):
+    template_name = 'landingPage/landing.html'

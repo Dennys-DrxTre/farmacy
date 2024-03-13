@@ -1,0 +1,55 @@
+{% extends "Inicio/index.html" %}
+{% load static %}
+
+{% block title %} Editar landing {% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/lib/datatable/dataTables.bootstrap.min.css' %}">
+    <style>
+        .edit-landing-container {
+            margin: 50px auto;
+            padding: 20px;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .edit-landing-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+        .edit-landing-container form {
+            text-align: center;
+        }
+        .edit-landing-container button[type="submit"] {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .edit-landing-container button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block body %}
+<div class="edit-landing-container">
+    <h1>Editar Contenido del Landing</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+</div>
+{% endblock body %}
+
+{% block extrajs %}
+    <script src="{% static 'js/lib/data-table/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/lote.js' %}"></script>
+{% endblock extrajs %}
