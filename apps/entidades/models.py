@@ -23,7 +23,11 @@ class Persona(models.Model):
 		MASCULINO = 'MA', 'Masculino'
 		FEMENINO = 'FE', 'Femenino'
 
-	nacionalidad = models.CharField(max_length=2, blank=False, null=False)
+	class Nacionalidad(models.TextChoices):
+		VENEZOLANO = 'V-', 'Venezolano'
+		EXTRANJERO = 'FE', 'Extranjero'
+
+	nacionalidad = models.CharField(max_length=2, choices=Nacionalidad.choices, default=Nacionalidad.VENEZOLANO, blank=False, null=False)
 	cedula = models.CharField(max_length=8, blank=False, null=False)
 	nombres = models.CharField(max_length=50, blank=False, null=False)
 	apellidos = models.CharField(max_length=50, blank=False, null=False)
@@ -31,12 +35,9 @@ class Persona(models.Model):
 	genero = models.CharField(max_length=2, blank=False, null=False, choices=Genero.choices)
 	f_nacimiento = models.DateField(auto_now_add = False, auto_now=False, blank=False, null=False)
 	embarazada = models.BooleanField(blank=False, null=False)
-	c_residencia = models.FileField(upload_to='constancias_residencias/', blank=False, null=False)
+	c_residencia = models.FileField(upload_to='constancias_residencias/', blank=True, null=True)
 	zona  = models.ForeignKey(Zona, on_delete=models.PROTECT, blank=False, null=False)
 	direccion = models.TextField(blank=False, null=False)
-
-	def __str__(self) -> str:
-		return super().__str__()
 	
 	class Meta:
 		abstract = True
@@ -56,20 +57,27 @@ class Perfil(Persona):
 	rol = models.CharField(max_length=2, choices=Rol.choices, default=Rol.PACIENTE)
 	usuario = models.OneToOneField(User, on_delete=models.CASCADE)
 	
-	def __str__(self) -> str:
-		return super().__str__()
+	def __str__(self):
+		return self.cedula
 	
 	class Meta:
 		verbose_name = 'perfil'
 		verbose_name_plural = 'perfiles'
 
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item
+
 class Beneficiado(Persona):
 	perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT)
 
-	def __str__(self) -> str:
-			return super().__str__()
+	def __str__(self):
+		return self.cedula
 		
 	class Meta:
 		verbose_name = 'Beneficiado'
 		verbose_name_plural = 'Beneficiados'
 
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item

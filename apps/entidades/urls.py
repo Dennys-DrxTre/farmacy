@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import vista, landing
+from .views import Inicio, landing
 
 urlpatterns = [
-    path('vista/', vista.as_view()),
+    path('vista/', Inicio.as_view()),
     path('landing/', landing.as_view()),
 ]

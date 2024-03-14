@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block title %} Bienvenido a tu Farmacia Comunitaria {% endblock title %}</title>
+    <title>{% block title %} {% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="{% static 'images/icon.png' %}" type="image/x-icon">
 
@@ -71,11 +71,11 @@
                     {% if not request.user.cargo == "PACIENTE" %}
 
                     <li class="menu-item-has-children dropdown">
-                       <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-laptop"></i>Procesos</a>
+                       <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-laptop"></i>Movimientos</a>
                        <ul class="sub-menu children dropdown-menu">
-                           <li><i class="fa fa-table"></i><a href="#">Factura</a></li>
-                           <li><i class="fa fa-table"></i><a href="#">Movimientos de Inventario</a></li>
-                           <li><i class="fa fa-table"></i><a href="#">Solicitudes de Medicamentos</a></li>
+                           <li><i class="fa fa-table"></i><a href="{% url 'listado_ingresos' %}">Listado de ingresos</a></li>
+                           <li><i class="fa fa-table"></i><a href="#">Solicitud de medicamentos</a></li>
+                           <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
                        </ul>
                     </li>
 
@@ -170,19 +170,6 @@
                 <div class="row">
                     <div class="col-lg-12">
                       {% block body %}
-                        <div class="col-md-12 prueba">
-                            <div class="card bg-primary">
-                                <div class="card-body">
-                                    <blockquote class="blockquote mb-0 text-light text-center">
-                                        <h1 class="text-light"><strong>{{ user.nombre }}, BIENVENIDO A LA FARMACIA COMUNITARIA</strong></h1>
-                                        {% if request.user.is_staff %}
-                                            <h3 class="text-light"></h3>
-                                        {% endif %}
-                                        {# <footer class="blockquote-footer text-light"></footer> #}
-                                    </blockquote>
-                                </div>
-                            </div>
-                        </div>
                       {% endblock body %}
                 </div>
             </div>
@@ -203,36 +190,6 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{% static 'js/main.js' %}"></script>
-	<script>
-	function actualizarReloj() {
-		var hoy = new Date();
-        var dia = hoy.getDate();
-        var mes = hoy.getMonth() + 1; // Se suma 1 ya que los meses empiezan en 0
-        var anio = hoy.getFullYear(); 
-		var hora = hoy.getHours();
-		var minutos = hoy.getMinutes();
-		var segundos = hoy.getSeconds();
-		var ampm = hora >= 12 ? 'PM' : 'AM';  // Determina si es AM o PM
-
-		// Convertir de formato de 24 horas a 12 horas
-		hora = hora % 12;
-		hora = hora ? hora : 12;  // Si es 0, se muestra como 12 en formato 12 horas
-		minutos = agregarCeros(minutos);
-		segundos = agregarCeros(segundos);
-
-		// Mostrar la hora en el elemento <div> con el id "reloj"
-		document.getElementById("reloj").innerHTML = dia + "/" + mes + "/" + anio + " " + hora + ":" + minutos + ":" + segundos + " " + ampm;
-	}
-
-	function agregarCeros(i) {
-		if (i < 10) {
-			i = "0" + i;
-		}
-		return i;
-	}
-
-	setInterval(actualizarReloj, 1000);
-	</script>
 
     {% block extrajs %}
     {% endblock extrajs %}

@@ -1,0 +1,60 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+
+{% block title %}
+Bienvenido a tu Farmacia Comunitaria
+{% endblock title %}
+    
+
+{% block body %}
+    <div class="col-md-12 prueba">
+        <div class="card bg-primary">
+            <div class="card-body">
+                <blockquote class="blockquote mb-0 text-light text-center">
+                    <h1 class="text-light"><strong>{{ user.nombre }}, BIENVENIDO A LA FARMACIA COMUNITARIA</strong></h1>
+                    {% if request.user.is_staff %}
+                        <h3 class="text-light"></h3>
+                    {% endif %}
+                    {# <footer class="blockquote-footer text-light"></footer> #}
+                </blockquote>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+
+
+{% block extrajs %}
+    <script>
+        function actualizarReloj() {
+            var hoy = new Date();
+            var dia = hoy.getDate();
+            var mes = hoy.getMonth() + 1; // Se suma 1 ya que los meses empiezan en 0
+            var anio = hoy.getFullYear(); 
+            var hora = hoy.getHours();
+            var minutos = hoy.getMinutes();
+            var segundos = hoy.getSeconds();
+            var ampm = hora >= 12 ? 'PM' : 'AM';  // Determina si es AM o PM
+
+            // Convertir de formato de 24 horas a 12 horas
+            hora = hora % 12;
+            hora = hora ? hora : 12;  // Si es 0, se muestra como 12 en formato 12 horas
+            minutos = agregarCeros(minutos);
+            segundos = agregarCeros(segundos);
+
+            // Mostrar la hora en el elemento <div> con el id "reloj"
+            document.getElementById("reloj").innerHTML = dia + "/" + mes + "/" + anio + " " + hora + ":" + minutos + ":" + segundos + " " + ampm;
+        }
+
+        function agregarCeros(i) {
+            if (i < 10) {
+                i = "0" + i;
+            }
+            return i;
+        }
+
+        setInterval(actualizarReloj, 1000);
+    </script>
+{% endblock extrajs %}
+    
+
