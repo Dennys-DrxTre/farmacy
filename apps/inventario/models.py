@@ -83,17 +83,3 @@ class Inventario(models.Model):
 	def toJSON(self):
 		item = model_to_dict(self)
 		return item
-
-# lote del producto
-# class Lote(models.Model):
-# 	lote = models.CharField(max_length=60, blank=False, null=False)
-# 	canti_pro = models.IntegerField(blank=False, null=False)
-# 	fecha_lote = models.DateField(auto_now=True, blank=False, null=False)
-
-# 	class Meta:
-# 		verbose_name = 'Lote'
-# 		verbose_name_plural = 'Lotes'
-# 		ordering = ['lote']
-
-# 	def __str__(self):
-# 		return self.lote
