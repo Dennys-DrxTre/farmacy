@@ -9,10 +9,11 @@ from apps.inventario.models import Producto, Inventario
 class Solicitud(models.Model):
 	
 	class Status(models.TextChoices):
-		EN_PROCRESO = 'EP', 'En Proceso'
+		EN_PROCRESO = 'PR', 'En Proceso'
 		APROBADO = 'AP', 'Aprobado'
 		EN_ESPERA_DE_ENTREGA = 'EE', 'En Espera de Entrega'
 		ENTREGADO = 'ET', 'Entregado'
+		RECHAZADO = 'RE', 'Rechazado'
 
 	fecha_soli = models.DateField(auto_now=True, blank=False, null=False)
 	cod_pac = models.ForeignKey(Paciente, verbose_name='Paciente', on_delete=models.PROTECT, blank=False, null=False)
@@ -40,6 +41,7 @@ class DetalleSolicitud(models.Model):
 	solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
 	producto = models.ForeignKey(Inventario, on_delete=models.CASCADE)
 	cantidad = models.IntegerField(default=1)
+	cant_entregada = models.IntegerField(default=1)
 
 	class Meta:
 		unique_together = ('solicitud', 'producto')  # Asegurar que no haya duplicados
