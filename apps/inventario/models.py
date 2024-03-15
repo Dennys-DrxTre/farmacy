@@ -66,6 +66,8 @@ class Producto(models.Model):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		item['almacen'] = self.almacen.nombre
+		item['tipo_insumo'] = self.tipo_insumo.nombre
 		return item
 
 class Inventario(models.Model):

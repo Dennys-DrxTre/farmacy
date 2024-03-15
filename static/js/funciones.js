@@ -134,3 +134,27 @@ const getDataTable = async (paging_p, searching_p, ordering_p, id_table, data_pa
 
 
 }
+
+
+const SendDataJsonBuyForm = async (url, parameters, callback) => {
+	try {
+
+		const response = await fetch (url, {
+			method: "POST",
+			body: parameters
+		});
+		const data = await response.json();
+
+		notifier.show(data['response']['title'], data['response']['data'], data['response']['type_response'], '', 4000);
+		if (data['response']['type_response'] === 'danger') {
+			console.log(data);
+			return false
+		}
+
+		callback();
+
+	} catch (error) {
+		notifier.show('Ocurrió un error!', error, 'danger', '', 4000);
+		console.log(error);
+	}
+}

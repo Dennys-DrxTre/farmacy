@@ -17,7 +17,7 @@ from django.views.generic import (
 )
 from .forms import IngresoForm
 
-from .models import Ingreso, DetalleIngreso
+from .models import Ingreso, DetalleIngreso, TipoMov
 from apps.inventario.models import Inventario, Producto
 # Create your views here.
 
@@ -49,42 +49,48 @@ class RegistrarIngreso(TemplateView):
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None
 
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
 	def get_success_url(self):
 		return reverse('detalle_ingreso', kwargs={'pk': self.object.pk})
 
 	def post(self, request, *args, **kwargs):
-		form = IngresoForm(request.POST)
-		if form.is_valid():
-			ingreso = IngresoForm()
-			ingreso.fecha = form.cleaned_data['cliente']
-			ingreso.descripcion = form.cleaned_data['descripcion']
-			ingreso.tipo_ingreso = form.cleaned_data['tipo_ingreso']
-			ingreso.save()
+		data = {}
+		try:
+			with transaction.atomic():
+				vents = json.loads(request.POST['vents'])
 
-			for det in form.cleaned_data['detalles']:
+				tipo_ingreso = TipoMov.objects.filter(pk=vents['tipo_ingreso']).first()
+				ingreso = Ingreso()
+				ingreso.fecha = vents['fecha']
+				ingreso.descripcion = vents['descripcion']
+				ingreso.tipo_ingreso = tipo_ingreso
+				ingreso.save()
 
-				inventario = Inventario()
-				inventario.lote = det['lote']
-				inventario.f_vencimiento = det['f_vencimiento']
-				inventario.stock = det['stock']
-				inventario.producto.pk = det['producto']
-				inventario.save()
+				for det in vents['det']:
 
-				detalle = DetalleIngreso()
-				detalle.ingreso = ingreso
-				detalle.inventario = inventario
-				detalle.f_vencimiento = det['f_vencimiento']
-				detalle.cantidad = det['stock']
-				detalle.lote = det['lote']
-				detalle.save()
+					inventario = Inventario()
+					inventario.lote = det['lote']
+					inventario.f_vencimiento = det['f_vencimiento']
+					inventario.stock = det['cantidad']
+					inventario.producto__id = det['id']
+					inventario.save()
 
-			self.object = ingreso
-			messages.success(request, 'El ingreso se ha registrado correctamente')
-			return redirect(self.get_success_url())
-		else:
-			context = self.get_context_data(**kwargs)
-			context["form"] = form
-			return render(request, self.template_name, context)
+					detalle = DetalleIngreso()
+					detalle.ingreso = ingreso
+					detalle.inventario = inventario
+					detalle.f_vencimiento = det['f_vencimiento']
+					detalle.cantidad = det['cantidad']
+					detalle.lote = det['lote']
+					detalle.save()
+					messages.success('Ingreso registrado correctamente')
+					data['response'] = {'title': 'Exito!', 'data':'Compra registrada correctamente', 'type_response': 'success'}
+		except Exception as e:
+			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
@@ -107,6 +113,16 @@ class BuscarProductosView(View):
 			data = []
 			ids_exclude = json.loads(request.POST.get('ids'))
 			productos = Producto.objects.filter(nombre__icontains=request.POST.get('term'))
+			for i in productos.exclude(pk__in=ids_exclude)[0:10]:
+				item = i.toJSON()
+				item['text'] = '{}'.format(i.nombre)
+				item['id'] = i.pk
+				data.append(item)
+
+		elif action == 'search_productos_table':
+			data = []
+			ids_exclude = json.loads(request.POST.get('ids'))
+			productos = Producto.objects.all()
 			for i in productos.exclude(pk__in=ids_exclude)[0:10]:
 				item = i.toJSON()
 				item['text'] = '{}'.format(i.nombre)

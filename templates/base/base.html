@@ -42,9 +42,13 @@
                     </li>
 
                     {% if not request.user.cargo == "ATENCION AL CLIENTE" and not request.user.cargo == "ALMACENISTA" %}
-                    <li class="dropdown">
-                        <a href="#"><i class="menu-icon fa fa-plus"></i>Solicitud de Medicamentos</a>
-                    </li>
+                    <li class="menu-item-has-children dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-envelope"></i>Mis solicitudes</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="fa fa-table"></i><a href="#">Solicitud de medicamentos</a></li>
+                            <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
+                        </ul>
+                     </li>
                     {% endif %}
 
                     {% if not request.user.cargo == "ATENCION AL CLIENTE" and not request.user.cargo == "ALMACENISTA" and not request.user.cargo == "ADMINISTRADOR" %}
