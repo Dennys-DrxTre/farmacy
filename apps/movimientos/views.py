@@ -1,15 +1,24 @@
+
+import json
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.db import transaction
 from django.contrib import messages
 from django.views.generic import (
-	UpdateView,
+	TemplateView,
 	ListView,
 	CreateView,
 	DetailView,
 	View
 )
+from .forms import IngresoForm
 
-from .models import Ingreso
+from .models import Ingreso, DetalleIngreso
+from apps.inventario.models import Inventario, Producto
 # Create your views here.
 
 class ListadoIngresos(ListView):
@@ -21,10 +30,10 @@ class ListadoIngresos(ListView):
 	
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context["sub_title"] = "Listado de ingresoss"
+		context["sub_title"] = "Listado de ingresos"
 		return context
 
-class DetalleIngreso(DetailView):
+class DetalleIngresoView(DetailView):
 	template_name = 'pages/movimientos/ingresos/detalle_ingreso.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	model = Ingreso
@@ -34,3 +43,78 @@ class DetalleIngreso(DetailView):
 		context = super().get_context_data(**kwargs)
 		context["sub_title"] = "Detalles del ingreso"
 		return context
+	
+class RegistrarIngreso(TemplateView):
+	template_name = 'pages/movimientos/ingresos/registrar_ingreso.html'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+
+	def get_success_url(self):
+		return reverse('detalle_ingreso', kwargs={'pk': self.object.pk})
+
+	def post(self, request, *args, **kwargs):
+		form = IngresoForm(request.POST)
+		if form.is_valid():
+			ingreso = IngresoForm()
+			ingreso.fecha = form.cleaned_data['cliente']
+			ingreso.descripcion = form.cleaned_data['descripcion']
+			ingreso.tipo_ingreso = form.cleaned_data['tipo_ingreso']
+			ingreso.save()
+
+			for det in form.cleaned_data['detalles']:
+
+				inventario = Inventario()
+				inventario.lote = det['lote']
+				inventario.f_vencimiento = det['f_vencimiento']
+				inventario.stock = det['stock']
+				inventario.producto.pk = det['producto']
+				inventario.save()
+
+				detalle = DetalleIngreso()
+				detalle.ingreso = ingreso
+				detalle.inventario = inventario
+				detalle.f_vencimiento = det['f_vencimiento']
+				detalle.cantidad = det['stock']
+				detalle.lote = det['lote']
+				detalle.save()
+
+			self.object = ingreso
+			messages.success(request, 'El ingreso se ha registrado correctamente')
+			return redirect(self.get_success_url())
+		else:
+			context = self.get_context_data(**kwargs)
+			context["form"] = form
+			return render(request, self.template_name, context)
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["sub_title"] = "Registrar ingreso"
+		context["form"] = IngresoForm
+		return context
+	
+class BuscarProductosView(View):
+	# permission_required = 'core.register_buy'
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		# try:
+		action = request.POST['action']
+		if action == 'search_productos':
+			data = []
+			ids_exclude = json.loads(request.POST.get('ids'))
+			productos = Producto.objects.filter(nombre__icontains=request.POST.get('term'))
+			for i in productos.exclude(pk__in=ids_exclude)[0:10]:
+				item = i.toJSON()
+				item['text'] = '{}'.format(i.nombre)
+				item['id'] = i.pk
+				data.append(item)
+		else:
+			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
+
+		# except Exception as e:
+		# 	data['error'] = str(e)
+		return JsonResponse(data, safe=False)

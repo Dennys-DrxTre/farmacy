@@ -24,7 +24,7 @@
                     <!-- <a href="#" id="btn_filter" class="btn btn-icon btn-light-dark ml-10" rel="btn_open_modal_report" data-bs-toggle="tooltip" data-bs-placement="top" title="Reportes">
                         <i class="fas fa-file-pdf"></i>
                     </a> -->
-                    <a href="#" class="btn btn-icon btn-info" data-bs-toggle="tooltip" title="Registrar anuncio">
+                    <a href="{% url 'registrar_ingreso' %}" class="btn btn-icon btn-info" data-bs-toggle="tooltip" title="Registrar anuncio">
                         <i class="fa fa-plus text-white"></i>
                     </a>
                 </div>
@@ -85,6 +85,5 @@
     <script src="{% static 'js/plugins/dataTables.bootstrap5.min.js' %}"></script>
     <script src="{% static 'js/plugins/dataTables.responsive.min.js' %}"></script>
     <script src="{% static 'js/plugins/responsive.bootstrap5.min.js' %}"></script>
-    <script src="{% static 'js/funciones.js' %}"></script>
 {% endblock extrajs %}
     
