@@ -19,12 +19,11 @@
     {% block extra_css %}
     {% endblock extra_css %}
     <style>
-        body {
+        .content {
             background-image: url('{% static "images/fondologin.jpg" %}');
-            background-size: cover;
             background-repeat: no-repeat;
+            background-size: 100% 100%;
             background-position: center;
-            background-repeat: repeat;
         }
     </style>
 </head>
@@ -171,13 +170,8 @@
         </header>
 
         <div class="content">
-            <div>
-                <div class="row">
-                    <div class="col-lg-12">
-                      {% block body %}
-                      {% endblock body %}
-                </div>
-            </div>
+            {% block body %}
+            {% endblock %}
         </div>
         <!-- /.content -->
         <div class="clearfix"></div>
