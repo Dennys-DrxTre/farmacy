@@ -1,0 +1,144 @@
+{% extends 'base/base.html' %}
+
+
+{% block body %}
+<form action="#" method="post" enctype="multipart/form-data">{% csrf_token %}
+<div class="card">
+    <div class="card-header">
+        <strong>Registro de Usuarios</strong> 
+    </div>
+    <div class="card-body card-block">
+        
+            <div class="row g-2 mb-3">
+                <div class="col">
+                    <div class="input-group">
+                        <div class="col-5">
+                            <label for="">Nacionalidad</label>
+                            <select name="" id="" class="form-control">
+                                <option value="">-- Seleccione --</option>
+                                <option value="V-">V-</option>
+                                <option value="E-">E-</option>
+                            </select>
+                        </div>
+                        <div class="col-7">
+                            <label for="">Cedula</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group">
+                        <div class="col-6">
+                            <label for="" class="form-control-label">Nombres</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="col-6">
+                            <label for="">Apellidos</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col">
+                    <div class="input-group">
+                        <div class="col-6">
+                            <label for="">Fecha de nacimiento</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-6">
+                            <label for="">Telefono</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group">
+                        <div class="col-6">
+                            <label for="">Genero</label>
+                            <select name="" id="" class="form-control">
+                                <option value="">-- Seleccione --</option>
+                                <option value="">Masculino</option>
+                                <option value="">Femenino</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label for="">¿Está embarazada?</label> <br>
+                            <div class="form-check-inline form-check">
+                                <label for="inline-radio1" class="form-check-label mr-3">
+                                    <input type="radio" id="inline-radio1" name="inline-radios" value="option1" class="form-check-input">Sí
+                                </label>
+                                <label for="inline-radio2" class="form-check-label ">
+                                    <input type="radio" id="inline-radio2" name="inline-radios" value="option2" class="form-check-input">No
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col g-2">
+                    <div class="input-group">
+                        <div class="col-4">
+                            <label for="">Correo</label>
+                           <input type="email" name="" id="" class="form-control">
+                        </div>
+                        <div class="col-4">
+                            <label for="">Zona</label>
+                            <select name="" id="" class="form-control">
+                                <option value="-- Seleccione --"></option>
+                                <option value="">Zona 1</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label for="">Constancia de residencia</label>
+                            <input type="file" name="" id="" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="">Ubicación</label>
+                    <textarea name="" id="" cols="30" rows="3" class="form-control" style="resize: none;"></textarea>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="input-group">
+                    <div class="col">
+                        <label for="">Rol en el sistema</label>
+                        <select name="" id="" class="form-control">
+                            <option value="">-- Seleccione --</option>
+                            <option value="">rol 1</option>
+                            <option value="">rol 2</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <div class="input-group">
+                            <div class="col-6">
+                                <label for="">Definir contraseña</label>
+                                <input type="password" name="" id="" class="form-control">
+                            </div>
+                            <div class="col-6">
+                                <label for="">Confirmar contraseña</label>
+                                <input type="password" name="" id="" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-dot-circle-o"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-danger btn-sm">
+            <i class="fa fa-ban"></i> Cancelar
+        </button>
+    </div>
+</div>
+</form>
+{% endblock body %}
+    
