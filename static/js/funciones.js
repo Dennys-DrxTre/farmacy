@@ -158,3 +158,26 @@ const SendDataJsonBuyForm = async (url, parameters, callback) => {
 		console.log(error);
 	}
 }
+
+const SendDataJsonForm = async (url, parameters, callback) => {
+	try {
+
+		const response = await fetch (url, {
+			method: "POST",
+			body: parameters
+		});
+		const data = await response.json();
+
+		notifier.show(data['response']['title'], data['response']['data'], data['response']['type_response'], '', 4000);
+		if (data['response']['type_response'] === 'danger') {
+			console.log(data);
+			return false
+		}
+
+		callback();
+
+	} catch (error) {
+		notifier.show('Ocurrió un error!', error, 'danger', '', 4000);
+		console.log(error);
+	}
+}
