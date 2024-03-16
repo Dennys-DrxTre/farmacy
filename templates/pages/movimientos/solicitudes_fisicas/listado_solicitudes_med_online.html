@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Listado de ingresos
+    Mis Solicitados
 {% endblock title %}
 
 {% block extra_css %}
@@ -11,7 +11,6 @@
 	<link rel="stylesheet" href="{% static 'css/dataTables.bootstrap5.min.css' %}">
 	<link rel="stylesheet" href="{% static 'css/responsive.bootstrap5.min.css' %}">
 {% endblock extra_css %}
-    
 
 {% block body %}
 <div class="row">
@@ -48,19 +47,21 @@
                                 <th>ID</th>
                                 <th>fecha</th>
                                 <th>Descripción</th>
-                                <th>Tipo de ingreso</th>
+                                <th>Proceso actual</th>
+                                <th>Estado</th>
                                 <th>Opciones</th>
                               </tr>
                         </thead>
                         <tbody>
-                            {% for ingreso in ingresos %}
+                            {% for solicitud in solicitudes %}
                                 <tr>
-                                    <td>{{ ingreso.pk }}</td>
-                                    <td>{{ ingreso.fecha|date:'d/m/Y' }}</td>
-                                    <td>{{ ingreso.descripcion }}</td>
-                                    <td>{{ ingreso.tipo_ingreso }}</td>
+                                    <td>{{ solicitud.pk }}</td>
+                                    <td>{{ solicitud.fecha_soli|date:'d/m/Y' }}</td>
+                                    <td>{{ solicitud.descripcion }}</td>
+                                    <td>{{ solicitud.get_proceso_actual_display }}</td>
+                                    <td>{{ solicitud.get_estado_display }}</td>
                                     <td>
-                                        <a href="{% url 'detalle_ingreso' ingreso.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalle de ingreso">
+                                        <a href="{% url 'mi_solicitud_medicamento' solicitud.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" title="Detalle de ingreso">
                                             <i class="fa fa-info"></i>
                                         </a>
                                         <!-- <a href="#" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar anuncio">
@@ -75,7 +76,8 @@
                                 <th>ID</th>
                                 <th>fecha</th>
                                 <th>Descripción</th>
-                                <th>Tipo de ingreso</th>
+                                <th>Proceso actual</th>
+                                <th>Estado</th>
                                 <th>Opciones</th>
                             </tr>
                         </tfoot>

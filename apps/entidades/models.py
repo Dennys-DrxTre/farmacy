@@ -58,7 +58,7 @@ class Perfil(Persona):
 	usuario = models.OneToOneField(User, on_delete=models.CASCADE)
 	
 	def __str__(self):
-		return self.cedula
+		return str(self.cedula)
 	
 	class Meta:
 		verbose_name = 'perfil'
@@ -72,7 +72,7 @@ class Beneficiado(Persona):
 	perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT)
 
 	def __str__(self):
-		return self.cedula
+		return str(self.cedula)
 		
 	class Meta:
 		verbose_name = 'Beneficiado'

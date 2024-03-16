@@ -218,6 +218,27 @@ $(function () {
         $(this).val('').trigger('change.select2');
     });
 
+    // asignar valor cantidad
+    $('#detalle tbody').on('change keyup', '.cantidad', function () {
+        let cantidad = $(this).val();
+        var tr = tblCate.cell($(this).closest('td, li')).index();
+            vents.items.det[tr.row].cantidad = parseInt(cantidad);
+    });
+
+    // asignar valor lote
+    $('#detalle tbody').on('change keyup', '.lote', function () {
+        let lote = $(this).val();
+        var tr = tblCate.cell($(this).closest('td, li')).index();
+            vents.items.det[tr.row].lote = lote;
+    });
+
+    // asignar valor f_vencimiento
+    $('#detalle tbody').on('change keyup', '.f_vencimiento', function () {
+        let f_vencimiento = $(this).val();
+        var tr = tblCate.cell($(this).closest('td, li')).index();
+            vents.items.det[tr.row].f_vencimiento = f_vencimiento;
+    });
+
     // delete individual element
     $('#detalle tbody').on('click', 'a[rel="delete"]', function () {
         var tr = tblCate.cell($(this).closest('td, li')).index();
