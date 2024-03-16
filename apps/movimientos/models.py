@@ -45,7 +45,7 @@ class Solicitud(models.Model):
 
 # detalle de la solicitud
 class DetalleSolicitud(models.Model):
-	solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
+	solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, related_name='detalle')
 	producto = models.ForeignKey(Inventario, on_delete=models.CASCADE)
 	cant_solicitada = models.IntegerField(default=1)
 	cant_entregada = models.IntegerField(default=1)
@@ -57,7 +57,7 @@ class DetalleSolicitud(models.Model):
 		ordering = ['pk']
 
 	def __str__(self):
-		return self.pk
+		return str(self.pk)
 
 	def toJSON(self):
 		item = model_to_dict(self)
@@ -139,13 +139,21 @@ class Historial(models.Model):
 	producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
 	cantidad = models.IntegerField(blank=False, null=False)
 
+	def crear_movimiento(self, datos):
+		movimiento = Historial()
+		movimiento.tipo_mov = datos['tipo_mov']
+		movimiento.empleado = datos['perfil']
+		movimiento.producto = datos['producto']
+		movimiento.cantidad = datos['cantidad']
+		movimiento.save()
+
 	class Meta:
 		verbose_name = 'Movimiento de Inventario'
 		verbose_name_plural = 'Movimientos de Inventario'
 		ordering = ['fecha_mov']
 
 	def __str__(self):
-		return self.pk
+		return str(self.pk)
 	
 	def toJSON(self):
 		item = model_to_dict(self)
@@ -169,7 +177,7 @@ class Ingreso(models.Model):
 		return item
 	
 class DetalleIngreso(models.Model):
-	ingreso = models.ForeignKey(Ingreso, on_delete=models.PROTECT)
+	ingreso = models.ForeignKey(Ingreso, on_delete=models.PROTECT, related_name='detalle')
 	inventario = models.ForeignKey(Inventario, on_delete=models.PROTECT)
 	cantidad = models.IntegerField()
 	lote = models.CharField(max_length=50)

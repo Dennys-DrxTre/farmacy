@@ -56,6 +56,12 @@ class Producto(models.Model):
 	stock_minimo = models.IntegerField(blank=False, null=False)
 	total_stock = models.IntegerField(null = False, blank= False)
 
+	def contar_productos(self):
+		self.total_stock = 0
+		for i in self.inventario.all():
+			self.total_stock += i.stock
+		self.save()
+
 	class Meta:
 		verbose_name = 'Producto'
 		verbose_name_plural = 'Productos'
@@ -74,7 +80,7 @@ class Inventario(models.Model):
 	lote = models.CharField(max_length=50,verbose_name='Codigo de lote')
 	f_vencimiento = models.DateField(auto_now=False, auto_now_add=False, verbose_name='Fecha de vencimiento')
 	stock = models.IntegerField(default=0, verbose_name='Stock')
-	producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='inventorario', verbose_name='Producto')
+	producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='inventario', verbose_name='Producto')
 
 	class Meta:
 		verbose_name = 'Inventario'
