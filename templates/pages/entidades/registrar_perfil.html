@@ -14,7 +14,7 @@
                     <div class="input-group">
                         <div class="col-5">
                             <label for="">Nacionalidad</label>
-                            <select name="" id="" class="form-control">
+                            <select name="nacionalidad" id="" class="form-control">
                                 <option value="">-- Seleccione --</option>
                                 <option value="V-">V-</option>
                                 <option value="E-">E-</option>
@@ -22,7 +22,7 @@
                         </div>
                         <div class="col-7">
                             <label for="">Cedula</label>
-                            <input type="text" class="form-control">
+                            <input type="text" name="cedula" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -30,11 +30,11 @@
                     <div class="input-group">
                         <div class="col-6">
                             <label for="" class="form-control-label">Nombres</label>
-                            <input type="text" class="form-control">
+                            <input type="text" name="nombres" class="form-control">
                         </div>
                         <div class="col-6">
                             <label for="">Apellidos</label>
-                            <input type="text" class="form-control">
+                            <input type="text" name="apellidos" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -44,11 +44,11 @@
                     <div class="input-group">
                         <div class="col-6">
                             <label for="">Fecha de nacimiento</label>
-                            <input type="date" class="form-control">
+                            <input type="date" name="f_nacimiento" class="form-control">
                         </div>
                         <div class="col-6">
                             <label for="">Telefono</label>
-                            <input type="text" class="form-control">
+                            <input type="text" name="telefono" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -56,20 +56,20 @@
                     <div class="input-group">
                         <div class="col-6">
                             <label for="">Genero</label>
-                            <select name="" id="" class="form-control">
+                            <select name="genero" id="" class="form-control">
                                 <option value="">-- Seleccione --</option>
-                                <option value="">Masculino</option>
-                                <option value="">Femenino</option>
+                                <option value="MA">Masculino</option>
+                                <option value="FE">Femenino</option>
                             </select>
                         </div>
                         <div class="col-6">
                             <label for="">¿Está embarazada?</label> <br>
                             <div class="form-check-inline form-check">
                                 <label for="inline-radio1" class="form-check-label mr-3">
-                                    <input type="radio" id="inline-radio1" name="inline-radios" value="option1" class="form-check-input">Sí
+                                    <input type="radio" id="inline-radio1" name="embarazada" value="True" class="form-check-input">Sí
                                 </label>
                                 <label for="inline-radio2" class="form-check-label ">
-                                    <input type="radio" id="inline-radio2" name="inline-radios" value="option2" class="form-check-input">No
+                                    <input type="radio" id="inline-radio2" name="embarazada" value="False" class="form-check-input">No
                                 </label>
                             </div>
                         </div>
@@ -81,18 +81,20 @@
                     <div class="input-group">
                         <div class="col-4">
                             <label for="">Correo</label>
-                           <input type="email" name="" id="" class="form-control">
+                           <input type="email" name="email" id="" class="form-control">
                         </div>
                         <div class="col-4">
                             <label for="">Zona</label>
-                            <select name="" id="" class="form-control">
+                            <select name="zona" id="" class="form-control">
                                 <option value="-- Seleccione --"></option>
-                                <option value="">Zona 1</option>
+                                {% for x in zona %}
+                                    <option value="{{x.id}}">{{x.zona_residencia}}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-4">
                             <label for="">Constancia de residencia</label>
-                            <input type="file" name="" id="" class="form-control">
+                            <input type="file" name="c_residencia" id="" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -100,7 +102,7 @@
             <div class="row">
                 <div class="col">
                     <label for="">Ubicación</label>
-                    <textarea name="" id="" cols="30" rows="3" class="form-control" style="resize: none;"></textarea>
+                    <textarea name="direccion" id="" cols="30" rows="3" class="form-control" style="resize: none;"></textarea>
                 </div>
             </div>
             <hr>
@@ -108,21 +110,21 @@
                 <div class="input-group">
                     <div class="col">
                         <label for="">Rol en el sistema</label>
-                        <select name="" id="" class="form-control">
+                        <select name="rol" id="" class="form-control">
                             <option value="">-- Seleccione --</option>
-                            <option value="">rol 1</option>
-                            <option value="">rol 2</option>
+                            <option value="AD">rol 1</option>
+                            <option value="AC">rol 2</option>
                         </select>
                     </div>
                     <div class="col">
                         <div class="input-group">
                             <div class="col-6">
                                 <label for="">Definir contraseña</label>
-                                <input type="password" name="" id="" class="form-control">
+                                <input type="password" name="password" id="" class="form-control">
                             </div>
                             <div class="col-6">
                                 <label for="">Confirmar contraseña</label>
-                                <input type="password" name="" id="" class="form-control">
+                                <input type="password" name="password1" id="" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -140,5 +142,6 @@
     </div>
 </div>
 </form>
+
 {% endblock body %}
     
