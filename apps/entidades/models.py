@@ -63,6 +63,12 @@ class Perfil(Persona):
 	class Meta:
 		verbose_name = 'perfil'
 		verbose_name_plural = 'perfiles'
+		permissions = [
+			('cambiar_password', 'cambiar contraseña a usuarios'),
+			('cambiar_estado_usuarios', 'cambiar estado de usuarios'),
+			('cambiar_estado_jornada', 'cambiar estatus de jornadas'),
+			('cambiar_estado_solicitudes', 'cambiar status de solicitudes')
+		]
 
 	def toJSON(self):
 		item = model_to_dict(self)

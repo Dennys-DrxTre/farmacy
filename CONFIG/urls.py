@@ -23,7 +23,6 @@ urlpatterns = [
     path('', include('apps.inventario.urls')),
     path('', include('apps.entidades.urls')),
     path('', include('apps.movimientos.urls')),
-    path('', include('apps.usuarios.urls')),
 ]
 
 if settings.DEBUG:

@@ -28,7 +28,6 @@ PROJECT_APPS = [
     'apps.entidades',
     'apps.inventario',
     'apps.movimientos',
-    'apps.usuarios',
 ]
 
 THIRD_PARTY_APPS = [
@@ -98,3 +97,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'farmaciaasicleonidasramos@gmail.com' # Tu correo de Gmail
+EMAIL_HOST_PASSWORD = 'clxx mehf mksj ciqh' # Tu contraseña de aplicacion Gmail
