@@ -136,7 +136,7 @@ class Historial(models.Model):
 	fecha_mov = models.DateField(auto_now=True, blank=False, null=False)
 	tipo_mov = models.ForeignKey(TipoMov, on_delete=models.PROTECT)
 	empleado = models.ForeignKey(Perfil, on_delete=models.PROTECT)
-	producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
+	producto = models.ForeignKey(Inventario, on_delete=models.PROTECT, related_name='historial')
 	cantidad = models.IntegerField(blank=False, null=False)
 
 	def crear_movimiento(self, datos):
@@ -150,7 +150,7 @@ class Historial(models.Model):
 	class Meta:
 		verbose_name = 'Movimiento de Inventario'
 		verbose_name_plural = 'Movimientos de Inventario'
-		ordering = ['fecha_mov']
+		ordering = ['-pk']
 
 	def __str__(self):
 		return str(self.pk)

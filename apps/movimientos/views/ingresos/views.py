@@ -91,7 +91,7 @@ class RegistrarIngreso(TemplateView):
 					movimiento = {
 						'tipo_mov': tipo_ingreso,
 						'perfil': perfil,
-						'producto': producto,
+						'producto': inventario,
 						'cantidad': det['cantidad']
 					}
 					Historial().crear_movimiento(movimiento)

@@ -90,7 +90,7 @@ class Inventario(models.Model):
 		# ]
 
 	def __str__(self):
-		return "{} - {}".format(self.producto.nombre, self.stock)
+		return "{} - {}".format(self.producto.nombre, self.lote)
 
 	def toJSON(self):
 		item = model_to_dict(self)
