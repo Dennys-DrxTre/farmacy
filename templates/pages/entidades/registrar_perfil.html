@@ -1,24 +1,20 @@
 {% extends 'base/base.html' %}
-
+{% load widget_tweaks %}
 
 {% block body %}
 <form action="#" method="post" enctype="multipart/form-data">{% csrf_token %}
-<div class="card">
-    <div class="card-header">
-        <strong>Registro de Usuarios</strong> 
-    </div>
-    <div class="card-body card-block">
-        
+    <div class="card">
+        <div class="card-header">
+            <strong>Registro de Usuarios</strong> 
+        </div>
+        <div class="card-body card-block">
+            
             <div class="row g-2 mb-3">
                 <div class="col">
                     <div class="input-group">
                         <div class="col-5">
                             <label for="">Nacionalidad</label>
-                            <select name="nacionalidad" id="" class="form-control">
-                                <option value="">-- Seleccione --</option>
-                                <option value="V-">V-</option>
-                                <option value="E-">E-</option>
-                            </select>
+                            {{form.nacionalidad|add_class:'form-control'}}
                         </div>
                         <div class="col-7">
                             <label for="">Cedula</label>
@@ -42,13 +38,27 @@
             <div class="row g-2 mb-3">
                 <div class="col">
                     <div class="input-group">
-                        <div class="col-6">
+                        <div class="col-5">
                             <label for="">Fecha de nacimiento</label>
                             <input type="date" name="f_nacimiento" class="form-control">
                         </div>
-                        <div class="col-6">
-                            <label for="">Telefono</label>
-                            <input type="text" name="telefono" class="form-control">
+                        <div class="col-7">
+                            <label for="">Teléfono</label>
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <div class="btn-group">
+                                        <select name="codigo_tlf" id="" class="form-control" required>
+                                            <option value="">----</option>
+                                            <option value="0412">0412</option>
+                                            <option value="0416">0416</option>
+                                            <option value="0426">0426</option>
+                                            <option value="0414">0414</option>
+                                            <option value="0424">0424</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <input type="text" name="telefono" class="form-control" required maxlength="7" minlength="7">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -56,11 +66,7 @@
                     <div class="input-group">
                         <div class="col-6">
                             <label for="">Genero</label>
-                            <select name="genero" id="" class="form-control">
-                                <option value="">-- Seleccione --</option>
-                                <option value="MA">Masculino</option>
-                                <option value="FE">Femenino</option>
-                            </select>
+                            {{form.genero|add_class:'form-control'}}
                         </div>
                         <div class="col-6">
                             <label for="">¿Está embarazada?</label> <br>
@@ -81,16 +87,11 @@
                     <div class="input-group">
                         <div class="col-4">
                             <label for="">Correo</label>
-                           <input type="email" name="email" id="" class="form-control">
+                            <input type="email" name="email" id="" class="form-control">
                         </div>
                         <div class="col-4">
                             <label for="">Zona</label>
-                            <select name="zona" id="" class="form-control">
-                                <option value="-- Seleccione --"></option>
-                                {% for x in zona %}
-                                    <option value="{{x.id}}">{{x.zona_residencia}}</option>
-                                {% endfor %}
-                            </select>
+                            {{form.zona|add_class:'form-control'}}
                         </div>
                         <div class="col-4">
                             <label for="">Constancia de residencia</label>
@@ -106,15 +107,11 @@
                 </div>
             </div>
             <hr>
-            <div class="row">
+            <div class="row mb-3">
                 <div class="input-group">
                     <div class="col">
                         <label for="">Rol en el sistema</label>
-                        <select name="rol" id="" class="form-control">
-                            <option value="">-- Seleccione --</option>
-                            <option value="AD">rol 1</option>
-                            <option value="AC">rol 2</option>
-                        </select>
+                        {{form.rol|add_class:'form-control'}}
                     </div>
                     <div class="col">
                         <div class="input-group">
@@ -130,17 +127,21 @@
                     </div>
                 </div>
             </div>
-        
+            <div class="form-check-inline form-check">
+                <label for="inline-checkbox1" class="form-check-label ">
+                    <input type="checkbox" id="inline-checkbox1" name="is_active" value="True" class="form-check-input">Activar usuario
+                </label>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fa fa-dot-circle-o"></i> Guardar
+            </button>
+            <button type="button" class="btn btn-danger btn-sm">
+                <i class="fa fa-ban"></i> Cancelar
+            </button>
+        </div>
     </div>
-    <div class="card-footer">
-        <button type="submit" class="btn btn-primary btn-sm">
-            <i class="fa fa-dot-circle-o"></i> Guardar
-        </button>
-        <button type="button" class="btn btn-danger btn-sm">
-            <i class="fa fa-ban"></i> Cancelar
-        </button>
-    </div>
-</div>
 </form>
 
 {% endblock body %}
