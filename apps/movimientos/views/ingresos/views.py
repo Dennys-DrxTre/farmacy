@@ -54,9 +54,6 @@ class RegistrarIngreso(TemplateView):
 	def dispatch(self, request, *args, **kwargs):
 		return super().dispatch(request, *args, **kwargs)
 
-	def get_success_url(self):
-		return reverse('detalle_ingreso', kwargs={'pk': self.object.pk})
-
 	def post(self, request, *args, **kwargs):
 		data = {}
 		try:
@@ -91,7 +88,7 @@ class RegistrarIngreso(TemplateView):
 					movimiento = {
 						'tipo_mov': tipo_ingreso,
 						'perfil': perfil,
-						'producto': producto,
+						'producto': inventario,
 						'cantidad': det['cantidad']
 					}
 					Historial().crear_movimiento(movimiento)

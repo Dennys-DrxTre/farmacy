@@ -60,7 +60,7 @@
                            <li><i class="fa fa-table"></i><a href="{% url 'lista_perfiles' %}">Usuarios</a></li>
                         {% endif %}
                         {% if not request.user.cargo == "PACIENTE" %}
-                           <li><i class="fa fa-table"></i><a href="#">Productos</a></li>
+                           <li><i class="fa fa-table"></i><a href="{% url 'listado_productos' %}">Productos</a></li>
                        </ul>
                     </li>
                     {% endif %}
