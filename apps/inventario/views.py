@@ -9,7 +9,7 @@ from django.views.generic import (
 	View
 )
 
-from .models import Producto
+from .models import Producto, Inventario
 from apps.movimientos.models import Historial
 
 # Create your views here.
@@ -35,9 +35,11 @@ class DetalleProductoView(DetailView):
 		context = super().get_context_data(**kwargs)
 		# Aquí puedes agregar datos adicionales al contexto
 		producto = Producto.objects.filter(pk=self.kwargs.get('pk')).first()
-		if producto:
-			for i in producto.inventario.all():
+		inventario = Inventario.objects.filter(producto_id=producto.pk).order_by('f_vencimiento')
+		if producto and inventario:
+			for i in inventario:
 				historial = Historial.objects.filter(producto__producto__id=i.producto.pk).order_by('-pk')
 		context["historial"] = historial
+		context["inventario"] = inventario
 		context["sub_title"] = "Detalles del producto"
 		return context
