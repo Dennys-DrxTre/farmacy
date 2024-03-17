@@ -3,9 +3,9 @@ let form_search = document.getElementById('search-input');
 
 let vents = {
     items : {
-        fecha: '',
         descripcion: '',
-        tipo_ingreso: '',
+        beneficiado: '',
+        recipe: '',
         det: []
     },
     get_ids: function () {
@@ -35,9 +35,6 @@ let vents = {
             },
             [
                 {"data": "nombre"},
-                {"data": "tipo_insumo"},
-                {"data": "almacen"},
-                {"data": "total_stock"},
                 {"data": "id"},
             ],
             [
@@ -89,23 +86,21 @@ let vents = {
             data: this.items.det,
             columns: [
                 {"data": "nombre"},
-                {"data": "lote"},
                 {"data": "cantidad"},
-                {"data": "f_vencimiento"},
                 {"data": "id"},
             ],
             columnDefs: [
                 {
-                    targets: [1],
+                    targets: [0],
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
 
-                        return '<input type="text" value="'+ data +'"name="lote" class="form-control form-control-sm lote" required autocomplete="off">';
+                        return data;
                     }
                 },
                 {
-                    targets: [2],
+                    targets: [1],
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row, meta) {                        
@@ -113,16 +108,7 @@ let vents = {
                     }
                 },
                 {
-                    targets: [3],
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-
-                        return '<input type="date" value="'+ data +'"name="f_vencimiento" class="form-control form-control-sm f_vencimiento" required autocomplete="off">';
-                    }
-                },
-                {
-                    targets: [4],
+                    targets: [2],
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
@@ -158,7 +144,6 @@ function formatRepo(repo) {
         '<p style="margin-bottom: 0;">' +
         '<b class="text-white">Nombre:</b> <b class="text-white">' + repo.text+ '</b><br>' +
         '<b class="text-white">Codigo:</b> <b class="text-white">' + repo.id + '</b><br>' +
-        '<b class="text-white">Disponibilidad:</b> <b class="text-white">' + repo.others.total_stock + '</b><br>' +
         '</p>' +
         '</div>');
 
@@ -193,7 +178,6 @@ $(function () {
                     results.push({
                         id: res.id,
                         text: res.nombre,
-                        others: res
                     });
                 });
     
@@ -211,8 +195,6 @@ $(function () {
         var data = e.params.data;
         data.cantidad = 1;
         data.nombre = data.text;
-        data.lote = "";
-        data.f_vencimiento = "";
         vents.add(data);
         $(this).val('').trigger('change.select2');
     });
@@ -250,10 +232,7 @@ $(function () {
         let data = {
             id: productos.id,
             text: productos.nombre,
-            lote: "",
-            f_vencimiento : "",
             nombre: productos.nombre,
-            others: productos,
             cantidad: 1,
         }
         vents.add(data);
@@ -304,20 +283,23 @@ $(function () {
         e.preventDefault();
         
         if (vents.items.det.length === 0) {
-            notifier.show('Ocurrio un error!', 'Debe al menos tener un producto en el ingreso', 'danger', '', 4000);
+            notifier.show('Ocurrio un error!', 'Debe al menos tener un producto en la solicitud', 'danger', '', 4000);
             return false;
         }
+
+        var imagefield = document.getElementById("id_recipe");
+
         vents.items.descripcion = $('textarea[name="descripcion"]').val();
-        vents.items.fecha = $('input[name="fecha"]').val();
-        vents.items.tipo_ingreso = $('select[name="tipo_ingreso"]').val();
+        vents.items.recipe = imagefield.files[0]
+        vents.items.beneficiado = $('select[name="beneficiado"]').val();
         // return false;
         var parameters = new FormData();
         parameters.append('vents', JSON.stringify(vents.items));
-    
-        // btn_submit.disabled = true;
-        console.log(vents.items);
-        await SendDataJsonBuyForm(window.location.pathname, parameters, function () {
-            window.location.replace('/listado-de-ingresos/');
+        parameters.append('recipe', imagefield.files[0]);
+
+        btn_submit.disabled = true;
+        await SendDataJsonForm(window.location.pathname, parameters, function () {
+            window.location.replace('/mis-solictudes-de-medicamentos/');
         })
     });
 });

@@ -23,16 +23,17 @@ from apps.inventario.models import Inventario, Producto
 from apps.entidades.models import Beneficiado,Perfil
 # # Create your views here.
 
-class ListadoSolictudOnline(ListView):
-	context_object_name = 'solicitudes'
+class MisSolicitudesMedOnline(TemplateView):
 	template_name = 'pages/movimientos/solicitudes_fisicas/listado_solicitudes_med_online.html'
 	# permission_required = 'anuncios.requiere_secretria'
-	model= Solicitud
-	ordering = ['-id']
 	
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
+		mis_solicitudes = Solicitud.objects.filter(beneficiado__cedula=self.request.user.perfil.cedula)
+		print(mis_solicitudes)
+
 		context["sub_title"] = "Mis Solicitudes online"
+		context['solicitudes'] = mis_solicitudes
 		return context
 
 class DetalleMiSolicitudOnline(DetailView):
@@ -61,29 +62,26 @@ class RegistrarMiSolicitud(TemplateView):
 			with transaction.atomic():
 				vents = json.loads(request.POST['vents'])
 
-				tipo_ingreso = TipoMov.objects.get_or_create(nombre='SOLICITUD DE MEDICAMENTO')
 				solicitud = Solicitud()
 				solicitud.fecha_soli = date.today()
 				solicitud.descripcion = vents['descripcion']
-				solicitud.tipo_ingreso = tipo_ingreso
+				solicitud.beneficiado_id = vents['beneficiado']
+				solicitud.recipe = request.FILES['recipe']
+				solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
+				solicitud.tipo_solicitud = solicitud.TipoSoli.ONLINE
+				solicitud.estado = solicitud.Status.EN_PROCRESO 
 				solicitud.save()
 
-				# for det in vents['det']:
-				# 	producto = Producto.objects.filter(pk=det['id']).first()
-				# 	inventario = Inventario()
-				# 	inventario.lote = det['lote']
-				# 	inventario.f_vencimiento = det['f_vencimiento']
-				# 	inventario.stock += det['cantidad'] 
-				# 	inventario.producto = producto
-				# 	inventario.save()
+				for det in vents['det']:
+					producto = Producto.objects.filter(pk=det['id']).first()
+					inventario = Inventario.objects.filter(producto_id=producto.pk).order_by('f_vencimiento').first()
+					inventario.save()
 
-				# 	detalle = DetalleSolicitud()
-				# 	detalle.ingreso = solicitud
-				# 	detalle.inventario = inventario
-				# 	detalle.f_vencimiento = det['f_vencimiento']
-				# 	detalle.cantidad = det['cantidad']
-				# 	detalle.lote = det['lote']
-				# 	detalle.save()
+					detalle = DetalleSolicitud()
+					detalle.solicitud = solicitud
+					detalle.producto = inventario
+					detalle.cant_solicitada = det['cantidad']
+					detalle.save()
 
 				# 	perfil = Perfil.objects.filter(usuario=request.user).first()
 				# 	movimiento = {
@@ -94,8 +92,8 @@ class RegistrarMiSolicitud(TemplateView):
 				# 	}
 				# 	Historial().crear_movimiento(movimiento)
 
-				# 	messages.success(request,'Ingreso registrado correctamente')
-				# 	data['response'] = {'title': 'Exito!', 'data':'Compra registrada correctamente', 'type_response': 'success'}
+					messages.success(request,'Solicitud de medicamento registrado correctamente')
+					data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
 		except Exception as e:
 			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
 			data['error'] = str(e)

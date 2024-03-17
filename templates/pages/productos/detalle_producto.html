@@ -105,11 +105,12 @@
                 </div>
                 <div class="card-body">
                     <div class="dt-responsive table-responsive">
-                        <table id="listado" class="table table-striped table-hover table-bordered nowrap">
+                        <table id="listado2" class="table table-striped table-hover table-bordered nowrap">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Tipo de movimiento</th>
+                                    <th>Fecha</th>
                                     <th>Empleado</th>
                                     <th>Producto-Lote</th>
                                     <th>Cantidad</th>
@@ -120,6 +121,7 @@
                                         <tr>
                                             <td>{{ h.pk }}</td>
                                             <td>{{ h.tipo_mov }}</td>
+                                            <td>{{ h.fecha_mov|date:'d/m/Y' }}</td>
                                             <td>{{ h.empleado.nombres }} {{ h.empleado.apellidos }}</td>
                                             <td>{{ h.producto.producto }} - {{ h.producto.lote }}</td>
                                             
@@ -153,6 +155,43 @@
         $('a[rel="ver_recipe"]').on('click', function () {
             $('#modal_recipe').modal('show');
         });
+
+        $('#listado2').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            deferRender: true,
+            ordering: false,
+            searching: true,
+            paging: true,
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrand del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "<span class='fa fa-angle-double-left'></span>",
+                    "sLast": "<span class='fa fa-angle-double-right'></span>",
+                    "sNext": "<span class='fa fa-angle-right'></span>",
+                    "sPrevious": "<span class='fa fa-angle-left'></span>"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            },
+            initComplete: function(settings, json) {
+        
+            }
+	    });
     </script>
 
 {% endblock extrajs %}

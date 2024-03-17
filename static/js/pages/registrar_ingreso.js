@@ -289,7 +289,7 @@ $(function () {
         var parameters = new FormData();
         parameters.append('vents', JSON.stringify(vents.items));
     
-        // btn_submit.disabled = true;
+        btn_submit.disabled = true;
         console.log(vents.items);
         await SendDataJsonBuyForm(window.location.pathname, parameters, function () {
             window.location.replace('/listado-de-ingresos/');

@@ -167,7 +167,7 @@ const SendDataJsonForm = async (url, parameters, callback) => {
 			body: parameters
 		});
 		const data = await response.json();
-
+		
 		notifier.show(data['response']['title'], data['response']['data'], data['response']['type_response'], '', 4000);
 		if (data['response']['type_response'] === 'danger') {
 			console.log(data);
