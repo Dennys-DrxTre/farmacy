@@ -8,16 +8,21 @@ class IngresoForm(forms.ModelForm):
 		model = Ingreso
 		fields = '__all__'
 
-class SolicitudForm(forms.ModelForm):
+class MiSolicitudForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        super(SolicitudForm, self).__init__(*args, **kwargs)
+        super(MiSolicitudForm, self).__init__(*args, **kwargs)
         if user is not None:
             self.fields['beneficiado'].queryset = Beneficiado.objects.filter(perfil__cedula=user.perfil.cedula)
 
     class Meta:
         model = Solicitud
         fields = ['descripcion', 'recipe', 'beneficiado']
+
+class SolicitudForm(forms.ModelForm):
+	class Meta:
+		model = Solicitud
+		fields = '__all__'
         
 class BeneficiadoForm(forms.ModelForm):
 	class Meta:
