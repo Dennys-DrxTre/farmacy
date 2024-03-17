@@ -1,12 +1,14 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, View
 from apps.entidades.models import Perfil, Persona, User, Beneficiado, Zona
 from django.contrib.auth.models import Permission
-from .forms import PerfilForm
+from .forms import PerfilForm, ZonaForm
 from .permisos import permisos_usuarios
 from django.contrib.messages.views import SuccessMessageMixin
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -107,3 +109,72 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 	
 class LoginPersonalidado(TemplateView):
 	template_name = 'acceso/login.html'
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		try:
+			action = request.POST['action_login']
+
+			if action == 'login':
+				naci = request.POST['naci']
+				ci = request.POST['ci']
+				username = f'{naci}{ci}'
+				password = request.POST['password']
+
+				user = authenticate(request, username=username, password=password)
+				if user is not None:
+					login(request, user)
+					data['response'] = {'title':'Exito!', 'data': 'Ingreso validado correctamente.', 'type_response': 'success'}
+
+				else:
+					if not User.objects.filter(username = username):
+						data['response'] = {'title':'Ocurrió un error!', 'data': 'El usuario no existe.', 'type_response': 'danger'}
+					else:
+						data['response'] = {'title':'Ocurrió un error!', 'data': 'Contraseña incorrecta.', 'type_response': 'danger'}
+
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		return context
+	
+class ListaZona(ListView):
+	model = Zona
+	context_object_name = 'zonas'
+	template_name = "pages/mantenimiento/listado_zonas.html"
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		# Aquí puedes agregar datos adicionales al contexto
+		context["sub_title"] = "Listado de zonas"
+		return context
+
+class RegistrarZona(View):
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		try:
+			action = request.POST['action']
+
+			if action == 'nueva_zona':
+				form = ZonaForm(request.POST)
+
+				if form.is_valid():
+					form.save()
+					data['response'] = {'title':'Exito!', 'data': 'Zona registrada correctamente.', 'type_response': 'success'}
+				else:
+					data['response'] = {'title':'Ocurrió un error!', 'data': 'Ocurrió un error inesperado.', 'type_response': 'danger'}
+
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)

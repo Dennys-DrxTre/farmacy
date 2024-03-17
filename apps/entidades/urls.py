@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Inicio, landing, RegistrarPerfil, ListadoPerfiles, LoginPersonalidado
+from .views import Inicio, landing, RegistrarPerfil, ListadoPerfiles, LoginPersonalidado, ListaZona
 
 urlpatterns = [
     path('vista/', Inicio.as_view(), name='vista'),
@@ -9,4 +9,6 @@ urlpatterns = [
 
     # control de acceso
     path('ingresar/', LoginPersonalidado.as_view(), name='login'),
+
+    path('listado-de-zonas/', ListaZona.as_view(), name='lista_zonas'),
 ]

@@ -11,3 +11,8 @@ class SolicitudForm(forms.ModelForm):
 	class Meta:
 		model = Solicitud
 		fields = '__all__'
+
+class FormTipoMovi(forms.ModelForm):
+	class Meta:
+		model = TipoMov
+		fields = '__all__'
