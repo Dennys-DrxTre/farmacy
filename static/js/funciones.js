@@ -159,16 +159,15 @@ const SendDataJsonBuyForm = async (url, parameters, callback) => {
 	}
 }
 
-const SendDataJSONForm = async (url, form, callback) => {
+const SendDataJsonForm = async (url, parameters, callback) => {
 	try {
-		const formData = new FormData(form);
 
 		const response = await fetch (url, {
 			method: "POST",
-			body: formData
+			body: parameters
 		});
 		const data = await response.json();
-
+		
 		notifier.show(data['response']['title'], data['response']['data'], data['response']['type_response'], '', 4000);
 		if (data['response']['type_response'] === 'danger') {
 			console.log(data);

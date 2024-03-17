@@ -44,8 +44,9 @@ class DetalleProductoView(DetailView):
 		if producto and inventario:
 			for i in inventario:
 				historial = Historial.objects.filter(producto__producto__id=i.producto.pk).order_by('-pk')
-		context["historial"] = historial
-		context["inventario"] = inventario
+				if historial:
+					context["historial"] = historial
+			context["inventario"] = inventario
 		context["sub_title"] = "Detalles del producto"
 		return context
 	

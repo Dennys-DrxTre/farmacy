@@ -41,84 +41,78 @@
                         <a href="#"><i class="menu-icon fa fa-home"></i>Inicio</a>
                     </li>
 
-                    {% if not request.user.cargo == "ATENCION AL CLIENTE" and not request.user.cargo == "ALMACENISTA" %}
-                    <li class="menu-item-has-children dropdown">
-                        <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-envelope"></i>Mis solicitudes</a>
-                        <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="{% url 'mis_solicitudes_medicamentos' %}">Solicitud de medicamentos</a></li>
-                            <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
-                        </ul>
-                     </li>
+                    {% if request.user.perfil.rol == "PA" or request.user.perfil.rol == "JC" %}
+                        <li class="menu-item-has-children dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-envelope"></i>Mis solicitudes</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="{% url 'mis_solicitudes_medicamentos' %}">Solicitud de medicamentos</a></li>
+                                {% if request.user.perfil.rol == "JC" %}
+                                    <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
                     {% endif %}
                     
-                    {% if not request.user.cargo == "PACIENTE" %}
-                    <li class="menu-item-has-children dropdown">
-                       <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-book"></i>Registros</a>
-                       <ul class="sub-menu children dropdown-menu">
+                    {% if not request.user.perfil.rol == "PA" and not request.user.perfil.rol == "JC" %}
+                        <li class="menu-item-has-children dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-book"></i>Registros</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                {% if request.user.perfil.rol == "AD" %}
+                                    <li><i class="fa fa-table"></i><a href="#">Empleados</a></li>
+                                    <li><i class="fa fa-table"></i><a href="{% url 'lista_perfiles' %}">Usuarios</a></li>
+                                {% endif %}
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_productos' %}">Productos</a></li>
+                            </ul>
+                        </li>
+
+
+                        <li class="menu-item-has-children dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-laptop"></i>Movimientos</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_ingresos' %}">Listado de ingresos</a></li>
+                                <li><i class="fa fa-table"></i><a href="#">Solicitud de medicamentos</a></li>
+                                <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
+                            </ul>
+                         </li>
+
+                        {% if request.user.perfil.rol == "AD" %}
+
+                            <li class="menu-item-has-children dropdown">
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-archive"></i>Reportes</a>
+                                <ul class="sub-menu children dropdown-menu">
+                                    {# <li><i class="fa fa-table"></i><a href="#"></a></li> #}
+                                </ul>
+                            </li>
                         {% endif %}
-                        {% if not request.user.cargo == "PACIENTE" and not request.user.cargo == "ALMACENISTA" %}
-                           <li><i class="fa fa-table"></i><a href="#">Empleados</a></li>
-                           <li><i class="fa fa-table"></i><a href="{% url 'lista_perfiles' %}">Usuarios</a></li>
-                        {% endif %}
-                        {% if not request.user.cargo == "PACIENTE" %}
-                           <li><i class="fa fa-table"></i><a href="{% url 'listado_productos' %}">Productos</a></li>
-                       </ul>
-                    </li>
                     {% endif %}
-
-                    {% if not request.user.cargo == "PACIENTE" %}
-
-                    <li class="menu-item-has-children dropdown">
-                       <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-laptop"></i>Movimientos</a>
-                       <ul class="sub-menu children dropdown-menu">
-                           <li><i class="fa fa-table"></i><a href="{% url 'listado_ingresos' %}">Listado de ingresos</a></li>
-                           <li><i class="fa fa-table"></i><a href="#">Solicitud de medicamentos</a></li>
-                           <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
-                       </ul>
-                    </li>
-
-                    {% endif %}
-
-
-                    {% if not request.user.cargo == "PACIENTE" %}
-
-                    <li class="menu-item-has-children dropdown">
-                       <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-archive"></i>Reportes</a>
-                       <ul class="sub-menu children dropdown-menu">
-                            {# <li><i class="fa fa-table"></i><a href="#"></a></li> #}
-                       </ul>
-                    </li>
-                    {% endif %}
-
                     <hr width="100%">
 
-                    {% if request.user.cargo == "ADMINISTRADOR" %}
+                    {% if request.user.perfil.rol == "AD" %}
 
-                    <li class="menu-item-has-children dropdown">
-                       <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Soporte</a>
-                       <ul class="sub-menu children dropdown-menu">
-                       	<li><i class="fa fa-table"></i><a href="#">Gestión de usuarios</a></li>
-                        <li><i class="fa fa-table"></i><a href="#">Edicion del Landing Page</a></li>
-                       	<li><i class="fa fa-table"></i><a href="#">Respaldo</a></li>
-                       	<li><i class="fa fa-table"></i><a href="#">Restauración</a></li>
-                       </ul>
-                    </li>
+                        <li class="menu-item-has-children dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Soporte</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="#">Gestión de usuarios</a></li>
+                                <li><i class="fa fa-table"></i><a href="#">Edicion del Landing Page</a></li>
+                                <li><i class="fa fa-table"></i><a href="#">Respaldo</a></li>
+                                <li><i class="fa fa-table"></i><a href="#">Restauración</a></li>
+                            </ul>
+                        </li>
 
                     {% endif %}
 
-                    {% if not request.user.cargo == "PACIENTE" %}
-
-                    <li class="menu-item-has-children dropdown">
-                       <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-wrench"></i>Mantenimiento</a>
-                       <ul class="sub-menu children dropdown-menu">
-                        <li><i class="fa fa-table"></i><a href="{% url 'listado_lab' %}">Laboratorio</a></li>
-                        <li><i class="fa fa-table"></i><a href="{% url 'listado_insumos' %}">Tipo de Insumo</a></li>
-                        <li><i class="fa fa-table"></i><a href="{% url 'listado_tipo_movi' %}">Tipo de Movimientos</a></li>
-                        <li><i class="fa fa-table"></i><a href="{% url 'listado_almacen' %}">Ubicación</a></li>
-                        <li><i class="fa fa-table"></i><a href="{% url 'lista_zonas' %}">Zona</a></li>
-                       </ul>
-                    </li>
-
+                    {% if not request.user.perfil.rol == "PA" and not request.user.perfil.rol == "JC" and not request.user.perfil.rol == "AT" %}
+                        <li class="menu-item-has-children dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-wrench"></i>Mantenimiento</a>
+                            <ul class="sub-menu children dropdown-menu">
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_lab' %}">Laboratorio</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_insumos' %}">Tipo de Insumo</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_tipo_movi' %}">Tipo de Movimientos</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_almacen' %}">Ubicación</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'lista_zonas' %}">Zona</a></li>
+                            </ul>
+                        </li>
+                        
                     {% endif %}
 
                 </ul>

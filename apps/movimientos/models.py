@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.forms import model_to_dict
 
@@ -48,7 +50,7 @@ class DetalleSolicitud(models.Model):
 	solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, related_name='detalle')
 	producto = models.ForeignKey(Inventario, on_delete=models.CASCADE)
 	cant_solicitada = models.IntegerField(default=1)
-	cant_entregada = models.IntegerField(default=1)
+	cant_entregada = models.IntegerField(default=0)
 
 	class Meta:
 		unique_together = ('solicitud', 'producto')  # Asegurar que no haya duplicados
@@ -133,7 +135,7 @@ class DetalleJornada(models.Model):
 
 # movimiento del inventario
 class Historial(models.Model):
-	fecha_mov = models.DateField(auto_now=True, blank=False, null=False)
+	fecha_mov = models.DateField(auto_now_add=True, blank=False, null=False)
 	tipo_mov = models.ForeignKey(TipoMov, on_delete=models.PROTECT)
 	empleado = models.ForeignKey(Perfil, on_delete=models.PROTECT)
 	producto = models.ForeignKey(Inventario, on_delete=models.PROTECT, related_name='historial')

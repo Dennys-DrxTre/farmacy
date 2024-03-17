@@ -24,8 +24,9 @@ class Persona(models.Model):
 		FEMENINO = 'FE', 'Femenino'
 
 	class Nacionalidad(models.TextChoices):
-		VENEZOLANO = 'V-', 'Venezolano'
-		EXTRANJERO = 'FE', 'Extranjero'
+		VENEZOLANO = 'V-', 'V-'
+		EXTRANJERO = 'E-', 'E-'
+		JURIDICO = 'J-', 'J-'
 
 	nacionalidad = models.CharField(max_length=2, choices=Nacionalidad.choices, default=Nacionalidad.VENEZOLANO, blank=False, null=False)
 	cedula = models.CharField(max_length=8, blank=False, null=False)
@@ -55,10 +56,10 @@ class Perfil(Persona):
 		PACIENTE = 'PA', 'Paciente'
 	
 	rol = models.CharField(max_length=2, choices=Rol.choices, default=Rol.PACIENTE)
-	usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+	usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
 	
 	def __str__(self):
-		return str(self.cedula)
+		return f'{self.cedula}-{self.nombres}'
 	
 	class Meta:
 		verbose_name = 'perfil'
@@ -75,10 +76,10 @@ class Perfil(Persona):
 		return item
 
 class Beneficiado(Persona):
-	perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT)
+	perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT, related_name='beneficiados')
 
 	def __str__(self):
-		return str(self.cedula)
+		return f'{self.cedula}-{self.nombres}'
 		
 	class Meta:
 		verbose_name = 'Beneficiado'

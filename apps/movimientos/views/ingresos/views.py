@@ -94,8 +94,8 @@ class RegistrarIngreso(TemplateView):
 					Historial().crear_movimiento(movimiento)
 					producto.contar_productos()
 
-					messages.success(request,'Ingreso registrado correctamente')
-					data['response'] = {'title': 'Exito!', 'data':'Compra registrada correctamente', 'type_response': 'success'}
+				messages.success(request,'Ingreso registrado correctamente')
+				data['response'] = {'title': 'Exito!', 'data':'Compra registrada correctamente', 'type_response': 'success'}
 		except Exception as e:
 			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
 			data['error'] = str(e)
