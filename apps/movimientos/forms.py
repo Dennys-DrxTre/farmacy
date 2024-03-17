@@ -32,5 +32,4 @@ class BeneficiadoForm(forms.ModelForm):
 class FormTipoMovi(forms.ModelForm):
 	class Meta:
 		model = TipoMov
-		model = Beneficiado
 		fields = '__all__'

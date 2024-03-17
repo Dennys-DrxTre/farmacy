@@ -144,16 +144,34 @@ class LoginPersonalidado(TemplateView):
 		context = super().get_context_data(**kwargs)
 		return context
 	
-class ListaZona(ListView):
-	model = Zona
-	context_object_name = 'zonas'
-	template_name = "pages/mantenimiento/listado_zonas.html"
+class ListaZona(TemplateView):
+    template_name = "pages/mantenimiento/listado_zonas.html"
 
-	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
-		# Aquí puedes agregar datos adicionales al contexto
-		context["sub_title"] = "Listado de zonas"
-		return context
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+
+            if action == 'search_zonas':
+                data = []
+                for i in Zona.objects.all():
+                    item = i.toJSON()
+                    data.append(item)
+                # Convertir la lista de datos en un JsonResponse
+                return JsonResponse(data, safe=False)
+                
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data, safe=False)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["sub_title"] = "Listado de zonas"
+        return context
 
 class RegistrarZona(View):
 
@@ -178,3 +196,27 @@ class RegistrarZona(View):
 		except Exception as e:
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
+	
+class ActualizarZona(View):
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		action = request.POST['action']
+		try:
+			if action == 'edit_zona':
+				zona = Zona.objects.filter(id = request.POST['id']).first()
+				form = ZonaForm(request.POST, instance=zona)
+
+				if form.is_valid():
+					form.save()
+					data['response'] = {'title':'Exito!', 'data': 'La zona se ha actualizado correctamente.', 'type_response': 'success'}
+				else:
+					data['response'] = {'title':'Ocurrió un error!', 'data': 'Ocurrió un error inesperado.', 'type_response': 'danger'}
+			
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)	

@@ -48,11 +48,16 @@ class Laboratorio(models.Model):
 	
 # productos
 class Producto(models.Model):
+
+	class Seleccion(models.TextChoices):
+		SI = 'SI', 'SÍ'
+		NO = 'NO', 'NO'
+
 	nombre = models.CharField(max_length=50, blank=False, null=False)
 	almacen = models.ForeignKey(Almacen, verbose_name='Ubicación', on_delete=models.PROTECT, blank=False, null=False)
 	tipo_insumo = models.ForeignKey(TipoInsumo, verbose_name='Tipo de insumo', on_delete=models.PROTECT, blank=False, null=False)
 	laboratorio = models.ForeignKey(Laboratorio, verbose_name='Laboratorio', on_delete=models.PROTECT, blank=False, null=False)
-	if_expire_date = models.BooleanField(default=True, verbose_name='Si caduca')
+	if_expire_date = models.CharField(verbose_name='Si caduca', max_length = 2, choices = Seleccion.choices)
 	stock_minimo = models.IntegerField(blank=False, null=False)
 	total_stock = models.IntegerField(null = False, blank= False)
 
@@ -72,8 +77,9 @@ class Producto(models.Model):
 
 	def toJSON(self):
 		item = model_to_dict(self)
-		item['almacen'] = self.almacen.nombre
-		item['tipo_insumo'] = self.tipo_insumo.nombre
+		item['almacen'] = {'nombre': self.almacen.nombre, 'id': self.almacen.pk}
+		item['laboratorio'] = {'nombre':self.laboratorio.nombre, 'id': self.laboratorio.pk}
+		item['tipo_insumo'] = {'nombre': self.tipo_insumo.nombre, 'id': self.tipo_insumo.pk}
 		return item
 
 class Inventario(models.Model):

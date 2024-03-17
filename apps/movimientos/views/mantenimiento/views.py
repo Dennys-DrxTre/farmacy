@@ -11,19 +11,38 @@ from django.views.generic import (
 )
 from apps.movimientos.models import TipoMov
 from apps.movimientos.forms import FormTipoMovi
-
-class ListadoTipoMovi(ListView):
-	model = TipoMov
-	context_object_name = 'tipo_movimiento'
+	
+class ListadoTipoMovi(TemplateView):
 	template_name = "pages/mantenimiento/tipo_movi.html"
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		try:
+			action = request.POST['action']
+
+			if action == 'search_tipo_mov':
+				data = []
+				for i in TipoMov.objects.all():
+					item = i.toJSON()
+					data.append(item)
+				# Convertir la lista de datos en un JsonResponse
+				return JsonResponse(data, safe=False)
+				
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		# Aquí puedes agregar datos adicionales al contexto
 		context["sub_title"] = "Listado de tipos de movimientos"
-		return 
+		context["form"] = FormTipoMovi()
+		return context
 	
-class RegistrarTipoInsu(View):
+class RegistrarTipoMovi(View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -39,10 +58,34 @@ class RegistrarTipoInsu(View):
 
 				if form.is_valid():
 					form.save()
-					data['response'] = {'title':'Exito!', 'data': 'Tipo de insumo registrado correctamente.', 'type_response': 'success'}
+					data['response'] = {'title':'Exito!', 'data': 'Tipo de movimiento registrado correctamente.', 'type_response': 'success'}
 				else:
 					data['response'] = {'title':'Ocurrió un error!', 'data': 'Ocurrió un error inesperado.', 'type_response': 'danger'}
 
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+	
+class ActualizarTipoMovi(View):
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		action = request.POST['action']
+		try:
+			if action == 'edit_tipo_movi':
+				tipo_movi = TipoMov.objects.filter(id = request.POST['id']).first()
+				form = FormTipoMovi(request.POST, instance=tipo_movi)
+
+				if form.is_valid():
+					form.save()
+					data['response'] = {'title':'Exito!', 'data': 'El tipo de movimiento se ha actualizado correctamente.', 'type_response': 'success'}
+				else:
+					data['response'] = {'title':'Ocurrió un error!', 'data': 'Ocurrió un error inesperado.', 'type_response': 'danger'}
+			
 		except Exception as e:
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)

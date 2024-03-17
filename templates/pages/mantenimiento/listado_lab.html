@@ -27,7 +27,7 @@
                     <!-- <a href="#" class="btn btn-icon btn-info" data-bs-toggle="tooltip" title="Registrar laboratorio">
                         <i class="fa fa-plus text-white"></i>
                     </a> -->
-                    <button type="button" class="btn btn-primary mb-1" data-toggle="modal" data-target="#smallmodal">
+                    <button type="button" class="btn btn-primary mb-1" id="btn_add_labs">
                         <i class="fa fa-plus text-white"></i>
                     </button>
                 </div>
@@ -45,7 +45,7 @@
                     {% endfor %}
                 {% endif %}
                 <div class="dt-responsive table-responsive">
-                    <table id="listado" class="table table-striped table-hover table-bordered nowrap">
+                    <table id="lista_lab" class="table table-striped table-hover table-bordered nowrap">
                         <thead>
                             <tr>
                                 <th style="width: 10%;">ID</th>
@@ -54,17 +54,6 @@
                               </tr>
                         </thead>
                         <tbody>
-                            {% for x in laboratorios %}
-                                <tr>
-                                    <td>{{ x.id }}</td>
-                                    <td>{{ x.nombre }}</td>
-                                    <td>
-                                        <a href="#" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar laboratorio">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
@@ -83,10 +72,11 @@
 </div>
 
 <!-- modales -->
-<div class="modal fade" id="smallmodal" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
+<div class="modal fade" id="smallmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true">
     <div class="modal-dialog " role="document">
-        <form action="" method="post" id="form_lab">{% csrf_token %}
-            <input type="hidden" name="action" value="">
+        <form method="post" id="form_lab">{% csrf_token %}
+            <input type="hidden" name="action" id="action" value="nuevo_lab">
+            <input type="hidden" name="id" id="" value="">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="smallmodalLabel">Agregar Laboratorio</h5>
