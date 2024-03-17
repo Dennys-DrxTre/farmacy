@@ -16,7 +16,7 @@ from django.views.generic import (
 	DetailView,
 	View
 )
-from ...forms import SolicitudForm, BeneficiadoForm
+from ...forms import MiSolicitudForm, BeneficiadoForm
 
 from ...models import Solicitud, TipoMov, DetalleSolicitud, Historial
 from apps.inventario.models import Inventario, Producto
@@ -24,20 +24,19 @@ from apps.entidades.models import Beneficiado,Perfil
 # # Create your views here.
 
 class MisSolicitudesMedOnline(TemplateView):
-	template_name = 'pages/movimientos/solicitudes_fisicas/listado_solicitudes_med_online.html'
+	template_name = 'pages/movimientos/solicitudes_online/listado_solicitudes_med_online.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		mis_solicitudes = Solicitud.objects.filter(beneficiado__cedula=self.request.user.perfil.cedula)
-		print(mis_solicitudes)
+		mis_solicitudes = Solicitud.objects.filter(beneficiado__cedula=self.request.user.perfil.cedula).order_by('-pk')
 
 		context["sub_title"] = "Mis Solicitudes online"
 		context['solicitudes'] = mis_solicitudes
 		return context
 
 class DetalleMiSolicitudOnline(DetailView):
-	template_name = 'pages/movimientos/solicitudes_fisicas/detalle_solicitud_med_online.html'
+	template_name = 'pages/movimientos/solicitudes_online/detalle_solicitud_med_online.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	model = Solicitud
 	context_object_name = 'solicitud'
@@ -48,7 +47,7 @@ class DetalleMiSolicitudOnline(DetailView):
 		return context
 	
 class RegistrarMiSolicitud(TemplateView):
-	template_name = 'pages/movimientos/solicitudes_fisicas/registrar_mi_solicitud_de_med.html'
+	template_name = 'pages/movimientos/solicitudes_online/registrar_mi_solicitud_de_med.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None
 
@@ -102,7 +101,7 @@ class RegistrarMiSolicitud(TemplateView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		context["sub_title"] = "Registrar ingreso"
-		context["form"] = SolicitudForm(user=self.request.user)
+		context["form"] = MiSolicitudForm(user=self.request.user)
 		context["form_b"] = BeneficiadoForm()
 		return context
 	

@@ -1,9 +1,9 @@
 from django.urls import path
 from .views.ingresos.views import ListadoIngresos, DetalleIngresoView, RegistrarIngreso, BuscarProductosView
-from .views.solicitudes_fisicas.views import ListadoSolictudOnline, DetalleMiSolicitudOnline
+from .views.solicitudes_online.views import MisSolicitudesMedOnline, DetalleMiSolicitudOnline, RegistrarMiSolicitud, RegistrarBeneficiado
+from .views.solicitudes.views import SolicitudesMed, EditarSolicitud
 from .views.mantenimiento.views import ListadoTipoMovi
 
-from .views.solicitudes_fisicas.views import MisSolicitudesMedOnline, DetalleMiSolicitudOnline, RegistrarMiSolicitud, RegistrarBeneficiado
 urlpatterns = [
     # INGRESOS
     path('listado-de-ingresos/', ListadoIngresos.as_view(), name='listado_ingresos'),
@@ -19,4 +19,9 @@ urlpatterns = [
 
     path('registrar-mi-solicitud/', RegistrarMiSolicitud.as_view(), name='registrar_mi_solicitud'),
     path('registrar-beneficiado-modal/', RegistrarBeneficiado.as_view(), name='registrar_beneficiado_modal'),
+
+    # SOLICITUDES
+    path('solictudes-de-medicamentos/', SolicitudesMed.as_view(), name='listado_solicitudes_medicamentos'),
+    path('modificar-solicitud-de-medicamentos/<int:pk>/', EditarSolicitud.as_view(), name='modificar_solicitudes_medicamentos'),
+
 ]
