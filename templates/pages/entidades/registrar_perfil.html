@@ -1,6 +1,12 @@
 {% extends 'base/base.html' %}
 {% load widget_tweaks %}
 
+
+{% block title %}
+    Registrar Perfil
+{% endblock title %}
+    
+
 {% block body %}
 <form action="#" method="post" enctype="multipart/form-data">{% csrf_token %}
     <div class="card">
@@ -72,10 +78,10 @@
                             <label for="">¿Está embarazada?</label> <br>
                             <div class="form-check-inline form-check">
                                 <label for="inline-radio1" class="form-check-label mr-3">
-                                    <input type="radio" id="inline-radio1" name="embarazada" value="True" class="form-check-input">Sí
+                                    <input type="radio" id="inline-radio1" name="embarazada" value="True" class="form-check-input deshabilitar">Sí
                                 </label>
                                 <label for="inline-radio2" class="form-check-label ">
-                                    <input type="radio" id="inline-radio2" name="embarazada" value="False" class="form-check-input">No
+                                    <input type="radio" id="inline-radio2" name="embarazada" value="False" class="form-check-input deshabilitar">No
                                 </label>
                             </div>
                         </div>
@@ -145,4 +151,23 @@
 </form>
 
 {% endblock body %}
+
+
+{% block extrajs %}
+<script>
+    $(document).ready(function () {
+        $('#id_genero').change(function () {
+            if ($(this).val() == "MA") {
+                // Deshabilitar checkboxes
+                $('.deshabilitar').prop('disabled', true);
+                $('#inline-radio2').prop('checked', true)
+            } else {
+                // Habilitar checkboxes
+                $('.deshabilitar').prop('disabled', false);
+            }
+        }).trigger('change'); // Trigger para establecer el estado inicial
+    });
+</script>
+{% endblock extrajs %}
+    
     

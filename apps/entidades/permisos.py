@@ -66,15 +66,11 @@ permisos_usuarios = {
         'cambiar_password',
         'cambiar_estado_jornada',
         'cambiar_estado_solicitudes',
-    ]
-}
-
-"""
-    ,
+    ],
     'JC': [
-        'requiere_usuario',
+        'add_solicitud',
     ],
     'PA': [
-        'requiere_usuario',
+        'add_solicitud',
     ]
-"""
+}

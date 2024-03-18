@@ -106,5 +106,5 @@ EMAIL_HOST_USER = 'farmaciaasicleonidasramos@gmail.com' # Tu correo de Gmail
 EMAIL_HOST_PASSWORD = 'clxx mehf mksj ciqh' # Tu contraseña de aplicacion Gmail
 
 LOGIN_URL = '/ingresar/'
-LOGIN_REDIRECT_URL = '/landing/'
-LOGOUT_REDIRECT_URL = '/landing/'
+LOGIN_REDIRECT_URL = '/inicio/'
+LOGOUT_REDIRECT_URL = '/'

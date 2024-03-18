@@ -7,7 +7,7 @@ from .permisos import permisos_usuarios
 from django.contrib.messages.views import SuccessMessageMixin
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -57,8 +57,11 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 		perfil.apellidos = request.POST["apellidos"]
 		perfil.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
 		perfil.genero = request.POST["genero"]
+		if request.POST["genero"] == 'MA':
+			perfil.embarazada = False
+		else:
+			perfil.embarazada = request.POST["embarazada"]
 		perfil.f_nacimiento = request.POST["f_nacimiento"]
-		perfil.embarazada = request.POST["embarazada"]
 		perfil.c_residencia = request.FILES["c_residencia"]
 		perfil.zona = Zona.objects.get(id = request.POST["zona"])
 		perfil.direccion = request.POST["direccion"]
@@ -74,8 +77,11 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 		beneficiado.apellidos = request.POST["apellidos"]
 		beneficiado.telefono = request.POST["telefono"]
 		beneficiado.genero = request.POST["genero"]
+		if request.POST["genero"] == 'MA':
+			beneficiado.embarazada = False
+		else:
+			beneficiado.embarazada = request.POST["embarazada"]
 		beneficiado.f_nacimiento = request.POST["f_nacimiento"]
-		beneficiado.embarazada = request.POST["embarazada"]
 		beneficiado.c_residencia = request.FILES["c_residencia"]
 		beneficiado.zona = Zona.objects.get(id = request.POST["zona"])
 		beneficiado.direccion = request.POST["direccion"]
@@ -143,7 +149,12 @@ class LoginPersonalidado(TemplateView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		return context
-	
+
+class Logout(View):
+	def get(self, request):
+		logout(request)
+		return redirect('/')
+
 class ListaZona(TemplateView):
     template_name = "pages/mantenimiento/listado_zonas.html"
 

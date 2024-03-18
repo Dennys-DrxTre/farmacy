@@ -34,8 +34,8 @@ $( async function () {
         e.preventDefault();
         await SendDataJSONForm(window.location.pathname, form_login, async () => {  
             setTimeout(() => {
-                window.location.replace('/landing/');
-            }, 3000); // Espera 3 segundos antes de ejecutar el código dentro de setTimeout
+                window.location.replace('/inicio/');
+            }, 1000); // Espera 3 segundos antes de ejecutar el código dentro de setTimeout
         });
     });
     
