@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.min.css">
+    <!-- notifier -->
+    <link rel="stylesheet" href="{% static 'css/notifier.css' %}">
     <link rel="stylesheet" href="{% static 'css/cs-skin-elastic.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}
@@ -37,7 +39,7 @@
                 <ul class="nav navbar-nav">
 
                     <li class="dropdown pt-2">
-                        <a href="#"><i class="menu-icon fa fa-home"></i>Inicio</a>
+                        <a href="{% url 'vista' %}"><i class="menu-icon fa fa-home"></i>Inicio</a>
                     </li>
 
                     {% if request.user.perfil.rol == "PA" or request.user.perfil.rol == "JC" %}
@@ -57,7 +59,7 @@
                             <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-book"></i>Registros</a>
                             <ul class="sub-menu children dropdown-menu">
                                 {% if request.user.perfil.rol == "AD" %}
-                                    <li><i class="fa fa-table"></i><a href="#">Empleados</a></li>
+                                    <!-- <li><i class="fa fa-table"></i><a href="#">Empleados</a></li> -->
                                     <li><i class="fa fa-table"></i><a href="{% url 'lista_perfiles' %}">Usuarios</a></li>
                                 {% endif %}
                                 <li><i class="fa fa-table"></i><a href="{% url 'listado_productos' %}">Productos</a></li>
@@ -104,13 +106,14 @@
                         <li class="menu-item-has-children dropdown">
                             <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-wrench"></i>Mantenimiento</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-table"></i><a href="#">Laboratorio</a></li>
-                                <li><i class="fa fa-table"></i><a href="#">Tipo de Insumo</a></li>
-                                <li><i class="fa fa-table"></i><a href="#">Tipo de Movimientos</a></li>
-                                <li><i class="fa fa-table"></i><a href="#">Ubicación</a></li>
-                                <li><i class="fa fa-table"></i><a href="#">Zona</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_lab' %}">Laboratorio</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_insumos' %}">Tipo de Insumo</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_tipo_movi' %}">Tipo de Movimientos</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_almacen' %}">Ubicación</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'lista_zonas' %}">Zona</a></li>
                             </ul>
                         </li>
+                        
                     {% endif %}
 
                 </ul>
@@ -148,7 +151,7 @@
                         <div class="user-menu dropdown-menu">
                             <a class="nav-link" href="#"><i class="fa fa-user"></i>Cambiar Perfil</a>
                             <a class="nav-link" href="#"><i class="fa fa-lock"></i>Cambiar Contraseña</a>
-                            <a class="nav-link" href="#"><i class="fa fa-power-off"></i>Cerrar sesion</a>
+                            <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                         </div>
                     </div>
                     {% endblock right_panel %}
@@ -175,6 +178,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <!-- notifier -->
+    <script src="{% static 'js/plugins/notifier.js' %}"></script>
+
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/funciones.js' %}"></script>
 

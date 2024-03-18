@@ -118,9 +118,15 @@
                 <div class="header-menu d-flex align-items-center">            
                 	<div class="navbar-brand"><div id="reloj"></div></div>
                     <div class="text-center">
-                        <a href="#" target="_blank" class="d-flex justify-content-center">
+                        {% if  not request.user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="d-flex justify-content-center">
                             <button type="button" class="btn" style="background-color: #93dbc1; color: #ffffff;">Iniciar Sesión</button>
                         </a>
+                        {% else %}
+                        <a href="{% url 'logout' %}" class="d-flex justify-content-center">
+                            <button type="button" class="btn" style="background-color: #c83b50; color: #ffffff;">Cerrar sesion</button>
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -34,3 +34,8 @@ class SolicitudEditForm(forms.ModelForm):
 		model = Solicitud
 		fields = '__all__'
 		exclude = ['beneficiado', 'tipo_solicitud','proceso_actual']
+
+class FormTipoMovi(forms.ModelForm):
+	class Meta:
+		model = TipoMov
+		fields = '__all__'

@@ -104,3 +104,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'farmaciaasicleonidasramos@gmail.com' # Tu correo de Gmail
 EMAIL_HOST_PASSWORD = 'clxx mehf mksj ciqh' # Tu contraseña de aplicacion Gmail
+
+LOGIN_URL = '/ingresar/'
+LOGIN_REDIRECT_URL = '/inicio/'
+LOGOUT_REDIRECT_URL = '/'

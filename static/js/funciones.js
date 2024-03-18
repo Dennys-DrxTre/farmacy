@@ -161,13 +161,11 @@ const SendDataJsonBuyForm = async (url, parameters, callback) => {
 
 const SendDataJsonForm = async (url, parameters, callback) => {
 	try {
-
 		const response = await fetch (url, {
 			method: "POST",
 			body: parameters
 		});
 		const data = await response.json();
-		
 		notifier.show(data['response']['title'], data['response']['data'], data['response']['type_response'], '', 4000);
 		if (data['response']['type_response'] === 'danger') {
 			console.log(data);
@@ -179,5 +177,31 @@ const SendDataJsonForm = async (url, parameters, callback) => {
 	} catch (error) {
 		notifier.show('Ocurrió un error!', error, 'danger', '', 4000);
 		console.log(error);
+	}
+}
+
+let type_actions = {
+	'labs': {
+		'nuevo_lab': '/registro-de-laboratorio/',
+		'edit_lab': '/actualizar-laboratorio/',
+	},
+	'type_ins': {
+		'nuevo_tipo_insu': '/registro-de-tipos-de-insumos/',
+		'edit_t_ins': '/actualizar-tipos-de-insumos/',
+	},'almacen': {
+		'nuevo_almacen': '/registro-de-almacen/',
+		'edit_almacen': '/actualizar-almacen/',
+	},
+	'tipo_movi': {
+		'nuevo_tipo_movi': '/agregar-tipos-movimientos/',
+		'edit_tipo_movi': '/editar-tipos-movimientos/',
+	},
+	'zonas': {
+		'nueva_zona': '/registro-de-zona/',
+		'edit_zona': '/actualizar-zona/',
+	},
+	'productos': {
+		'nuevo_producto': '/registro-de-productos/',
+		'edit_producto': '/actualizar-producto/',
 	}
 }
