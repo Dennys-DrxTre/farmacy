@@ -158,6 +158,31 @@ class EditarSolicitud(SuccessMessageMixin, UpdateView):
 		context['tipo_solicitud'] = self.get_object().tipo_solicitud
 		return context
 
+class MedicamentoEntregado(SuccessMessageMixin, View):
+	success_massage = 'El medicamento ha sido entregado correctamente'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+		
+	def get(self, request, pk, *args, **kwargs):
+		try:
+			with transaction.atomic():
+
+				solicitud = Solicitud.objects.filter(pk=pk).first()
+				if solicitud:
+					if request.user.perfil.rol == 'AT':
+						solicitud.estado = Solicitud.Status.ENTREGADO
+						solicitud.save()
+						messages.success(request, self.success_massage)
+					else:
+						messages.error(request, 'No tienes permisos para realizar esta acción.')
+				else:
+					messages.error(request, 'La solicitud no existe.')
+				# messages.success(request,'Solicitud de medicamento registrado correctamente')
+		except Exception as e:
+			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
+			print(e)
+		return redirect('listado_solicitudes_medicamentos')
+
 # class DetalleMiSolicitudOnline(DetailView):
 # 	template_name = 'pages/movimientos/solicitudes_online/detalle_solicitud_med_online.html'
 # 	# permission_required = 'anuncios.requiere_secretria'

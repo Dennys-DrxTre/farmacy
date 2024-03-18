@@ -113,8 +113,14 @@ let vents = {
                     targets: [2],
                     class: 'text-center',
                     orderable: false,
-                    render: function (data, type, row, meta) {                        
-                        return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" autocomplete="off">';
+                    render: function (data, type, row, meta) {
+                        let total_stock = row.total_stock
+                        let cantidad = row.cantidad;
+                        if (cantidad > total_stock) {
+                            return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" max="'+ parseInt(total_stock) +'" autocomplete="off">';
+                        } else{
+                            return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" max="'+ parseInt(cantidad) +'" autocomplete="off">';
+                        }                    
                     }
                 },
                 {

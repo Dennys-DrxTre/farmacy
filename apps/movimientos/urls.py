@@ -1,7 +1,7 @@
 from django.urls import path
 from .views.ingresos.views import ListadoIngresos, DetalleIngresoView, RegistrarIngreso, BuscarProductosView
 from .views.solicitudes_online.views import MisSolicitudesMedOnline, DetalleMiSolicitudOnline, RegistrarMiSolicitud, RegistrarBeneficiado
-from .views.solicitudes.views import SolicitudesMed, EditarSolicitud
+from .views.solicitudes.views import SolicitudesMed, EditarSolicitud, MedicamentoEntregado
 from .views.mantenimiento.views import ListadoTipoMovi, ActualizarTipoMovi, RegistrarTipoMovi
 
 urlpatterns = [
@@ -25,4 +25,5 @@ urlpatterns = [
     # SOLICITUDES
     path('solictudes-de-medicamentos/', SolicitudesMed.as_view(), name='listado_solicitudes_medicamentos'),
     path('modificar-solicitud-de-medicamentos/<int:pk>/', EditarSolicitud.as_view(), name='modificar_solicitudes_medicamentos'),
+    path('solicitud-de-medicamento-entregado/<int:pk>/', MedicamentoEntregado.as_view(), name='solicitud_de_medicamento_entregado'),
 ]
