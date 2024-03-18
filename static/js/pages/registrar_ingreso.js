@@ -36,8 +36,8 @@ let vents = {
             },
             [
                 {"data": "nombre"},
-                {"data": "tipo_insumo"},
-                {"data": "almacen"},
+                {"data": "tipo_insumo.nombre"},
+                {"data": "almacen.nombre"},
                 {"data": "total_stock"},
                 {"data": "id"},
             ],
