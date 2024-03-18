@@ -1,3 +1,4 @@
+from datetime import date
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -35,12 +36,15 @@ class DetalleProductoView(DetailView):
 		context = super().get_context_data(**kwargs)
 		# Aquí puedes agregar datos adicionales al contexto
 		producto = Producto.objects.filter(pk=self.kwargs.get('pk')).first()
-		inventario = Inventario.objects.filter(producto_id=producto.pk).order_by('f_vencimiento')
-		if producto and inventario:
-			for i in inventario:
+		inventario = Inventario.objects.filter(producto_id=producto.pk, f_vencimiento__gt=date.today(), stock__gt=0).order_by('f_vencimiento')
+		if inventario:
+			context["inventario"] = inventario
+
+		if producto:
+			for i in Inventario.objects.filter(producto_id=producto.pk).order_by('f_vencimiento'):
 				historial = Historial.objects.filter(producto__producto__id=i.producto.pk).order_by('-pk')
 				if historial:
 					context["historial"] = historial
-			context["inventario"] = inventario
+			
 		context["sub_title"] = "Detalles del producto"
 		return context

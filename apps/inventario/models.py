@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from django.forms import model_to_dict
 
@@ -58,7 +59,7 @@ class Producto(models.Model):
 
 	def contar_productos(self):
 		self.total_stock = 0
-		for i in self.inventario.all():
+		for i in self.inventario.filter(f_vencimiento__gt=date.today(), stock__gt=0):
 			self.total_stock += i.stock
 		self.save()
 

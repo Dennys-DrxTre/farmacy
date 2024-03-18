@@ -48,7 +48,8 @@ class Solicitud(models.Model):
 # detalle de la solicitud
 class DetalleSolicitud(models.Model):
 	solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, related_name='detalle')
-	producto = models.ForeignKey(Inventario, on_delete=models.CASCADE)
+	producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+	inventario = models.ManyToManyField(Inventario)
 	cant_solicitada = models.IntegerField(default=1)
 	cant_entregada = models.IntegerField(default=0)
 

@@ -74,7 +74,7 @@
                             <tbody>
                                 {% for det in solicitud.detalle.all %}
                                     <tr>
-                                        <td>{{ det.producto.producto }}</td>
+                                        <td>{{ det.producto.nombre }}</td>
                                         <td>{{ det.cant_solicitada }}</td>
                                         {% if det.cant_entregada > 0 %}
                                             <td>{{ det.cant_entregada }}</td>

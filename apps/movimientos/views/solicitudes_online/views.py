@@ -73,12 +73,10 @@ class RegistrarMiSolicitud(TemplateView):
 
 				for det in vents['det']:
 					producto = Producto.objects.filter(pk=det['id']).first()
-					inventario = Inventario.objects.filter(producto_id=producto.pk).order_by('f_vencimiento').first()
-					inventario.save()
 
 					detalle = DetalleSolicitud()
 					detalle.solicitud = solicitud
-					detalle.producto = inventario
+					detalle.producto = producto
 					detalle.cant_solicitada = det['cantidad']
 					detalle.save()
 
@@ -91,8 +89,8 @@ class RegistrarMiSolicitud(TemplateView):
 				# 	}
 				# 	Historial().crear_movimiento(movimiento)
 
-					messages.success(request,'Solicitud de medicamento registrado correctamente')
-					data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
+				messages.success(request,'Solicitud de medicamento registrado correctamente')
+				data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
 		except Exception as e:
 			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
 			data['error'] = str(e)

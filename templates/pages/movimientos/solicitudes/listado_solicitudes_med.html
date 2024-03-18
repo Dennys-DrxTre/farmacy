@@ -64,9 +64,12 @@
                                         <a href="{% url 'mi_solicitud_medicamento' solicitud.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" title="Detalle de ingreso">
                                             <i class="fa fa-info"></i>
                                         </a>
-                                        <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Actualizar anuncio">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
+                                        
+                                        {% if not solicitud.estado == 'EE' %}
+                                            <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Actualizar anuncio">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
