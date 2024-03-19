@@ -2,6 +2,7 @@ from datetime import date
 
 from django.db import models
 from django.forms import model_to_dict
+from django.contrib.auth.models import User
 
 from apps.entidades.models import Beneficiado, Perfil
 from apps.inventario.models import Producto, Inventario
@@ -26,6 +27,7 @@ class Solicitud(models.Model):
 		AT_CLIENTE = 'AT', 'Atención al Cliente'
 
 	fecha_soli = models.DateField(auto_now=False, auto_now_add=False, blank=False, null=False)
+	perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT, blank=False, null=False)
 	beneficiado = models.ForeignKey(Beneficiado, on_delete=models.PROTECT, blank=False, null=False)
 	descripcion = models.TextField(blank=False, null=False)
 	recipe = models.ImageField(upload_to='recipes/', blank=False, null=False)
@@ -48,7 +50,8 @@ class Solicitud(models.Model):
 # detalle de la solicitud
 class DetalleSolicitud(models.Model):
 	solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, related_name='detalle')
-	producto = models.ForeignKey(Inventario, on_delete=models.CASCADE)
+	producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+	inventario = models.ManyToManyField(Inventario)
 	cant_solicitada = models.IntegerField(default=1)
 	cant_entregada = models.IntegerField(default=0)
 

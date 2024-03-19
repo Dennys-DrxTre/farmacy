@@ -6,6 +6,7 @@ let vents = {
         descripcion: '',
         beneficiado: '',
         recipe: '',
+        estado:'',
         det: []
     },
     get_ids: function () {
@@ -87,6 +88,7 @@ let vents = {
             columns: [
                 {"data": "nombre"},
                 {"data": "cantidad"},
+                {"data": "cantidad_entregada"},
                 {"data": "id"},
             ],
             columnDefs: [
@@ -111,6 +113,20 @@ let vents = {
                     targets: [2],
                     class: 'text-center',
                     orderable: false,
+                    render: function (data, type, row, meta) {
+                        let total_stock = row.total_stock
+                        let cantidad = row.cantidad;
+                        if (cantidad > total_stock) {
+                            return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" max="'+ parseInt(total_stock) +'" autocomplete="off">';
+                        } else{
+                            return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" max="'+ parseInt(cantidad) +'" autocomplete="off">';
+                        }                    
+                    }
+                },
+                {
+                    targets: [3],
+                    class: 'text-center',
+                    orderable: false,
                     render: function (data, type, row) {
 
                         buttons = '<a href="#" rel="delete" class="btn btn-icon btn-danger"><i class="fa fa-trash"></i></a> ';                       
@@ -126,12 +142,65 @@ let vents = {
     },
 };
 
-$('#id_tipo_ingreso').select2({
+$('#id_estado').select2({
     theme: 'bootstrap4',
     language: 'es',
-    placeholder: 'Selecionar tipo de ingreso',
+    placeholder: 'Selecionar el estado',
     allowClear: true
 });
+
+let estados_permisos = {
+    'AD': [
+        { 'id':'PR', 'text': 'En Proceso' },
+        { 'id':'AP', 'text': 'Aprobado' },
+        { 'id':'RE', 'text': 'Rechazado' },
+    ],
+    'AL': [
+        { 'id':'EE', 'text': 'En Espera de Entrega' },
+        { 'id':'AP', 'text': 'Aprobado' },
+    ]
+}
+
+let select2 = $('#id_estado');
+let opcionesActuales = select2.find('option');
+let rol = document.getElementById('rol'); // Asegúrate de que este valor sea válido y exista en estados_permisos
+rol = String(rol.value)
+// Verificar si el rol es válido y si tiene opciones permitidas
+if (estados_permisos[rol] && Array.isArray(estados_permisos[rol])) {
+    // Obtener la opción seleccionada por defecto
+    let opcionSeleccionada = select2.val();
+
+    // Iterar sobre las opciones actuales
+    opcionesActuales.each(function() {
+        var opcionActual = $(this);
+        var idActual = opcionActual.val();
+        var textoActual = opcionActual.text();
+
+        // Verificar si la opción actual está en el listado permitido y no es la seleccionada por defecto
+        var estaPermitida = estados_permisos[rol].some(function(opcionPermitida) {
+            return opcionPermitida.id === idActual && opcionPermitida.text === textoActual;
+        });
+
+        // Si la opción actual no está en el listado permitido y no es la seleccionada por defecto, eliminarla
+        if (!estaPermitida && idActual !== opcionSeleccionada) {
+            opcionActual.remove();
+        }
+    });
+
+    // Asegurarse de que las opciones permitidas no se dupliquen
+    estados_permisos[rol].forEach(function(opcionPermitida) {
+        if (!opcionesActuales.filter(`[value="${opcionPermitida.id}"]`).length) {
+            // Crear y agregar la nueva opción si no existe
+            var newOption = new Option(opcionPermitida.text, opcionPermitida.id, false, false);
+            select2.append(newOption);
+        }
+    });
+
+    // Actualizar el Select2 para reflejar los cambios
+    select2.trigger('change');
+} else {
+    console.error('El rol especificado no es válido o no tiene opciones permitidas.');
+}
 
 // FORMATTING WHEN DISPLAYING THE RESULT OF THE SELECT
 function formatRepo(repo) {
@@ -142,8 +211,9 @@ function formatRepo(repo) {
     let option = $(
         '<div class="col text-left shadow-sm">' +
         '<p style="margin-bottom: 0;">' +
-        '<b class="text-white">Nombre:</b> <b class="text-white">' + repo.text+ '</b><br>' +
-        '<b class="text-white">Codigo:</b> <b class="text-white">' + repo.id + '</b><br>' +
+        '<b style="color:#000000">Nombre:</b> <b style="color:#000000">' + repo.text+ '</b><br>' +
+        '<b style="color:#000000">Codigo:</b> <b style="color:#000000">' + repo.id + '</b><br>' +
+        '<b style="color:#000000">Disponibilidad:</b> <b style="color:#000000">' + repo.others.total_stock + '</b><br>' +
         '</p>' +
         '</div>');
 
@@ -178,6 +248,7 @@ $(function () {
                     results.push({
                         id: res.id,
                         text: res.nombre,
+                        others:res,
                     });
                 });
     
@@ -193,8 +264,9 @@ $(function () {
         templateResult: formatRepo,
     }).on('select2:select', function (e) {
         var data = e.params.data;
-        data.cantidad = 1;
+        data.cantidad = 0;
         data.nombre = data.text;
+        data.cantidad_entregada = 0
         vents.add(data);
         $(this).val('').trigger('change.select2');
     });
@@ -204,6 +276,13 @@ $(function () {
         let cantidad = $(this).val();
         var tr = tblCate.cell($(this).closest('td, li')).index();
             vents.items.det[tr.row].cantidad = parseInt(cantidad);
+    });
+
+    // asignar valor cantidad
+    $('#detalle tbody').on('change keyup', '.cantidad_entregada', function () {
+        let cantidad_entregada = $(this).val();
+        var tr = tblCate.cell($(this).closest('td, li')).index();
+            vents.items.det[tr.row].cantidad_entregada = parseInt(cantidad_entregada);
     });
 
     // delete individual element
@@ -233,7 +312,8 @@ $(function () {
             id: productos.id,
             text: productos.nombre,
             nombre: productos.nombre,
-            cantidad: 1,
+            cantidad: 0,
+            cantidad_entregada:0,
         }
         vents.add(data);
         $('#modal_search_product').modal('hide');   
@@ -292,14 +372,16 @@ $(function () {
         vents.items.descripcion = $('textarea[name="descripcion"]').val();
         vents.items.recipe = imagefield.files[0]
         vents.items.beneficiado = $('select[name="beneficiado"]').val();
+        vents.items.estado = $('select[name="estado"]').val();
         // return false;
         var parameters = new FormData();
         parameters.append('vents', JSON.stringify(vents.items));
         parameters.append('recipe', imagefield.files[0]);
+        console.log(vents.items);
 
-        btn_submit.disabled = true;
+        // btn_submit.disabled = true;
         await SendDataJsonForm(window.location.pathname, parameters, function () {
-            window.location.replace('/mis-solictudes-de-medicamentos/');
+            window.location.replace('/solictudes-de-medicamentos/');
         })
     });
 });

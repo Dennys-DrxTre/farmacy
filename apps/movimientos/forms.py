@@ -26,8 +26,14 @@ class SolicitudForm(forms.ModelForm):
         
 class BeneficiadoForm(forms.ModelForm):
 	class Meta:
+		model = Beneficiado
+		fields = '__all__'
+
+class SolicitudEditForm(forms.ModelForm):
+	class Meta:
 		model = Solicitud
 		fields = '__all__'
+		exclude = ['beneficiado', 'tipo_solicitud','proceso_actual']
 
 class FormTipoMovi(forms.ModelForm):
 	class Meta:

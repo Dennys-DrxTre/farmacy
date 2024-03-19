@@ -35,16 +35,20 @@ class MisSolicitudesMedOnline(TemplateView):
 		context['solicitudes'] = mis_solicitudes
 		return context
 
-class DetalleMiSolicitudOnline(DetailView):
+class DetalleMiSolicitudOnline(TemplateView):
 	template_name = 'pages/movimientos/solicitudes_online/detalle_solicitud_med_online.html'
 	# permission_required = 'anuncios.requiere_secretria'
-	model = Solicitud
-	context_object_name = 'solicitud'
 
-	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
-		context["sub_title"] = "Detalle de mi solicitud"
-		return context
+	def get(self, request, pk, *args, **kwargs):
+		context = {}
+		try:
+			mi_solicitud = Solicitud.objects.get(pk=pk, perfil=request.user.perfil)
+			context['solicitud'] = mi_solicitud
+			context["sub_title"] = "Detalle de mi solicitud"
+			return render(request, self.template_name, context)
+		except Solicitud.DoesNotExist:
+			return redirect('mis_solicitudes_medicamentos')
+
 	
 class RegistrarMiSolicitud(TemplateView):
 	template_name = 'pages/movimientos/solicitudes_online/registrar_mi_solicitud_de_med.html'
@@ -73,12 +77,10 @@ class RegistrarMiSolicitud(TemplateView):
 
 				for det in vents['det']:
 					producto = Producto.objects.filter(pk=det['id']).first()
-					inventario = Inventario.objects.filter(producto_id=producto.pk).order_by('f_vencimiento').first()
-					inventario.save()
 
 					detalle = DetalleSolicitud()
 					detalle.solicitud = solicitud
-					detalle.producto = inventario
+					detalle.producto = producto
 					detalle.cant_solicitada = det['cantidad']
 					detalle.save()
 
@@ -91,8 +93,8 @@ class RegistrarMiSolicitud(TemplateView):
 				# 	}
 				# 	Historial().crear_movimiento(movimiento)
 
-					messages.success(request,'Solicitud de medicamento registrado correctamente')
-					data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
+				messages.success(request,'Solicitud de medicamento registrado correctamente')
+				data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
 		except Exception as e:
 			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
 			data['error'] = str(e)

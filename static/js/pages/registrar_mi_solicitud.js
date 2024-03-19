@@ -142,8 +142,8 @@ function formatRepo(repo) {
     let option = $(
         '<div class="col text-left shadow-sm">' +
         '<p style="margin-bottom: 0;">' +
-        '<b class="text-white">Nombre:</b> <b class="text-white">' + repo.text+ '</b><br>' +
-        '<b class="text-white">Codigo:</b> <b class="text-white">' + repo.id + '</b><br>' +
+        '<b style="color:#000000">Nombre:</b> <b style="color:#000000">' + repo.text+ '</b><br>' +
+        '<b style="color:#000000">Codigo:</b> <b style="color:#000000">' + repo.id + '</b><br>' +
         '</p>' +
         '</div>');
 
