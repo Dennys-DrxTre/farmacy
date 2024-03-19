@@ -69,6 +69,7 @@ class RegistrarMiSolicitud(TemplateView):
 				solicitud.fecha_soli = date.today()
 				solicitud.descripcion = vents['descripcion']
 				solicitud.beneficiado_id = vents['beneficiado']
+				solicitud.perfil_id = request.user.perfil.pk
 				solicitud.recipe = request.FILES['recipe']
 				solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
 				solicitud.tipo_solicitud = solicitud.TipoSoli.ONLINE
@@ -83,15 +84,6 @@ class RegistrarMiSolicitud(TemplateView):
 					detalle.producto = producto
 					detalle.cant_solicitada = det['cantidad']
 					detalle.save()
-
-				# 	perfil = Perfil.objects.filter(usuario=request.user).first()
-				# 	movimiento = {
-				# 		'tipo_mov': tipo_ingreso,
-				# 		'perfil': perfil,
-				# 		'producto': producto,
-				# 		'cantidad': det['cantidad']
-				# 	}
-				# 	Historial().crear_movimiento(movimiento)
 
 				messages.success(request,'Solicitud de medicamento registrado correctamente')
 				data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
@@ -121,10 +113,15 @@ class RegistrarBeneficiado(View):
 				beneficiado.nacionalidad = request.POST['nacionalidad'] 
 				beneficiado.cedula = request.POST['cedula'] 
 				beneficiado.nombres = request.POST['nombres'] 
-				beneficiado.apellidos = request.POST['telefono'] 
+				beneficiado.apellidos = request.POST['apellidos']
+				beneficiado.telefono = f"{request.POST['codigo_tlf']}{request.POST['telefono']}"
 				beneficiado.genero = request.POST['genero'] 
+				if request.POST["genero"] == 'MA':
+					beneficiado.embarazada = False
+				else:
+					beneficiado.embarazada = request.POST["embarazada"]
+					print(request.POST["embarazada"])
 				beneficiado.f_nacimiento = request.POST['f_nacimiento'] 
-				beneficiado.embarazada = request.POST.get('embarazada') == 'on'
 				beneficiado.zona_id = request.POST['zona'] 
 				beneficiado.direccion = request.POST['direccion']
 				beneficiado.perfil_id	 = request.user.perfil.pk

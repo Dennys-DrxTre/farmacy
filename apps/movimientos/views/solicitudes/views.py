@@ -100,6 +100,8 @@ class EditarSolicitud(SuccessMessageMixin, UpdateView):
 			solicitud = self.get_object()
 			solicitud.descripcion = vents['descripcion']
 			solicitud.estado = vents['estado']
+			solicitud.beneficiado_id = vents['beneficiado']
+			# solicitud.perfil_id = vents['perfil']
 
 			if request.FILES.get('recipe'):
 				solicitud.recipe = request.FILES['recipe']
@@ -169,6 +171,63 @@ class EditarSolicitud(SuccessMessageMixin, UpdateView):
 		context['tipo_solicitud'] = self.get_object().tipo_solicitud
 		return context
 
+class RegistrarSolicitudPresencial(TemplateView):
+	template_name = 'pages/movimientos/solicitudes/registrar_solicitud_de_med_presencial.html'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		try:
+			with transaction.atomic():
+				vents = json.loads(request.POST['vents'])
+
+				solicitud = Solicitud()
+				solicitud.fecha_soli = date.today()
+				solicitud.descripcion = vents['descripcion']
+				solicitud.beneficiado_id = vents['beneficiado']
+				solicitud.recipe = request.FILES['recipe']
+				solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
+				solicitud.tipo_solicitud = solicitud.TipoSoli.ONLINE
+				solicitud.estado = solicitud.Status.EN_PROCRESO 
+				solicitud.save()
+
+				for det in vents['det']:
+					producto = Producto.objects.filter(pk=det['id']).first()
+
+					detalle = DetalleSolicitud()
+					detalle.solicitud = solicitud
+					detalle.producto = producto
+					detalle.cant_solicitada = det['cantidad']
+					detalle.save()
+
+				# 	perfil = Perfil.objects.filter(usuario=request.user).first()
+				# 	movimiento = {
+				# 		'tipo_mov': tipo_ingreso,
+				# 		'perfil': perfil,
+				# 		'producto': producto,
+				# 		'cantidad': det['cantidad']
+				# 	}
+				# 	Historial().crear_movimiento(movimiento)
+
+				messages.success(request,'Solicitud de medicamento registrado correctamente')
+				data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
+		except Exception as e:
+			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["sub_title"] = "Registrar ingreso"
+		context["form"] = MiSolicitudForm(user=self.request.user)
+		context["form_b"] = BeneficiadoForm()
+		return context
+
 class MedicamentoEntregado(SuccessMessageMixin, View):
 	success_massage = 'El medicamento ha sido entregado correctamente'
 	# permission_required = 'anuncios.requiere_secretria'
@@ -194,75 +253,7 @@ class MedicamentoEntregado(SuccessMessageMixin, View):
 			print(e)
 		return redirect('listado_solicitudes_medicamentos')
 
-# class DetalleMiSolicitudOnline(DetailView):
-# 	template_name = 'pages/movimientos/solicitudes_online/detalle_solicitud_med_online.html'
-# 	# permission_required = 'anuncios.requiere_secretria'
-# 	model = Solicitud
-# 	context_object_name = 'solicitud'
 
-# 	def get_context_data(self, **kwargs):
-# 		context = super().get_context_data(**kwargs)
-# 		context["sub_title"] = "Detalle de mi solicitud"
-# 		return context
-	
-# class RegistrarMiSolicitud(TemplateView):
-# 	template_name = 'pages/movimientos/solicitudes_online/registrar_mi_solicitud_de_med.html'
-# 	# permission_required = 'anuncios.requiere_secretria'
-# 	object = None
-
-# 	@method_decorator(csrf_exempt)
-# 	def dispatch(self, request, *args, **kwargs):
-# 		return super().dispatch(request, *args, **kwargs)
-
-# 	def post(self, request, *args, **kwargs):
-# 		data = {}
-# 		try:
-# 			with transaction.atomic():
-# 				vents = json.loads(request.POST['vents'])
-
-# 				solicitud = Solicitud()
-# 				solicitud.fecha_soli = date.today()
-# 				solicitud.descripcion = vents['descripcion']
-# 				solicitud.beneficiado_id = vents['beneficiado']
-# 				solicitud.recipe = request.FILES['recipe']
-# 				solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
-# 				solicitud.tipo_solicitud = solicitud.TipoSoli.ONLINE
-# 				solicitud.estado = solicitud.Status.EN_PROCRESO 
-# 				solicitud.save()
-
-# 				for det in vents['det']:
-# 					producto = Producto.objects.filter(pk=det['id']).first()
-# 					inventario = Inventario.objects.filter(producto_id=producto.pk).order_by('f_vencimiento').first()
-# 					inventario.save()
-
-# 					detalle = DetalleSolicitud()
-# 					detalle.solicitud = solicitud
-# 					detalle.producto = inventario
-# 					detalle.cant_solicitada = det['cantidad']
-# 					detalle.save()
-
-# 				# 	perfil = Perfil.objects.filter(usuario=request.user).first()
-# 				# 	movimiento = {
-# 				# 		'tipo_mov': tipo_ingreso,
-# 				# 		'perfil': perfil,
-# 				# 		'producto': producto,
-# 				# 		'cantidad': det['cantidad']
-# 				# 	}
-# 				# 	Historial().crear_movimiento(movimiento)
-
-# 					messages.success(request,'Solicitud de medicamento registrado correctamente')
-# 					data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
-# 		except Exception as e:
-# 			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
-# 			data['error'] = str(e)
-# 		return JsonResponse(data, safe=False)
-
-# 	def get_context_data(self, **kwargs):
-# 		context = super().get_context_data(**kwargs)
-# 		context["sub_title"] = "Registrar ingreso"
-# 		context["form"] = SolicitudForm(user=self.request.user)
-# 		context["form_b"] = BeneficiadoForm()
-# 		return context
 	
 class RegistrarBeneficiado(View):
 	# permission_required = 'anuncios.requiere_secretria'

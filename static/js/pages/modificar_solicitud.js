@@ -5,6 +5,7 @@ let vents = {
     items : {
         descripcion: '',
         beneficiado: '',
+        perfil:'',
         recipe: '',
         estado:'',
         det: []
@@ -89,6 +90,7 @@ let vents = {
                 {"data": "nombre"},
                 {"data": "cantidad"},
                 {"data": "cantidad_entregada"},
+                {"data": "total_stock"},
                 {"data": "id"},
             ],
             columnDefs: [
@@ -106,7 +108,7 @@ let vents = {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row, meta) {                        
-                        return '<input type="number" value="'+ parseInt(data) +'" name="cantidad" class="form-control form-control-sm cantidad" required min="1" autocomplete="off">';
+                        return '<input type="number" value="'+ parseInt(data) +'" name="cantidad" class="form-control form-control-sm cantidad" required min="1" readonly autocomplete="off">';
                     }
                 },
                 {
@@ -125,6 +127,15 @@ let vents = {
                 },
                 {
                     targets: [3],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+
+                        return data;
+                    }
+                },
+                {
+                    targets: [4],
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
@@ -327,7 +338,7 @@ $(function () {
     });
 
     /** OPEN MODAL BENEFICIADOS **/
-    $('a[rel="open_modal_beneficiado"]').on('click', function () {
+    $('button[rel="open_modal_beneficiado"]').on('click', function () {
         $("#form_beneficiado")[0].reset();
         $('#modal_beneficiados').modal('show');
     });
@@ -379,7 +390,7 @@ $(function () {
         parameters.append('recipe', imagefield.files[0]);
         console.log(vents.items);
 
-        // btn_submit.disabled = true;
+        btn_submit.disabled = true;
         await SendDataJsonForm(window.location.pathname, parameters, function () {
             window.location.replace('/solictudes-de-medicamentos/');
         })

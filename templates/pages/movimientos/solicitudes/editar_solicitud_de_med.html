@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 {% block title %}
-    Registro de mi Solicitud
+    Modificar Solicitud
 {% endblock title %}
 
 
@@ -45,19 +45,19 @@
                             {{ form.estado|add_class:'form-control form-control-sm' }}
                         </div>
                         
-                        {% if not tipo_solicitud == 'ON' %}
+                        {% if tipo_solicitud == 'ON' %}
                             <div class="form-group">
                                 <label class="form-label" for="id_recipe">Beneficiado</label>
                                 <div class="input-group">
-                                    {{ form.beneficiado|add_class:'form-control form-control-sm beneficiado' }}
-                                    <a class="btn btn-sm btn-dark" href="#" rel="open_modal_beneficiado">
+                                    {{ form.beneficiado|add_class:'form-control form-control-sm beneficiado'|attr:'disabled' }}
+                                    <button class="btn btn-sm btn-dark" type="button" rel="open_modal_beneficiado" disabled>
                                         <i class="fa fa-plus"></i>
-                                    </a>
+                                    </button>
                                 </div>	
                             </div>
                         {% endif %}
                             
-                        <button type="submit" class="btn btn-info me-2" id="btn_submit">Registrar</button>
+                        <button type="submit" class="btn btn-info me-2" id="btn_submit">Modificar</button>
                         <button type="button" onclick="PagePrevious()" class="btn btn-dark">Cancelar</button>
                     </div>
                 </div>
@@ -89,8 +89,9 @@
                                 <thead>
                                     <tr>
                                         <th>Producto</th>
-                                        <th>Cantidad Solicitada</th>
-                                        <th>Cantidad Entregada</th>
+                                        <th>Cant. Solicitada</th>
+                                        <th>Cant. Entregada</th>
+                                        <th>Cant. Disponible</th>
                                         <th>Opciones</th>
                                     </tr>
                                 </thead>
@@ -100,8 +101,9 @@
                                 <tfoot>
                                     <tr>
                                         <th>Producto</th>
-                                        <th>Cantidad Solicitada</th>
-                                        <th>Cantidad Entregada</th>
+                                        <th>Cant. Solicitada</th>
+                                        <th>Cant. Entregada</th>
+                                        <th>Cant. Disponible</th>
                                         <th>Opciones</th>
                                     </tr>
                                 </tfoot>
