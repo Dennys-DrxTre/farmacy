@@ -88,3 +88,29 @@ class Beneficiado(Persona):
 	def toJSON(self):
 		item = model_to_dict(self)
 		return item
+
+# personalizar landing
+
+class LandingPage(models.Model):
+	imagen1 = models.ImageField(upload_to='images_landing/', blank=True, null=True)
+	imagen2 = models.ImageField(upload_to='images_landing/', blank=True, null=True)
+	imagen3 = models.ImageField(upload_to='images_landing/', blank=True, null=True)
+	imagen4 = models.ImageField(upload_to='images_landing/', blank=True, null=True)
+	imagen5 = models.ImageField(upload_to='images_landing/', blank=True, null=True)
+	texto1 = models.TextField(blank=True, null=True)
+
+	def __str__(self) -> str:
+		return super().__str__()
+	
+	@classmethod
+	def get_config(cls):
+		conf, created = cls.objects.get_or_create()
+		return conf
+	
+	class Meta:
+		verbose_name = 'Imagen'
+		verbose_name_plural = 'Imagenes'
+
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item

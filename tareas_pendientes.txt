@@ -1,14 +1,13 @@
 TAREAS & CORRECIONES JOSE
     # CORRECIONES
-        - el sistema arroja error de django al intentar dejar vacio los campos de los modulos de mantenimiento
-        - el sistema arroja error de django al intentar dejar vacio el campo de constancia de residencia en registro de usuario
         - el sistema le falta por distrubuir los permisos al registrar los usuarios
     # TAREAS
         - VALIDAR Y TESTEAR CADA INPUT DE LOS FORMULARIOS
         - AGREGAR PERMISOS A VISTAS, Y PAGINA PARA REDIRECINAR EN CASO DE QUE NO TENGA PERMISOS Y TENGA UN BOTON PARA MANDARLO A LA PAGINA QUE TENGA PERMISOS
         - REPORTES EN CADA MODULOS
         - CAMBIAR CONTRASENA DESDE EL MODULO DE USUARIOS
-        - CAMBIAR CONTRASENA DESDE EL PROPIO USUARIO
+        - EDICION Y DETALLES DE USUARIOS
+        - FILTRADO POR TIPO DE USUARIOS EN EL LISTADO
 
 TAREAS & CORRECIONES DENNYS
     # CORRECIONES

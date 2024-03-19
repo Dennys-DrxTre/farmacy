@@ -91,11 +91,11 @@
                     <div class="modal-body">
                         <div class="row">
                             <label for="id_nombre_lab">Nombre del tipo de movimiento</label>
-                            {{form.nombre|add_class:'form-control'}}
+                            {{form.nombre|add_class:'form-control'|attr:'type:required'}}
                         </div>
                         <div class="row">
                             <label for="">Operacion</label>
-                            {{form.operacion|add_class:'form-control'|attr:'type:select'}}
+                            {{form.operacion|add_class:'form-control'|attr:'type:select'|attr:'type:required'}}
                         </div>
                     </div>
                 </div>

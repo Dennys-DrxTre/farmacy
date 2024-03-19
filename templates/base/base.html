@@ -92,7 +92,7 @@
                             <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Soporte</a>
                             <ul class="sub-menu children dropdown-menu">
                                 <li><i class="fa fa-table"></i><a href="#">Gestión de usuarios</a></li>
-                                <li><i class="fa fa-table"></i><a href="#">Edicion del Landing Page</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'edit_landing' %}">Edicion del Landing Page</a></li>
                                 <li><i class="fa fa-table"></i><a href="#">Respaldo</a></li>
                                 <li><i class="fa fa-table"></i><a href="#">Restauración</a></li>
                             </ul>
@@ -148,7 +148,7 @@
                         </a>
                         <div class="user-menu dropdown-menu">
                             <a class="nav-link" href="#"><i class="fa fa-user"></i>Cambiar Perfil</a>
-                            <a class="nav-link" href="#"><i class="fa fa-lock"></i>Cambiar Contraseña</a>
+                            <a class="nav-link" href="#" rel="cambiar_clave"><i class="fa fa-lock"></i>Cambiar Contraseña</a>
                             <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                         </div>
                     </div>
@@ -169,6 +169,9 @@
         <!-- /.site-footer -->
     </div>
     <!-- /#right-panel -->
+
+    <!-- modales -->
+    {% include 'acceso/cambiar_clave.html' %}
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>

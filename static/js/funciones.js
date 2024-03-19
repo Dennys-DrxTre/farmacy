@@ -188,7 +188,8 @@ let type_actions = {
 	'type_ins': {
 		'nuevo_tipo_insu': '/registro-de-tipos-de-insumos/',
 		'edit_t_ins': '/actualizar-tipos-de-insumos/',
-	},'almacen': {
+	},
+	'almacen': {
 		'nuevo_almacen': '/registro-de-almacen/',
 		'edit_almacen': '/actualizar-almacen/',
 	},
@@ -203,5 +204,40 @@ let type_actions = {
 	'productos': {
 		'nuevo_producto': '/registro-de-productos/',
 		'edit_producto': '/actualizar-producto/',
+	},
+	'user': {
+		'cambiar_clave': '/actualizar-clave/',
+		'edit_producto': '/actualizar-producto/',
+	},
+	'landing': {
+		'edit_landing': '/actualizar-landing/',
+		'edit_producto': '/actualizar-producto/',
 	}
 }
+
+let form_cambiar_clave = document.getElementById('form_cambiar_clave');
+$(function () {
+
+	// cambiar contraseña
+	$('a[rel="cambiar_clave"]').on('click', function () {
+        $('input[name="action_password"]').val('cambiar_clave');
+		$('#id_modal_password').modal('show');
+    });
+
+	form_cambiar_clave.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        let parameters = new FormData(form_cambiar_clave);
+		if ($('input[name="new_password"]').val() === $('input[name="new_password2"]').val() ) {
+			await SendDataJsonForm(type_actions['user'][action_password.value], parameters, async () => {
+				setTimeout(() => {
+					$('#id_modal_password').modal('hide');   
+					$("#form_cambiar_clave")[0].reset(); 
+					window.location.replace('/ingresar/')
+				}, 1000); // Espera 3 segundos antes de ejecutar el código dentro de setTimeout  
+				
+			});
+		}else{
+            notifier.show('Ocurrió un error!', 'Las contraseñas nueva no coinciden', 'danger', 4000);
+        }
+    });
+});
