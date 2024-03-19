@@ -150,7 +150,7 @@
                         </a>
                         <div class="user-menu dropdown-menu">
                             <a class="nav-link" href="#"><i class="fa fa-user"></i>Cambiar Perfil</a>
-                            <a class="nav-link" href="#"><i class="fa fa-lock"></i>Cambiar Contraseña</a>
+                            <a class="nav-link" href="#" rel="cambiar_clave"><i class="fa fa-lock"></i>Cambiar Contraseña</a>
                             <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                         </div>
                     </div>
@@ -171,6 +171,9 @@
         <!-- /.site-footer -->
     </div>
     <!-- /#right-panel -->
+
+    <!-- modales -->
+    {% include 'acceso/cambiar_clave.html' %}
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>

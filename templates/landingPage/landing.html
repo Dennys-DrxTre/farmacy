@@ -116,7 +116,16 @@
             
             <div class="top-right">
                 <div class="header-menu d-flex align-items-center">            
-                	<div class="navbar-brand"><div id="reloj"></div></div>
+                	<div class="navbar-brand">
+                        <div id="reloj"></div>
+                    </div>
+                    
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'vista' %}" class="d-flex justify-content-center">
+                        <button type="button" class="btn bg-info">Inicio</button>
+                    </a>
+                    {% endif %}
+                        
                     <div class="text-center">
                         {% if  not request.user.is_authenticated %}
                         <a href="{% url 'login' %}" class="d-flex justify-content-center">
@@ -144,7 +153,7 @@
                             <div class="container mt-5">
                                 <div class="row">
                                     <div class="col-12">
-                                        <font face="arial black" class="texto-con-borde">
+                                        <font face="arial black" class="texto-con-borde text-danger">
                                             <h1>FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS</h1>
                                         </font>
                                         <hr>
@@ -186,7 +195,7 @@
                             
                                 <div class="row justify-content-center">
                                     <section id="historia" class="text-center">
-                                        <font face="arial black" class="texto-con-borde">
+                                        <font face="arial black" class="texto-con-borde text-info">
                                             <h2>HISTORIA DE LA FARMACIA</h2>
                                         </font>
                                         <br>
@@ -208,7 +217,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <section id="mision" class="text-center">
-                                            <font face="arial black" class="texto-con-borde">
+                                            <font face="arial black" class="texto-con-borde text-info">
                                                 <h2>MISIÓN DE LA FARMACIA</h2>
                                             </font>
                                             <br>
@@ -221,7 +230,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <section id="vision" class="text-center">
-                                            <font face="arial black" class="texto-con-borde">
+                                            <font face="arial black" class="texto-con-borde text-info">
                                                 <h2>VISIÓN DE LA FARMACIA</h2>
                                             </font>
                                             <br>
@@ -234,10 +243,10 @@
                                     </div>
                                 </div>
                             
-                                <div class="row justify-content-center">
+                                <div class="row justify-content-center mt-5">
                                     <div class="col-md-12">
                                         <section id="ubicacion" class="text-center">
-                                            <font face="arial black" class="texto-con-borde">
+                                            <font face="arial black" class="texto-con-borde text-info">
                                                 <h2>UBICACIÓN</h2>
                                             </font>
                                             <br>
@@ -247,7 +256,7 @@
                                             <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1393.0578105928648!2d-69.72547851818175!3d9.048938030137558!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e7cf7004f05c5e5%3A0xe6716f8befcd9afe!2sFarmacia%20Comunitaria%20Asic%20Leonidas%20Ramos!5e0!3m2!1ses-419!2sve!4v1710362121370!5m2!1ses-419!2sve" width="900" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             <br>
                                             <font face="arial black" class="texto-con-borde1">
-                                                <a>URB. MANUEL CEDEÑO, ESQUINA DE LA AV.1CON AV. 3, TAMBIÉN CONOCIDA COMO AV.RIO MEDERO.</a>
+                                                <a>URB. MANUEL CEDEÑO, ESQUINA DE LA AV.1 CON AV. 3, TAMBIÉN CONOCIDA COMO AV. RIO MEDERO.</a>
                                             </font>
                                             </section>
                                             <br>
@@ -256,42 +265,43 @@
                             </div>
                             
                             <div class="row justify-content-center">
-                                <div class="col-md-8">
+                                <div class="col-md-12">
                                     <section id="beneficios" class="text-center">
-                                        <h2 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde">BENEFICIOS Y SERVICIOS</h2>
+                                        <h2 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde text-info">BENEFICIOS Y SERVICIOS</h2>
                                         <br>
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde">PROGRAMA DE ASISTENCIA FARMACÉUTICA GRATUITA</h3>
+                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde text-danger">PROGRAMA DE ASISTENCIA FARMACÉUTICA GRATUITA</h3>
                                                 <br>
-                                                <p style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde1">OFRECEMOS UN PROGRAMA DE ASISTENCIA FARMACÉUTICA GRATUITA PARA AQUELLOS EN SITUACIÓN DE NECESIDAD QUE NO PUEDEN PAGAR POR SUS MEDICAMENTOS.</p>
+                                                <p style="font-family: Arial Black; text-transform: uppercase; text-align: justify;" class="texto-con-borde1">OFRECEMOS UN PROGRAMA DE ASISTENCIA FARMACÉUTICA GRATUITA PARA AQUELLOS EN SITUACIÓN DE NECESIDAD QUE NO PUEDEN PAGAR POR SUS MEDICAMENTOS.</p>
                                             </div>
                                             <div class="col-md-4">
-                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde">CAMPAÑAS DE SALUD COMUNITARIA</h3>
+                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde text-danger">CAMPAÑAS DE SALUD COMUNITARIA</h3>
                                                 <br>
-                                                <p style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde1">ORGANIZAMOS CAMPAÑAS DE SALUD COMUNITARIA PARA PROPORCIONAR SERVICIOS DE SALUD PREVENTIVA Y EDUCACIÓN MÉDICA EN LAS COMUNIDADES QUE SERVIMOS.</p>
+                                                <p style="font-family: Arial Black; text-transform: uppercase; text-align: justify;" class="texto-con-borde1">ORGANIZAMOS CAMPAÑAS DE SALUD COMUNITARIA PARA PROPORCIONAR SERVICIOS DE SALUD PREVENTIVA Y EDUCACIÓN MÉDICA EN LAS COMUNIDADES QUE SERVIMOS.</p>
                                             </div>
                                             <div class="col-md-4">
-                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde">CONSULTAS MÉDICAS GRATUITAS</h3>
+                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde text-danger">CONSULTAS MÉDICAS GRATUITAS</h3>
                                                 <br>
-                                                <p style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde1">COLABORAMOS CON PROFESIONALES DE LA SALUD PARA OFRECER CONSULTAS MÉDICAS GRATUITAS EN LA FARMACIA PARA QUIENES NO PUEDEN ACCEDER A SERVICIOS MÉDICOS REGULARES.</p>
+                                                <p style="font-family: Arial Black; text-transform: uppercase; text-align: justify;" class="texto-con-borde1">COLABORAMOS CON PROFESIONALES DE LA SALUD PARA OFRECER CONSULTAS MÉDICAS GRATUITAS EN LA FARMACIA PARA QUIENES NO PUEDEN ACCEDER A SERVICIOS MÉDICOS REGULARES.</p>
                                             </div>
                                         </div>
+                                        <hr>
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde">PROGRAMAS DE EDUCACIÓN SOBRE EL USO ADECUADO DE MEDICAMENTOS</h3>
+                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde text-danger">PROGRAMAS DE EDUCACIÓN SOBRE EL USO ADECUADO DE MEDICAMENTOS</h3>
                                                 <br>
-                                                <p style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde1">DESARROLLAMOS PROGRAMAS DE EDUCACIÓN PARA LA COMUNIDAD SOBRE EL USO ADECUADO DE MEDICAMENTOS, INCLUYENDO LA DOSIFICACIÓN CORRECTA Y LOS POSIBLES EFECTOS SECUNDARIOS.</p>
+                                                <p style="font-family: Arial Black; text-transform: uppercase; text-align: justify;" class="texto-con-borde1">DESARROLLAMOS PROGRAMAS DE EDUCACIÓN PARA LA COMUNIDAD SOBRE EL USO ADECUADO DE MEDICAMENTOS, INCLUYENDO LA DOSIFICACIÓN CORRECTA Y LOS POSIBLES EFECTOS SECUNDARIOS.</p>
                                             </div>
                                             <div class="col-md-4">
-                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde">RECURSOS PARA PACIENTES</h3>
+                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde text-danger">RECURSOS PARA PACIENTES</h3>
                                                 <br>
-                                                <p style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde1">PROPORCIONAMOS RECURSOS Y MATERIALES EDUCATIVOS PARA PACIENTES SOBRE SUS CONDICIONES MÉDICAS Y LOS TRATAMIENTOS DISPONIBLES.</p>
+                                                <p style="font-family: Arial Black; text-transform: uppercase; text-align: justify;" class="texto-con-borde1">PROPORCIONAMOS RECURSOS Y MATERIALES EDUCATIVOS PARA PACIENTES SOBRE SUS CONDICIONES MÉDICAS Y LOS TRATAMIENTOS DISPONIBLES.</p>
                                             </div>
                                             <div class="col-md-4">
-                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde">APOYO A GRUPOS VULNERABLES</h3>
+                                                <h3 style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde text-danger">APOYO A GRUPOS VULNERABLES</h3>
                                                 <br>
-                                                <p style="font-family: Arial Black; text-transform: uppercase;" class="texto-con-borde1">BRINDAMOS APOYO ESPECIALIZADO A GRUPOS VULNERABLES, COMO PERSONAS MAYORES, NIÑOS Y PERSONAS CON DISCAPACIDADES, PARA GARANTIZAR QUE RECIBAN LA ATENCIÓN MÉDICA ADECUADA.</p>
+                                                <p style="font-family: Arial Black; text-transform: uppercase; text-align: justify;" class="texto-con-borde1">BRINDAMOS APOYO ESPECIALIZADO A GRUPOS VULNERABLES, COMO PERSONAS MAYORES, NIÑOS Y PERSONAS CON DISCAPACIDADES, PARA GARANTIZAR QUE RECIBAN LA ATENCIÓN MÉDICA ADECUADA.</p>
                                             </div>
                                         </div>
                                     </section>

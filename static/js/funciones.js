@@ -205,3 +205,13 @@ let type_actions = {
 		'edit_producto': '/actualizar-producto/',
 	}
 }
+
+$(function () {
+
+	// cambiar contraseña
+	$('a[rel="cambiar_clave"]').on('click', function () {
+        $('input[name="action"]').val('cambiar_clave');
+		$('#smallmodal').modal('show');
+    });
+
+});

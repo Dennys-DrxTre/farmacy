@@ -37,6 +37,7 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 	success_message = 'El Usuario se ha registrado correctamente'
 
 	def post(self, request, *args, **kwargs):
+		print(request.POST)
 
 		usuario = User()
 		usuario.username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
@@ -62,7 +63,8 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 		else:
 			perfil.embarazada = request.POST["embarazada"]
 		perfil.f_nacimiento = request.POST["f_nacimiento"]
-		perfil.c_residencia = request.FILES["c_residencia"]
+		if request.FILES.get("c_residencia"):
+			perfil.c_residencia = request.FILES.get("c_residencia")
 		perfil.zona = Zona.objects.get(id = request.POST["zona"])
 		perfil.direccion = request.POST["direccion"]
 		perfil.rol = request.POST["rol"]
@@ -82,7 +84,8 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 		else:
 			beneficiado.embarazada = request.POST["embarazada"]
 		beneficiado.f_nacimiento = request.POST["f_nacimiento"]
-		beneficiado.c_residencia = request.FILES["c_residencia"]
+		if request.FILES.get("c_residencia"):
+			beneficiado.c_residencia = request.FILES.get("c_residencia")
 		beneficiado.zona = Zona.objects.get(id = request.POST["zona"])
 		beneficiado.direccion = request.POST["direccion"]
 		beneficiado.save()
