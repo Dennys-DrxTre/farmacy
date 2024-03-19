@@ -5,9 +5,8 @@ let vents = {
     items : {
         descripcion: '',
         beneficiado: '',
-        perfil:'',
+        perfil: '',
         recipe: '',
-        estado:'',
         det: []
     },
     get_ids: function () {
@@ -37,6 +36,7 @@ let vents = {
             },
             [
                 {"data": "nombre"},
+                {"data": "total_stock"},
                 {"data": "id"},
             ],
             [
@@ -89,7 +89,6 @@ let vents = {
             columns: [
                 {"data": "nombre"},
                 {"data": "cantidad"},
-                {"data": "cantidad_entregada"},
                 {"data": "total_stock"},
                 {"data": "id"},
             ],
@@ -107,26 +106,13 @@ let vents = {
                     targets: [1],
                     class: 'text-center',
                     orderable: false,
-                    render: function (data, type, row, meta) {                        
-                        return '<input type="number" value="'+ parseInt(data) +'" name="cantidad" class="form-control form-control-sm cantidad" required min="1" readonly autocomplete="off">';
+                    render: function (data, type, row, meta) { 
+                        let cantidad_disponible = row.total_stock                       
+                        return '<input type="number" value="'+ parseInt(data) +'" name="cantidad" class="form-control form-control-sm cantidad" required min="1" max="'+ cantidad_disponible +'" autocomplete="off">';
                     }
                 },
                 {
                     targets: [2],
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row, meta) {
-                        let total_stock = row.total_stock
-                        let cantidad = row.cantidad;
-                        if (cantidad > total_stock) {
-                            return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" max="'+ parseInt(total_stock) +'" autocomplete="off">';
-                        } else{
-                            return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" max="'+ parseInt(cantidad) +'" autocomplete="off">';
-                        }                    
-                    }
-                },
-                {
-                    targets: [3],
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
@@ -135,7 +121,7 @@ let vents = {
                     }
                 },
                 {
-                    targets: [4],
+                    targets: [3],
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
@@ -153,81 +139,12 @@ let vents = {
     },
 };
 
-$('#id_estado').select2({
+$('#id_tipo_ingreso').select2({
     theme: 'bootstrap4',
     language: 'es',
-    placeholder: 'Selecionar el estado',
+    placeholder: 'Selecionar tipo de ingreso',
     allowClear: true
 });
-
-let estados_permisos = {
-    'ON':{
-        'AD': [
-            { 'id':'PR', 'text': 'En Proceso' },
-            { 'id':'AP', 'text': 'Aprobado' },
-            { 'id':'RE', 'text': 'Rechazado' },
-        ],
-        'AL': [
-            { 'id':'EE', 'text': 'En Espera de Entrega' },
-            { 'id':'AP', 'text': 'Aprobado' },
-        ]
-    },
-    'PR':{
-        'AD': [
-            { 'id':'PR', 'text': 'En Proceso' },
-            { 'id':'AP', 'text': 'Aprobado' },
-            { 'id':'RE', 'text': 'Rechazado' },
-        ],
-        'AL': [
-            { 'id':'EE', 'text': 'En Espera de Entrega' },
-            { 'id':'AP', 'text': 'Aprobado' },
-            { 'id':'RE', 'text': 'Rechazado' },
-        ]
-    }
-}
-
-let select2 = $('#id_estado');
-let opcionesActuales = select2.find('option');
-let tipo_solicitud = document.getElementById('tipo_solicitud');
-let rol = document.getElementById('rol'); // Asegúrate de que este valor sea válido y exista en estados_permisos
-tipo_solicitud = String(tipo_solicitud.value)
-rol = String(rol.value)
-// Verificar si el rol es válido y si tiene opciones permitidas
-if (estados_permisos[tipo_solicitud][rol] && Array.isArray(estados_permisos[tipo_solicitud][rol])) {
-    // Obtener la opción seleccionada por defecto
-    let opcionSeleccionada = select2.val();
-
-    // Iterar sobre las opciones actuales
-    opcionesActuales.each(function() {
-        var opcionActual = $(this);
-        var idActual = opcionActual.val();
-        var textoActual = opcionActual.text();
-
-        // Verificar si la opción actual está en el listado permitido y no es la seleccionada por defecto
-        var estaPermitida = estados_permisos[tipo_solicitud][rol].some(function(opcionPermitida) {
-            return opcionPermitida.id === idActual && opcionPermitida.text === textoActual;
-        });
-
-        // Si la opción actual no está en el listado permitido y no es la seleccionada por defecto, eliminarla
-        if (!estaPermitida && idActual !== opcionSeleccionada) {
-            opcionActual.remove();
-        }
-    });
-
-    // Asegurarse de que las opciones permitidas no se dupliquen
-    estados_permisos[tipo_solicitud][rol].forEach(function(opcionPermitida) {
-        if (!opcionesActuales.filter(`[value="${opcionPermitida.id}"]`).length) {
-            // Crear y agregar la nueva opción si no existe
-            var newOption = new Option(opcionPermitida.text, opcionPermitida.id, false, false);
-            select2.append(newOption);
-        }
-    });
-
-    // Actualizar el Select2 para reflejar los cambios
-    select2.trigger('change');
-} else {
-    console.error('El rol especificado no es válido o no tiene opciones permitidas.');
-}
 
 // FORMATTING WHEN DISPLAYING THE RESULT OF THE SELECT
 function formatRepo(repo) {
@@ -240,7 +157,6 @@ function formatRepo(repo) {
         '<p style="margin-bottom: 0;">' +
         '<b style="color:#000000">Nombre:</b> <b style="color:#000000">' + repo.text+ '</b><br>' +
         '<b style="color:#000000">Codigo:</b> <b style="color:#000000">' + repo.id + '</b><br>' +
-        '<b style="color:#000000">Disponibilidad:</b> <b style="color:#000000">' + repo.others.total_stock + '</b><br>' +
         '</p>' +
         '</div>');
 
@@ -248,6 +164,21 @@ function formatRepo(repo) {
 }
 
 $(function () {
+    $('.beneficiado').select2({
+        placeholder: 'Seleccione el beneficiado',
+        theme:'bootstrap4',
+        language: "es",
+        allowClear: true
+    });
+
+    $('.perfil').select2({
+        placeholder: 'Seleccione el titular',
+        theme:'bootstrap4',
+        language: "es",
+        allowClear: true
+    });
+
+    $('.beneficiado').chained('.perfil');
 
     vents.list()
 
@@ -275,7 +206,7 @@ $(function () {
                     results.push({
                         id: res.id,
                         text: res.nombre,
-                        others:res,
+                        others: res,
                     });
                 });
     
@@ -291,9 +222,9 @@ $(function () {
         templateResult: formatRepo,
     }).on('select2:select', function (e) {
         var data = e.params.data;
-        data.cantidad = 0;
+        data.cantidad = 1;
         data.nombre = data.text;
-        data.cantidad_entregada = 0
+        data.total_stock = data.others.total_stock;
         vents.add(data);
         $(this).val('').trigger('change.select2');
     });
@@ -303,13 +234,6 @@ $(function () {
         let cantidad = $(this).val();
         var tr = tblCate.cell($(this).closest('td, li')).index();
             vents.items.det[tr.row].cantidad = parseInt(cantidad);
-    });
-
-    // asignar valor cantidad
-    $('#detalle tbody').on('change keyup', '.cantidad_entregada', function () {
-        let cantidad_entregada = $(this).val();
-        var tr = tblCate.cell($(this).closest('td, li')).index();
-            vents.items.det[tr.row].cantidad_entregada = parseInt(cantidad_entregada);
     });
 
     // delete individual element
@@ -339,49 +263,89 @@ $(function () {
             id: productos.id,
             text: productos.nombre,
             nombre: productos.nombre,
-            cantidad: 0,
-            cantidad_entregada:0,
+            cantidad: 1,
+            total_stock: productos.total_stock,
         }
         vents.add(data);
         $('#modal_search_product').modal('hide');   
     });
 
-    $('.beneficiado').select2({
-        placeholder: 'Seleccione el beneficiado',
-        theme:'bootstrap4',
-        language: "es",
-        allowClear: true
+    /** OPEN MODAL PERFILES **/
+    $('a[rel="open_modal_perfil"]').on('click', function () {
+        $("#form_perfil")[0].reset();
+        $('#modal_perfiles').modal('show');
     });
 
     /** OPEN MODAL BENEFICIADOS **/
-    $('button[rel="open_modal_beneficiado"]').on('click', function () {
+    $('a[rel="open_modal_beneficiado"]').on('click', function () {
+        if (!($('select[name="perfil"]').val())) {
+            notifier.show('Ocurrió un error!', 'Debe tener un Titular seleccionado', 'danger', '', 4000);
+            return true
+        }
         $("#form_beneficiado")[0].reset();
         $('#modal_beneficiados').modal('show');
+    });
+
+    $('#form_perfil').on('submit', function (e) {
+        e.preventDefault();
+
+        if ($("#password1").val() !==  $("#password2").val()) {
+            notifier.show('Ocurrió un error!', 'Las contraseñas no coinciden, intenta nuevamente', 'danger', '', 4000);
+
+            $("#password2").val("");
+            $("#password1").val("");
+            $("#password1").focus();
+            return false;  
+        }
+
+        var parameters = new FormData(this);
+        SendDataJsonForm('/registrar-perfil-fisico-modal/', parameters, function () {
+            $("#modal_perfiles").modal('hide');
+
+            let ci = $(".cedulaP").val();
+            let nombre = $(".nombreP").val();
+            let apellido = $(".apellidoP").val();
+
+            let data = {
+                id: ci,
+                text: ci,
+                nombre: nombre,
+                apellido: apellido,
+            };
+            var newOption = new Option(`${data.text }-${data.nombre}`, data.id, true, true);
+            $('.perfil').append(newOption).trigger('change');
+    
+            var newOption2 = new Option(`${data.text }-${data.nombre}`, data.id, true, true);
+            $('.beneficiado').append(newOption2).trigger('change');
+
+            $("#form_perfil")[0].reset();            
+        });    
     });
 
     $('#form_beneficiado').on('submit', function (e) {
         e.preventDefault();
         var parameters = new FormData(this);
-        SendDataJsonForm('/registrar-beneficiado-modal/', parameters, function () {
+        parameters.append('perfil', $('select[name="perfil"]').val())
+        SendDataJsonForm('/registrar-beneficiado-fisico-modal/', parameters, function () {
             $("#modal_beneficiados").modal('hide');
 
             var ci = $(".cedula").val();
             var nombre = $(".nombre").val();
             var apellido = $(".apellido").val();
+            var perfilId = $('select[name="perfil"]').val(); // Obtén el ID del perfil seleccionado
 
             var data = {
                 id: ci,
                 text: ci,
                 nombre: nombre,
                 apellido: apellido,
-
+                dataChained: perfilId
             };
             var newOption = new Option(`${data.text }-${data.nombre}`, data.id, true, true);
+            $(newOption).attr('data-chained', data.dataChained);
             $('.beneficiado').append(newOption).trigger('change');
     
-            $("#form_beneficiado")[0].reset();
-            // $('.titular_modal').val(null).trigger('change');
-            
+            $("#form_beneficiado")[0].reset();            
         });    
     });
 
@@ -399,14 +363,14 @@ $(function () {
         vents.items.descripcion = $('textarea[name="descripcion"]').val();
         vents.items.recipe = imagefield.files[0]
         vents.items.beneficiado = $('select[name="beneficiado"]').val();
-        (tipo_solicitud == 'PR') ? vents.items.perfil = $('select[name="perfil"]').val(): '';
-        vents.items.estado = $('select[name="estado"]').val();
+        vents.items.perfil = $('select[name="perfil"]').val();
 
         var parameters = new FormData();
         parameters.append('vents', JSON.stringify(vents.items));
         parameters.append('recipe', imagefield.files[0]);
+        console.log(vents.items);
 
-        btn_submit.disabled = true;
+        // btn_submit.disabled = true;
         await SendDataJsonForm(window.location.pathname, parameters, function () {
             window.location.replace('/solictudes-de-medicamentos/');
         })

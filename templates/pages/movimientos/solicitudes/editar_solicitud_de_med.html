@@ -23,6 +23,7 @@
 {% block body %}
     <form action="" method="post" enctype="multipart/form-data" id="form_register">
         <input type="text" value="{{ rol }}" id="rol" hidden>
+        <input type="text" value="{{ tipo_solicitud}}" id="tipo_solicitud" hidden>
         {% csrf_token %}
         <div class="row">
             <div class="col-sm-4">
@@ -46,6 +47,25 @@
                         </div>
                         
                         {% if tipo_solicitud == 'ON' %}
+                            <div class="form-group">
+                                <label class="form-label" for="id_beneficiado">Beneficiado</label>
+                                <div class="input-group">
+                                    {{ form.beneficiado|add_class:'form-control form-control-sm beneficiado'|attr:'disabled' }}
+                                    <button class="btn btn-sm btn-dark" type="button" rel="open_modal_beneficiado" disabled>
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>	
+                            </div>
+                        {% elif tipo_solicitud == 'PR' %}
+                            <div class="form-group">
+                                <label class="form-label" for="id_perfil">Titular</label>
+                                <div class="input-group">
+                                    {{ form.perfil|add_class:'form-control form-control-sm perfil'|attr:'disabled' }}
+                                    <button class="btn btn-sm btn-dark" type="button" rel="open_modal_perfil" disabled>
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>	
+                            </div>
                             <div class="form-group">
                                 <label class="form-label" for="id_recipe">Beneficiado</label>
                                 <div class="input-group">

@@ -68,7 +68,14 @@ class Perfil(Persona):
 			('cambiar_password', 'cambiar contraseña a usuarios'),
 			('cambiar_estado_usuarios', 'cambiar estado de usuarios'),
 			('cambiar_estado_jornada', 'cambiar estatus de jornadas'),
-			('cambiar_estado_solicitudes', 'cambiar status de solicitudes')
+			('cambiar_estado_solicitudes', 'cambiar status de solicitudes'),
+			('aprobar_solicitud_medicamentos', 'Aprobar solicitud de medicamentos'),
+			('aprobar_jornada_medicamentos', 'Aprobar jornada de medicamentos'),
+			('ver_inicio', 'Ver inicio'),
+			('ver_mis_solicitudes_de_medicamentos', 'Ver mis solicitudes de medicamentos'),
+			('ver_mis_jornada_medicamentos', 'Ver mis jornadas de medicamentos'),
+			('registrar_mi_solicitud_de_medicamentos', 'Registrar mi solicitud de medicamentos'),
+			('registrar_mi_jornada_medicamentos', 'Registrar mi jornada de medicamentos')
 		]
 
 	def toJSON(self):

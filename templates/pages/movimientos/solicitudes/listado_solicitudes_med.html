@@ -23,7 +23,7 @@
                     <!-- <a href="#" id="btn_filter" class="btn btn-icon btn-light-dark ml-10" rel="btn_open_modal_report" data-bs-toggle="tooltip" data-bs-placement="top" title="Reportes">
                         <i class="fas fa-file-pdf"></i>
                     </a> -->
-                    <a href="{% url 'registrar_mi_solicitud' %}" class="btn btn-icon btn-info" data-bs-toggle="tooltip" title="Registrar anuncio">
+                    <a href="{% url 'registrar_solicitud_presencial' %}" class="btn btn-icon btn-info" data-bs-toggle="tooltip" title="Registrar Solicitud">
                         <i class="fa fa-plus text-white"></i>
                     </a>
                 </div>
@@ -70,7 +70,6 @@
                                         </a>
                                         
                                         {% if solicitud.tipo_solicitud == 'ON' %}
-                                            
                                             {% if request.user.perfil.rol == 'AD' %}
                                                 {% if solicitud.estado == 'PR' %}
                                                     <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Mofificar Solicitud">
@@ -79,6 +78,20 @@
                                                 {% endif %}
                                             
                                             {% elif request.user.perfil.rol == 'AL' %}
+                                                {% if not solicitud.estado == 'EE' and not solicitud.estado == 'ET' and not solicitud.estado == 'RE' %}
+                                                    <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Mofificar Solicitud">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% elif request.user.perfil.rol == 'AT' %}
+                                                {% if solicitud.estado == 'EE' %}
+                                                    <a href="{% url 'solicitud_de_medicamento_entregado' solicitud.pk %}" rel="entregar" class="btn btn-dark" data-bs-toggle="tooltip" title="Entregado al cliente">
+                                                        <i class="fa fa-check-circle"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% elif solicitud.tipo_solicitud == 'PR' %}
+                                            {% if request.user.perfil.rol == 'AL' %}
                                                 {% if not solicitud.estado == 'EE' and not solicitud.estado == 'ET' and not solicitud.estado == 'RE' %}
                                                     <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Mofificar Solicitud">
                                                         <i class="fa fa-edit"></i>

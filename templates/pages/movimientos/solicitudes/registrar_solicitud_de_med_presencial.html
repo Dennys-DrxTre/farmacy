@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 {% block title %}
-    Registro de mi Solicitud
+    Registro de Solicitud Presencial
 {% endblock title %}
 
 
@@ -40,13 +40,33 @@
                             {{ form.recipe|add_class:'form-control form-control-sm' }}
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="id_recipe">Beneficiado</label>
+                            <label class="form-label" for="id_perfil">Títular</label>
+                            <div class="mb-3 input-group">
+                                <select name="perfil" id="id_perfil" class="form-control perfil" required>
+                                    <option value="">Seleccione el Titular</option>
+                                    {% for x in perfiles %}
+                                        <option value="{{x.id}}">{{x.cedula}} | {{x.nombres}} {{x.apellidos}}</option>
+                                    {% endfor %}
+                                </select>
+                                <a class="btn btn-sm btn-dark" href="#" rel="open_modal_perfil">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>	
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="id_beneficiado">Beneficiado</label>
                             <div class="input-group">
-                                {{ form.beneficiado|add_class:'form-control form-control-sm beneficiado' }}
+                                <select name="beneficiado" id="id_beneficiado" class="form-control beneficiado" required>
+                                    <option value="0">--------------</option>
+                                    {% for x in beneficiados %}
+                                        <option value="{{x.cedula}}" data-chained="{{x.perfil.id}}">{{x.cedula}} | {{x.nombres}} {{x.apellidos}}</option>
+                                    {% endfor %}
+                                </select>
                                 <a class="btn btn-sm btn-dark" href="#" rel="open_modal_beneficiado">
                                     <i class="fa fa-plus"></i>
                                 </a>
                             </div>	
+                            
                         </div>
                         <button type="submit" class="btn btn-info me-2" id="btn_submit">Registrar</button>
                         <button type="button" onclick="PagePrevious()" class="btn btn-dark">Cancelar</button>
@@ -68,7 +88,7 @@
                         <div class="form-group">
                             <label for="id_provider" class="form-label">Buscar Producto</label>
                             <div class="input-group">
-                                <select name="search" class="form-control form-control-sm" id=""></select>
+                                <select name="search" class="form-control form-control-sm" id="search"></select>
                                 <a class="btn btn-sm btn-dark" href="#" rel="open_modal_product">
                                     <i class="fa fa-search"></i>
                                 </a>
@@ -81,6 +101,7 @@
                                     <tr>
                                         <th>Producto</th>
                                         <th>Cantidad</th>
+                                        <th>Cant. Disponible</th>
                                         <th>Opciones</th>
                                     </tr>
                                 </thead>
@@ -91,6 +112,7 @@
                                     <tr>
                                         <th>Producto</th>
                                         <th>Cantidad</th>
+                                        <th>Cant. Disponible</th>
                                         <th>Opciones</th>
                                     </tr>
                                 </tfoot>
@@ -121,6 +143,7 @@
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
+                                    <th>Cant. Disponible</th>
                                     <th>Seleccionar</th>
                                   </tr>
                             </thead>
@@ -136,7 +159,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Modal Beneficiado -->
     <div class="modal fade" id="modal_beneficiados" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -177,7 +200,7 @@
                             <div class="col col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="id_apellidos">Apellidos</label>
-                                    {{ form_b.apellidos|add_class:'form-control'|attr:'placeholder:Introduzca el apellido' }}
+                                    {{ form_b.apellidos|add_class:'form-control apellido'|attr:'placeholder:Introduzca el apellido' }}
                                 </div>
                             </div>
                             <div class="col col-md-6">
@@ -185,7 +208,7 @@
                                 <div class="input-group">
                                     <div class="input-group-btn">
                                         <div class="btn-group">
-                                            <select name="codigo_tlf" id="" class="form-control" required>
+                                            <select name="codigo_tlf" class="form-control" required>
                                                 <option value="">----</option>
                                                 <option value="0412">0412</option>
                                                 <option value="0416">0416</option>
@@ -247,6 +270,162 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Perfil -->
+    <div class="modal fade" id="modal_perfiles" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form action="" method="post" id="form_perfil">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="modal-title" id="mediumModalLabel">Registrar Titular</h5>
+                            <div class="cart-tools">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col col-md-2">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_cedula">Nacionalidad</label>
+                                    {{ form_p.nacionalidad|add_class:'form-control'|attr:'placeholder:Introduzca la Nacionalidad' }}
+                                </div>
+                            </div>
+                            <div class="col col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_cedula">Cedula</label>
+                                    {{ form_p.cedula|add_class:'form-control cedulaP'|attr:'placeholder:Introduzca la cedula' }}
+                                </div>
+                            </div>
+                            <div class="col col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_nombres">Nombres</label>
+                                    {{ form_p.nombres|add_class:'form-control nombreP'|attr:'placeholder:Introduzca el nombre' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_apellidos">Apellidos</label>
+                                    {{ form_p.apellidos|add_class:'form-control apellidoP'|attr:'placeholder:Introduzca el apellido' }}
+                                </div>
+                            </div>
+                            <div class="col col-md-6">
+                                <label for="">Teléfono</label>
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <div class="btn-group">
+                                            <select name="codigo_tlf" class="form-control" required>
+                                                <option value="">----</option>
+                                                <option value="0412">0412</option>
+                                                <option value="0416">0416</option>
+                                                <option value="0426">0426</option>
+                                                <option value="0414">0414</option>
+                                                <option value="0424">0424</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {{ form_p.telefono|add_class:'form-control'|attr:'placeholder:Introduzca el telefono'|attr:'maxlength:7'|attr:'minlength:7' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_generoP">Genero</label>
+                                    {{ form_p.genero|add_class:'form-control'|attr:'placeholder:Introduzca el genero'|attr:'id:id_generoP' }}
+                                </div>
+                            </div>
+                            <div class="col col">
+                                <label for="">¿Está embarazada?</label> <br>
+                                <div class="form-check-inline form-check">
+                                    <label for="inline-radio3" class="form-check-label mr-3">
+                                        <input type="radio" id="inline-radio3" name="embarazada" value="True" class="form-check-input deshabilitar">Sí
+                                    </label>
+                                    <label for="inline-radio3" class="form-check-label ">
+                                        <input type="radio" id="inline-radio4" name="embarazada" value="False" class="form-check-input deshabilitar">No
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_telefono">F.Nacimiento</label>
+                                    {{ form_p.f_nacimiento|add_class:'form-control'|attr:'placeholder:Introduzca la fecha de nacimiento'|attr:'type:date' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_zona">Zona</label>
+                                    {{ form_p.zona|add_class:'form-control'|attr:'placeholder:Introduzca la zona' }}
+                                </div>
+                            </div>
+                            <div class="col col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_direccion">Direccion</label>
+                                    {{ form_p.direccion|add_class:'form-control'|attr:'placeholder:Introduzca la direccion'|attr:'rows:3' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_c_residencia">Constancia de residencia</label>
+                                    {{ form_p.c_residencia|add_class:'form-control'|attr:'required' }}
+                                </div>
+                            </div>
+                            <div class="col col-md-5">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_direccion">Correo electronico</label>
+                                    {{ form_p.email|add_class:'form-control'|attr:'placeholder:Introduzca el correo electronico'|attr:'required' }}
+                                </div>
+                            </div>
+                            <div class="col col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_is_active">Activar Usuario</label>
+                                    {{ form_p.is_active|add_class:'form-control' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_rol">Rol del sistema</label>
+                                    <select name="rol" class="form-control" required>
+                                        <option value="">----</option>
+                                        <option value="PA">Paciente</option>
+                                        <option value="JC">Jefe de Comunidad</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_password1">Definir contraseña</label>
+                                    <input type="password" minlength="6" name="password1" id="password1" class="form-control" placeholder="Definir contraseña" required>
+                                </div>
+                            </div>
+                            <div class="col col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_password2">Confirmar contraseña</label>
+                                    <input type="password" minlength="6" name="password2" id="password2" class="form-control" placeholder="Confirmar contraseña" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-info me-2" id="btn_submit_p">Registrar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock body %}
     
 
@@ -262,7 +441,10 @@
     <!-- notifier -->
     <script src="{% static 'js/plugins/notifier.js' %}"></script>
 
-    <script src="{% static 'js/pages/registrar_mi_solicitud.js' %}"></script>    
+    <script src="{% static 'js/pages/registrar_solicitud_presencial.js' %}"></script>    
+
+    <script type="text/javascript" src="{% static 'js/plugins/jquery_chained-2.x/jquery.chained.js' %}"></script>
+
     
     <script>
         $(document).ready(function () {
@@ -271,6 +453,17 @@
                     // Deshabilitar checkboxes
                     $('.deshabilitar').prop('disabled', true);
                     $('#inline-radio2').prop('checked', true)
+                } else {
+                    // Habilitar checkboxes
+                    $('.deshabilitar').prop('disabled', false);
+                }
+            }).trigger('change'); // Trigger para establecer el estado inicial
+
+            $('#id_generoP').change(function () {
+                if ($(this).val() == "MA") {
+                    // Deshabilitar checkboxes
+                    $('.deshabilitar').prop('disabled', true);
+                    $('#inline-radio4').prop('checked', true)
                 } else {
                     // Habilitar checkboxes
                     $('.deshabilitar').prop('disabled', false);

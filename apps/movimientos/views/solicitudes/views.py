@@ -8,8 +8,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.db import transaction
+from django.contrib.auth.models import Permission
 from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 from django.views.generic import (
 	TemplateView,
 	ListView,
@@ -17,11 +20,12 @@ from django.views.generic import (
 	DetailView,
 	View
 )
-from ...forms import SolicitudForm, BeneficiadoForm, SolicitudEditForm
+from ...forms import BeneficiadoForm, SolicitudEditForm, SolicitudPresencialForm, PerfilForm
+from apps.entidades.permisos import permisos_usuarios
 
 from ...models import Solicitud, TipoMov, DetalleSolicitud, Historial
 from apps.inventario.models import Inventario, Producto
-from apps.entidades.models import Beneficiado,Perfil
+from apps.entidades.models import Beneficiado, Perfil, User, Zona
 # # Create your views here.
 
 class SolicitudesMed(TemplateView):
@@ -174,7 +178,6 @@ class EditarSolicitud(SuccessMessageMixin, UpdateView):
 class RegistrarSolicitudPresencial(TemplateView):
 	template_name = 'pages/movimientos/solicitudes/registrar_solicitud_de_med_presencial.html'
 	# permission_required = 'anuncios.requiere_secretria'
-	object = None
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -189,10 +192,11 @@ class RegistrarSolicitudPresencial(TemplateView):
 				solicitud = Solicitud()
 				solicitud.fecha_soli = date.today()
 				solicitud.descripcion = vents['descripcion']
-				solicitud.beneficiado_id = vents['beneficiado']
+				solicitud.beneficiado= Beneficiado.objects.filter(cedula=vents['beneficiado']).first()
+				solicitud.perfil_id = vents['perfil']
 				solicitud.recipe = request.FILES['recipe']
 				solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
-				solicitud.tipo_solicitud = solicitud.TipoSoli.ONLINE
+				solicitud.tipo_solicitud = solicitud.TipoSoli.PRESENCIAL
 				solicitud.estado = solicitud.Status.EN_PROCRESO 
 				solicitud.save()
 
@@ -205,15 +209,6 @@ class RegistrarSolicitudPresencial(TemplateView):
 					detalle.cant_solicitada = det['cantidad']
 					detalle.save()
 
-				# 	perfil = Perfil.objects.filter(usuario=request.user).first()
-				# 	movimiento = {
-				# 		'tipo_mov': tipo_ingreso,
-				# 		'perfil': perfil,
-				# 		'producto': producto,
-				# 		'cantidad': det['cantidad']
-				# 	}
-				# 	Historial().crear_movimiento(movimiento)
-
 				messages.success(request,'Solicitud de medicamento registrado correctamente')
 				data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
 		except Exception as e:
@@ -223,9 +218,12 @@ class RegistrarSolicitudPresencial(TemplateView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context["sub_title"] = "Registrar ingreso"
-		context["form"] = MiSolicitudForm(user=self.request.user)
+		context["sub_title"] = "Registrar Solicitud de medimento presencial"
+		context["form"] = SolicitudPresencialForm()
 		context["form_b"] = BeneficiadoForm()
+		context["form_p"] = PerfilForm()
+		context['beneficiados'] = Beneficiado.objects.all()
+		context['perfiles'] = Perfil.objects.all()
 		return context
 
 class MedicamentoEntregado(SuccessMessageMixin, View):
@@ -252,10 +250,8 @@ class MedicamentoEntregado(SuccessMessageMixin, View):
 			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
 			print(e)
 		return redirect('listado_solicitudes_medicamentos')
-
-
 	
-class RegistrarBeneficiado(View):
+class RegistrarBeneficiadoFisico(View):
 	# permission_required = 'anuncios.requiere_secretria'
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -269,18 +265,109 @@ class RegistrarBeneficiado(View):
 				beneficiado.nacionalidad = request.POST['nacionalidad'] 
 				beneficiado.cedula = request.POST['cedula'] 
 				beneficiado.nombres = request.POST['nombres'] 
-				beneficiado.apellidos = request.POST['telefono'] 
+				beneficiado.apellidos = request.POST['apellidos']
+				beneficiado.telefono = f"{request.POST['codigo_tlf']}{request.POST['telefono']}"
 				beneficiado.genero = request.POST['genero'] 
+				if request.POST["genero"] == 'MA':
+					beneficiado.embarazada = False
+				else:
+					beneficiado.embarazada = request.POST["embarazada"]
 				beneficiado.f_nacimiento = request.POST['f_nacimiento'] 
-				beneficiado.embarazada = request.POST.get('embarazada') == 'on'
 				beneficiado.zona_id = request.POST['zona'] 
 				beneficiado.direccion = request.POST['direccion']
-				beneficiado.perfil_id	 = request.user.perfil.pk
+				beneficiado.perfil_id = request.POST['perfil']
 				beneficiado.save()
 				data['response'] = {'title':'Exito!', 'data': 'El beneficiado se registro correctamente', 'type_response': 'success'}
 			else:
 				data['response'] = {'title':'Ocurrió un error!', 'data': 'El beneficiado ya existe', 'type_response': 'danger'}
 				# 	data['response'] = {'title': 'Exito!', 'data':'Compra registrada correctamente', 'type_response': 'success'}
+		except Exception as e:
+			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+
+class RegistrarPerfilFisico(View):
+	# permission_required = 'anuncios.requiere_secretria'
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		try:
+			with transaction.atomic():
+				if not User.objects.filter(username=f'{request.POST["nacionalidad"]}{request.POST["cedula"]}').first():
+					usuario = User()
+					usuario.username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
+					usuario.email = request.POST["email"]
+					usuario.set_password(request.POST["password1"])
+					usuario.is_active = request.POST.get('is_active') == 'on'
+					usuario.save()
+
+					permissions = Permission.objects.filter(codename__in=permisos_usuarios[request.POST["rol"]])
+					for permission in permissions:
+						usuario.user_permissions.add(permission)
+					usuario.save()
+
+					perfil = Perfil()
+					perfil.nacionalidad = request.POST["nacionalidad"]
+					perfil.cedula = request.POST["cedula"]
+					perfil.nombres = request.POST["nombres"]
+					perfil.apellidos = request.POST["apellidos"]
+					perfil.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
+					perfil.genero = request.POST["genero"]
+					if request.POST["genero"] == 'MA':
+						perfil.embarazada = False
+					else:
+						perfil.embarazada = request.POST["embarazada"]
+					perfil.f_nacimiento = request.POST["f_nacimiento"]
+					if request.FILES.get("c_residencia"):
+						perfil.c_residencia = request.FILES.get("c_residencia")
+					perfil.zona_id = request.POST["zona"]
+					perfil.direccion = request.POST["direccion"]
+					perfil.rol = request.POST["rol"]
+					perfil.usuario = User.objects.get(username = usuario.username)
+					perfil.save()
+
+
+					if Beneficiado.objects.filter(cedula=perfil.cedula).first():
+						beneficiado = Beneficiado.objects.filter(cedula=perfil.cedula).first()
+					else:
+						beneficiado = Beneficiado()
+					beneficiado.perfil_id = perfil.pk
+					beneficiado.nacionalidad = request.POST["nacionalidad"]
+					beneficiado.cedula = request.POST["cedula"]
+					beneficiado.nombres = request.POST["nombres"]
+					beneficiado.apellidos = request.POST["apellidos"]
+					beneficiado.telefono = request.POST["telefono"]
+					beneficiado.genero = request.POST["genero"]
+					print(request.POST["f_nacimiento"])
+					beneficiado.f_nacimiento = request.POST["f_nacimiento"]
+					if request.POST["genero"] == 'MA':
+						beneficiado.embarazada = False
+					else:
+						beneficiado.embarazada = request.POST["embarazada"]
+					if request.FILES.get("c_residencia"):
+						beneficiado.c_residencia = request.FILES.get("c_residencia")
+					beneficiado.zona_id = request.POST["zona"]
+					beneficiado.direccion = request.POST["direccion"]
+					beneficiado.save()
+
+					# enviando el correo de registro
+
+					# Cargar la plantilla HTML
+					html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
+					# Configurar el correo electrónico
+					subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
+					text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
+					msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+					msg.attach_alternative(html_content, "text/html")
+					# Enviar el correo electrónico
+					msg.send()
+
+					data['response'] = {'title':'Exito!', 'data': 'El titular se registro correctamente', 'type_response': 'success'}
+				else:
+					data['response'] = {'title':'Ocurrió un error!', 'data': 'El titular ya existe', 'type_response': 'danger'}
 		except Exception as e:
 			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
 			data['error'] = str(e)

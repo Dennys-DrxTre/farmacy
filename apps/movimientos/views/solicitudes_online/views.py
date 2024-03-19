@@ -48,7 +48,6 @@ class DetalleMiSolicitudOnline(TemplateView):
 			return render(request, self.template_name, context)
 		except Solicitud.DoesNotExist:
 			return redirect('mis_solicitudes_medicamentos')
-
 	
 class RegistrarMiSolicitud(TemplateView):
 	template_name = 'pages/movimientos/solicitudes_online/registrar_mi_solicitud_de_med.html'
@@ -120,11 +119,10 @@ class RegistrarBeneficiado(View):
 					beneficiado.embarazada = False
 				else:
 					beneficiado.embarazada = request.POST["embarazada"]
-					print(request.POST["embarazada"])
 				beneficiado.f_nacimiento = request.POST['f_nacimiento'] 
 				beneficiado.zona_id = request.POST['zona'] 
 				beneficiado.direccion = request.POST['direccion']
-				beneficiado.perfil_id	 = request.user.perfil.pk
+				beneficiado.perfil_id = request.user.perfil.pk
 				beneficiado.save()
 				data['response'] = {'title':'Exito!', 'data': 'El beneficiado se registro correctamente', 'type_response': 'success'}
 			else:
