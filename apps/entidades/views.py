@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, View
-from apps.entidades.models import Perfil, Persona, User, Beneficiado, Zona
+from apps.entidades.models import Perfil, Persona, User, Beneficiado, Zona, LandingPage
 from django.contrib.auth.models import Permission
-from .forms import PerfilForm, ZonaForm
+from .forms import PerfilForm, ZonaForm, FormLanding
 from .permisos import permisos_usuarios
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login, logout
@@ -22,6 +23,49 @@ class Inicio(TemplateView):
 class landing(TemplateView):
 	template_name = 'landingPage/landing.html'
 
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['landing'] = LandingPage().get_config()
+		return context
+
+class ActualizarLanding(TemplateView):
+	template_name = 'landingPage/edit_landing.html'
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		action = request.POST['action']
+
+		# Obtener la configuración de la página de inicio
+		conf = LandingPage.get_config()
+
+		if action == 'edit_landing':
+			# Lista de nombres de campos para imágenes y texto
+			campos = ['imagen1', 'imagen2', 'imagen3', 'imagen4', 'imagen5', 'texto1']
+
+			# Iterar sobre los campos y actualizar el objeto conf si el campo está presente en request.FILES o request.POST
+			for campo in campos:
+				if campo.startswith('imagen'):
+					if request.FILES.get(campo):
+						setattr(conf, campo, request.FILES.get(campo))
+				elif campo.startswith('texto'):
+					if request.POST.get(campo):
+						setattr(conf, campo, request.POST.get(campo))
+
+			# Guardar el objeto actualizado
+			conf.save()
+			
+			messages.add_message(request, messages.SUCCESS, 'La configuración de la página de inicio ha sido actualizada exitosamente.')
+			return redirect(reverse_lazy('edit_landing'))
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['form'] = FormLanding(instance=LandingPage.get_config())
+		return context
+		
+
 class ListadoPerfiles(ListView):
 	model = Perfil
 	template_name = 'pages/entidades/listado_usuarios.html'
@@ -37,7 +81,6 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 	success_message = 'El Usuario se ha registrado correctamente'
 
 	def post(self, request, *args, **kwargs):
-		print(request.POST)
 
 		usuario = User()
 		usuario.username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
@@ -153,39 +196,73 @@ class LoginPersonalidado(TemplateView):
 		context = super().get_context_data(**kwargs)
 		return context
 
+class CambiarClave(View):
+	#permission_required = 'core.change_password_users'
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		action = request.POST['action_password']
+		try:
+			
+			if action == 'cambiar_clave':
+
+				username = request.POST['username']
+				password = request.POST['password_actual']
+
+				user = authenticate(request, username=username, password=password)
+				if user is not None:
+					usuario = User.objects.get(username = username)
+					usuario.set_password(request.POST['new_password'])
+					usuario.save()
+					logout(request)
+					data['response'] = {'title':'Exito!', 'data': 'Contraseña actualizada correctamente.', 'type_response': 'success'}
+				
+				else:
+					data['response'] = {'title':'Ocurrió un error!', 'data': 'Contraseña actual incorrecta.', 'type_response': 'danger'}
+			else:
+				data['response'] = {'title':'Ocurrió un error!', 'data': 'Solicitud invalida.', 'type_response': 'danger'}
+					
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+
 class Logout(View):
 	def get(self, request):
 		logout(request)
 		return redirect('/')
 
 class ListaZona(TemplateView):
-    template_name = "pages/mantenimiento/listado_zonas.html"
+	template_name = "pages/mantenimiento/listado_zonas.html"
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        data = {}
-        try:
-            action = request.POST['action']
+	def post(self, request, *args, **kwargs):
+		data = {}
+		try:
+			action = request.POST['action']
 
-            if action == 'search_zonas':
-                data = []
-                for i in Zona.objects.all():
-                    item = i.toJSON()
-                    data.append(item)
-                # Convertir la lista de datos en un JsonResponse
-                return JsonResponse(data, safe=False)
-                
-        except Exception as e:
-            data['error'] = str(e)
-        return JsonResponse(data, safe=False)
+			if action == 'search_zonas':
+				data = []
+				for i in Zona.objects.all():
+					item = i.toJSON()
+					data.append(item)
+				# Convertir la lista de datos en un JsonResponse
+				return JsonResponse(data, safe=False)
+				
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["sub_title"] = "Listado de zonas"
-        return context
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["sub_title"] = "Listado de zonas"
+		return context
 
 class RegistrarZona(View):
 

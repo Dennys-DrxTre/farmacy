@@ -164,7 +164,6 @@ class RegistrarLab(View):
 			print(request.POST)
 
 			if action == 'nuevo_lab':
-				print('aqui')
 				form = FormLab(request.POST)
 
 				if form.is_valid():
