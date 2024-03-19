@@ -65,7 +65,7 @@
                                     <td>{{ solicitud.get_proceso_actual_display }}</td>
                                     <td>{{ solicitud.get_estado_display }}</td>
                                     <td>
-                                        <a href="{% url 'mi_solicitud_medicamento' solicitud.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" title="Detalle de ingreso">
+                                        <a href="{% url 'detalle_solicitud_med' solicitud.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" title="Detalle de Solicitud de medicamentos">
                                             <i class="fa fa-info"></i>
                                         </a>
                                         

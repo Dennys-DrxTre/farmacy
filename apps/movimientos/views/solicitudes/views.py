@@ -36,6 +36,17 @@ class SolicitudesMed(TemplateView):
 		context['solicitudes'] = solicitudes
 		return context
 
+class DetalleSolicitudMed(DetailView):
+	template_name = 'pages/movimientos/solicitudes/detalle_solicitud_med.html'
+	# permission_required = 'anuncios.requiere_secretria'
+	model = Solicitud
+	context_object_name = 'solicitud'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["sub_title"] = "Detalle de Solicitud"
+		return context
+
 class EditarSolicitud(SuccessMessageMixin, UpdateView):
 	template_name = 'pages/movimientos/solicitudes/editar_solicitud_de_med.html'
 	model = Solicitud

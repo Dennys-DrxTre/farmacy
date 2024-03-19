@@ -42,17 +42,15 @@
                         <a href="{% url 'vista' %}"><i class="menu-icon fa fa-home"></i>Inicio</a>
                     </li>
 
-                    {% if request.user.perfil.rol == "PA" or request.user.perfil.rol == "JC" %}
-                        <li class="menu-item-has-children dropdown">
-                            <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-envelope"></i>Mis solicitudes</a>
-                            <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-table"></i><a href="{% url 'mis_solicitudes_medicamentos' %}">Solicitud de medicamentos</a></li>
-                                {% if request.user.perfil.rol == "JC" %}
-                                    <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
-                                {% endif %}
-                            </ul>
-                        </li>
-                    {% endif %}
+                    <li class="menu-item-has-children dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-envelope"></i>Mis solicitudes</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="fa fa-table"></i><a href="{% url 'mis_solicitudes_medicamentos' %}">Solicitud de medicamentos</a></li>
+                            {% if request.user.perfil.rol == "JC" %}
+                                <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
                     
                     {% if not request.user.perfil.rol == "PA" and not request.user.perfil.rol == "JC" %}
                         <li class="menu-item-has-children dropdown">
