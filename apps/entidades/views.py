@@ -110,58 +110,69 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 	def post(self, request, *args, **kwargs):
 
 		usuario = User()
-		usuario.username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
-		usuario.email = request.POST["email"]
-		usuario.set_password(request.POST["password"])
-		usuario.is_active = request.POST.get('is_active', False)
-		usuario.save()
+		username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
+		if not User.objects.filter(username = username):
+			usuario.username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
+			usuario.email = request.POST["email"]
+			usuario.set_password(request.POST["password"])
+			usuario.is_active = request.POST.get('is_active', False)
+			usuario.save()
 
-		permissions = Permission.objects.filter(codename__in=permisos_usuarios[request.POST["rol"]])
-		for permission in permissions:
-			usuario.user_permissions.add(permission)
-		usuario.save()
+			permissions = Permission.objects.filter(codename__in=permisos_usuarios[request.POST["rol"]])
+			for permission in permissions:
+				usuario.user_permissions.add(permission)
+			usuario.save()
+		else:
+			messages.add_message(request, messages.ERROR, 'Usuario ya existe')
 
 		perfil = Perfil()
-		perfil.nacionalidad = request.POST["nacionalidad"]
-		perfil.cedula = request.POST["cedula"]
-		perfil.nombres = request.POST["nombres"]
-		perfil.apellidos = request.POST["apellidos"]
-		perfil.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
-		perfil.genero = request.POST["genero"]
-		if request.POST["genero"] == 'MA':
-			perfil.embarazada = False
+		if not Perfil.objects.filter(cedula = request.POST["cedula"]):
+			perfil.nacionalidad = request.POST["nacionalidad"]
+			perfil.cedula = request.POST["cedula"]
+			perfil.nombres = request.POST["nombres"]
+			perfil.apellidos = request.POST["apellidos"]
+			perfil.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
+			perfil.genero = request.POST["genero"]
+			if request.POST["genero"] == 'MA':
+				perfil.embarazada = False
+			else:
+				perfil.embarazada = request.POST["embarazada"]
+			perfil.f_nacimiento = request.POST["f_nacimiento"]
+			if request.FILES.get("c_residencia"):
+				perfil.c_residencia = request.FILES.get("c_residencia")
+			perfil.zona = Zona.objects.get(id = request.POST["zona"])
+			perfil.direccion = request.POST["direccion"]
+			perfil.rol = request.POST["rol"]
+			perfil.usuario = User.objects.get(username = usuario.username)
+			perfil.save()
 		else:
-			perfil.embarazada = request.POST["embarazada"]
-		perfil.f_nacimiento = request.POST["f_nacimiento"]
-		if request.FILES.get("c_residencia"):
-			perfil.c_residencia = request.FILES.get("c_residencia")
-		perfil.zona = Zona.objects.get(id = request.POST["zona"])
-		perfil.direccion = request.POST["direccion"]
-		perfil.rol = request.POST["rol"]
-		perfil.usuario = User.objects.get(username = usuario.username)
-		perfil.save()
-
-		beneficiado = Beneficiado()
-		beneficiado.perfil = Perfil.objects.get(cedula = perfil.cedula)
-		beneficiado.nacionalidad = request.POST["nacionalidad"]
-		beneficiado.cedula = request.POST["cedula"]
-		beneficiado.nombres = request.POST["nombres"]
-		beneficiado.apellidos = request.POST["apellidos"]
-		beneficiado.telefono = request.POST["telefono"]
-		beneficiado.genero = request.POST["genero"]
-		if request.POST["genero"] == 'MA':
-			beneficiado.embarazada = False
+			messages.add_message(request, messages.ERROR, 'Perfil ya existe')
+		
+		if not Beneficiado.objects.filter(cedula =request.POST["cedula"]):
+			beneficiado = Beneficiado()
+			beneficiado.perfil = Perfil.objects.get(cedula = perfil.cedula)
+			beneficiado.nacionalidad = request.POST["nacionalidad"]
+			beneficiado.cedula = request.POST["cedula"]
+			beneficiado.nombres = request.POST["nombres"]
+			beneficiado.apellidos = request.POST["apellidos"]
+			beneficiado.telefono = request.POST["telefono"]
+			beneficiado.genero = request.POST["genero"]
+			if request.POST["genero"] == 'MA':
+				beneficiado.embarazada = False
+			else:
+				beneficiado.embarazada = request.POST["embarazada"]
+			beneficiado.f_nacimiento = request.POST["f_nacimiento"]
+			if request.FILES.get("c_residencia"):
+				beneficiado.c_residencia = request.FILES.get("c_residencia")
+			beneficiado.zona = Zona.objects.get(id = request.POST["zona"])
+			beneficiado.direccion = request.POST["direccion"]
+			beneficiado.save()
+		
 		else:
-			beneficiado.embarazada = request.POST["embarazada"]
-		beneficiado.f_nacimiento = request.POST["f_nacimiento"]
-		if request.FILES.get("c_residencia"):
-			beneficiado.c_residencia = request.FILES.get("c_residencia")
-		beneficiado.zona = Zona.objects.get(id = request.POST["zona"])
-		beneficiado.direccion = request.POST["direccion"]
-		beneficiado.save()
-
+			messages.add_message(request, messages.ERROR, 'Beneficiado ya existe')
 		# enviando el correo de registro
 
+		"""
 		# Cargar la plantilla HTML
 		html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
 
@@ -174,6 +185,7 @@ class RegistrarPerfil(SuccessMessageMixin, TemplateView):
 
 		# Enviar el correo electrónico
 		msg.send()
+		"""
 
 		# Redirige al usuario a la URL de éxito
 		return redirect(reverse_lazy('lista_perfiles'))
