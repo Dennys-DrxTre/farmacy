@@ -27,6 +27,13 @@ class Persona(models.Model):
 		VENEZOLANO = 'V-', 'V-'
 		EXTRANJERO = 'E-', 'E-'
 		JURIDICO = 'J-', 'J-'
+	
+	class CodigoTlf(models.TextChoices):
+		C412 = '0412', '0412'
+		C414 = '0414', '0414'
+		C416 = '0416', '0416'
+		C424 = '0424', '0424'
+		C426 = '0426', '0426'
 
 	nacionalidad = models.CharField(max_length=2, choices=Nacionalidad.choices, default=Nacionalidad.VENEZOLANO, blank=False, null=False)
 	cedula = models.CharField(max_length=8, blank=False, null=False)
@@ -45,6 +52,10 @@ class Persona(models.Model):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		if self.c_residencia:
+			item['c_residencia'] = self.c_residencia.url
+		else:
+			item['c_residencia'] = None
 		return item
 
 class Perfil(Persona):
@@ -80,6 +91,12 @@ class Perfil(Persona):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		if self.c_residencia:
+			item['c_residencia'] = self.c_residencia.url
+		else:
+			item['c_residencia'] = None
+		item['usuario'] = {'id': self.usuario.pk, 'username': self.usuario.username, 'is_active': self.usuario.is_active}
+		item['zona'] = {'id': self.zona.pk, 'zona_residencia': self.zona.zona_residencia}
 		return item
 
 class Beneficiado(Persona):
@@ -94,6 +111,10 @@ class Beneficiado(Persona):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		if self.c_residencia:
+			item['c_residencia'] = self.c_residencia.url
+		else:
+			item['c_residencia'] = None
 		return item
 
 # personalizar landing

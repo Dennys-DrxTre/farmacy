@@ -207,7 +207,8 @@ let type_actions = {
 	},
 	'user': {
 		'cambiar_clave': '/actualizar-clave/',
-		'edit_producto': '/actualizar-producto/',
+		'nuevo_usuario': '/registrar-perfil/',
+		'reset_password': '/reset-password/',
 	},
 	'landing': {
 		'edit_landing': '/actualizar-landing/',

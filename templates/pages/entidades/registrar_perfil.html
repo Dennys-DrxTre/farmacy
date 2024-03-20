@@ -15,6 +15,18 @@
         </div>
         <div class="card-body card-block">
             
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="sufee-alert alert with-close alert-success alert-dismissible fade show">
+                        <span class="badge badge-pill badge-success">Exito!</span>
+                        {{ message }}.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             <div class="row g-2 mb-3">
                 <div class="col">
                     <div class="input-group">
@@ -24,7 +36,7 @@
                         </div>
                         <div class="col-7">
                             <label for="">Cedula</label>
-                            <input type="text" name="cedula" class="form-control" required>
+                            {{form.cedula|add_class:'form-control'|attr:'required'}}
                         </div>
                     </div>
                 </div>
@@ -53,17 +65,10 @@
                             <div class="input-group">
                                 <div class="input-group-btn">
                                     <div class="btn-group">
-                                        <select name="codigo_tlf" id="" class="form-control" required>
-                                            <option value="">----</option>
-                                            <option value="0412">0412</option>
-                                            <option value="0416">0416</option>
-                                            <option value="0426">0426</option>
-                                            <option value="0414">0414</option>
-                                            <option value="0424">0424</option>
-                                        </select>
+                                        {{form.codigo_tlf|add_class:'form-control'|attr:'required'}}
                                     </div>
                                 </div>
-                                <input type="text" name="telefono" class="form-control" required maxlength="7" minlength="7">
+                                {{form.telefono|add_class:'form-control'|attr:'required'}}
                             </div>
                         </div>
                     </div>
@@ -93,7 +98,7 @@
                     <div class="input-group">
                         <div class="col-4">
                             <label for="">Correo</label>
-                            <input type="email" name="email" id="" class="form-control" required>
+                            {{form.email|add_class:'form-control'|attr:'required'}}
                         </div>
                         <div class="col-4">
                             <label for="">Zona</label>
@@ -101,7 +106,7 @@
                         </div>
                         <div class="col-4">
                             <label for="">Constancia de residencia</label>
-                            <input type="file" name="c_residencia" id="" class="form-control">
+                            {{form.c_residencia|add_class:'form-control'}}
                         </div>
                     </div>
                 </div>
@@ -109,7 +114,7 @@
             <div class="row">
                 <div class="col">
                     <label for="">Ubicación</label>
-                    <textarea name="direccion" id="" cols="30" rows="3" class="form-control" style="resize: none;" required></textarea>
+                    {{form.direccion|add_class:'form-control'|attr:'style:resize:none'|attr:'rows:3'|attr:'required'}}
                 </div>
             </div>
             <hr>
@@ -123,11 +128,11 @@
                         <div class="input-group">
                             <div class="col-6">
                                 <label for="">Definir contraseña</label>
-                                <input type="password" minlength="6" name="password" id="" class="form-control" required>
+                                {{form.password1|add_class:'form-control'|attr:'required'}}
                             </div>
                             <div class="col-6">
                                 <label for="">Confirmar contraseña</label>
-                                <input type="password" minlength="6" name="password1" id="" class="form-control" required>
+                                {{form.password2|add_class:'form-control'|attr:'required'}}
                             </div>
                         </div>
                     </div>
@@ -138,6 +143,7 @@
                     <input type="checkbox" id="inline-checkbox1" name="is_active" value="True" class="form-check-input">Activar usuario
                 </label>
             </div>
+            {{form.usuario}}
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary btn-sm">
