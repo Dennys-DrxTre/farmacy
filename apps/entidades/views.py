@@ -14,11 +14,37 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from .mixins import ValidarUsuario
 
+
+from .models import Perfil
+from apps.inventario.models import Producto
+from apps.movimientos.models import Solicitud, Jornada
 # Create your views here.
 
-class Inicio(TemplateView):
+class Inicio(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.ver_inicio'
 	template_name = 'pages/dashboard/inicio.html'
+
+	def get(self, request, *args, **kwargs):
+		context = {}
+		cantidad_usuarios = Perfil.objects.all().count()
+		cantidad_productos = Producto.objects.all().count()
+		cantidad_solicitudes = Solicitud.objects.all().count()
+		cantidad_jornadas = Jornada.objects.all().count()
+
+		mis_solicitudes_de_medicamentos = Solicitud.objects.filter(perfil_id=request.user.perfil.pk).order_by('-pk')[:20]
+		mis_solicitudes_de_jornadas_de_medicamentos = Jornada.objects.filter(jefe_comunidad_id=request.user.perfil.pk).order_by('-pk')[:20]
+
+
+		context['cantidad_usuarios'] = cantidad_usuarios
+		context['cantidad_productos'] = cantidad_productos
+		context['cantidad_solicitudes'] = cantidad_solicitudes
+		context['cantidad_jornadas'] = cantidad_jornadas
+		context['mis_solicitudes_de_medicamentos'] = mis_solicitudes_de_medicamentos
+		context['mis_solicitudes_de_jornadas_de_medicamentos'] = mis_solicitudes_de_jornadas_de_medicamentos
+
+		return render(request, self.template_name, context)
 
 class landing(TemplateView):
 	template_name = 'landingPage/landing.html'
@@ -28,7 +54,8 @@ class landing(TemplateView):
 		context['landing'] = LandingPage().get_config()
 		return context
 
-class ActualizarLanding(TemplateView):
+class ActualizarLanding(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.change_imagen'
 	template_name = 'landingPage/edit_landing.html'
 
 	@method_decorator(csrf_exempt)

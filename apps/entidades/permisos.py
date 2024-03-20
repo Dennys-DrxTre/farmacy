@@ -64,6 +64,7 @@ permisos_usuarios = {
 
     ],
     'AL': [
+        'ver_inicio',
         'cambiar_estado_jornada',
         'cambiar_estado_solicitudes',
         'registrar_mi_solicitud_de_medicamentos',
@@ -134,6 +135,7 @@ permisos_usuarios = {
         'view_user',
         'view_solicitud',
         'view_jornada',
+        'ver_inicio',
 
     ],
     'JC': [

@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
 
 class ValidarUsuario(LoginRequiredMixin, UserPassesTestMixin):
 	permission_required = None
@@ -10,6 +11,7 @@ class ValidarUsuario(LoginRequiredMixin, UserPassesTestMixin):
 
 	def handle_no_permission(self):
 		if not self.request.user.has_perm(self.permission_required):
+			messages.error(self.request, 'No tienes permisos para acceder a esta página.')
 			return redirect(self.redirect_url)
 
 		return super().handle_no_permission()

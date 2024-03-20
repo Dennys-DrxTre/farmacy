@@ -137,7 +137,7 @@
             <div class="top-right">
                 <div class="header-menu d-flex align-items-center justify-content-center">
                     <div class="navbar-brand">
-                        <div>SU ROL ES {{ user.cargo }}</div>
+                        <div>SU ROL ES: {{ user.perfil.get_rol_display|upper }}</div>
                     </div>
                     <div class="navbar-brand ml-auto"><div id="reloj"></div></div>
                     {% block right_panel %}
@@ -167,6 +167,7 @@
         <footer class="site-footer">
         </footer>
         <!-- /.site-footer -->
+        <input type="hidden" name="user_rol" id="user_rol" value="{{ request.user.perfil.rol }}">
     </div>
     <!-- /#right-panel -->
 

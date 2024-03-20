@@ -61,6 +61,19 @@ class EditarSolicitud(SuccessMessageMixin, UpdateView):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
+		if request.user.perfil.rol == 'AD':
+			if self.get_object().tipo_solicitud == 'PR':
+				return redirect('listado_solicitudes_medicamentos')
+			elif self.get_object().tipo_solicitud == 'ON':
+				if self.get_object().estado in ['RE','ET','EE','AP']:
+					return redirect('listado_solicitudes_medicamentos')
+		if request.user.perfil.rol == "AL":
+			if self.get_object().tipo_solicitud == 'PR':
+				if self.get_object().estado in ['RE','ET','EE']:
+					return redirect('listado_solicitudes_medicamentos')
+			elif self.get_object().tipo_solicitud == 'ON':
+				if self.get_object().estado in ['PR','RE','EE','ET']:
+					return redirect('listado_solicitudes_medicamentos')
 		return super().dispatch(request, *args, **kwargs)
 
 	def producto_proximo_a_vencer(self, producto):

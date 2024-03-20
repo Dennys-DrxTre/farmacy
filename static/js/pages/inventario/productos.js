@@ -1,5 +1,7 @@
 let form_producto = document.getElementById('form_producto');
-
+let user_rol = document.getElementById('user_rol');
+user_rol = String(user_rol.value)
+console.log(user_rol);
 let getData = async () => {
     // PRODUCTO LIST
     await getDataTable(
@@ -27,8 +29,14 @@ let getData = async () => {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    let buttons = '<a href="#" rel="edit" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar producto"><i class="fa fa-edit"></i></a>';
-                    buttons += '<a href="#" rel="detail" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles de productos"><i class="fa fa-info"></i></a>';
+                    let buttons;
+                    if (!(user_rol == 'AT')) {
+                        buttons = '<a href="#" rel="edit" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar producto"><i class="fa fa-edit"></i></a>';
+                        buttons += '<a href="#" rel="detail" class="btn btn-icon btn-dark ml-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles de productos"><i class="fa fa-info"></i></a>';
+
+                    } else {
+                        buttons = '<a href="#" rel="detail" class="btn btn-icon btn-dark ml-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles de productos"><i class="fa fa-info"></i></a>';
+                    }
                     return buttons
                 }
             },
