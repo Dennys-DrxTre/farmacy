@@ -33,7 +33,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label class="form-label" for="id_descripcion">Descripcion</label>
-                            {{ form.descripcion|add_class:'form-control form-control-sm'|attr:'rows:3'|attr:'style:resize:none' }}
+                            {{ form.descripcion|add_class:'form-control form-control-sm'|attr:'rows:3'|attr:'style:resize:none'|attr:'onkeypress:return Texto_Numeros(event)' }}
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="id_recipe">Recipe</label>
@@ -186,13 +186,13 @@
                             <div class="col col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="id_cedula">Cedula</label>
-                                    {{ form_b.cedula|add_class:'form-control cedula'|attr:'placeholder:Introduzca la cedula' }}
+                                    {{ form_b.cedula|add_class:'form-control cedula'|attr:'placeholder:Introduzca la cedula'|attr:'onkeypress:return Solo_Numero(event)' }}
                                 </div>
                             </div>
                             <div class="col col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="id_nombres">Nombres</label>
-                                    {{ form_b.nombres|add_class:'form-control nombre'|attr:'placeholder:Introduzca el nombre' }}
+                                    {{ form_b.nombres|add_class:'form-control nombre'|attr:'placeholder:Introduzca el nombre'|attr:'onkeypress:return Solo_Texto(event)' }}
                                 </div>
                             </div>
                         </div>
@@ -200,7 +200,7 @@
                             <div class="col col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="id_apellidos">Apellidos</label>
-                                    {{ form_b.apellidos|add_class:'form-control apellido'|attr:'placeholder:Introduzca el apellido' }}
+                                    {{ form_b.apellidos|add_class:'form-control apellido'|attr:'placeholder:Introduzca el apellido'|attr:'onkeypress:return Solo_Texto(event)' }}
                                 </div>
                             </div>
                             <div class="col col-md-6">
@@ -218,7 +218,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    {{ form_b.telefono|add_class:'form-control'|attr:'placeholder:Introduzca el telefono'|attr:'maxlength:7'|attr:'minlength:7' }}
+                                    {{ form_b.telefono|add_class:'form-control'|attr:'placeholder:Introduzca el telefono'|attr:'maxlength:7'|attr:'minlength:7'|attr:'onkeypress:return Solo_Numero(event)' }}
                                 </div>
                             </div>
                         </div>
@@ -257,7 +257,7 @@
                             <div class="col col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="id_direccion">Direccion</label>
-                                    {{ form_b.direccion|add_class:'form-control'|attr:'placeholder:Introduzca la direccion'|attr:'rows:3' }}
+                                    {{ form_b.direccion|add_class:'form-control'|attr:'placeholder:Introduzca la direccion'|attr:'rows:3'|attr:'onkeypress:return Texto_Numeros(event)' }}
                                 </div>
                             </div>
                         </div>
@@ -298,13 +298,13 @@
                             <div class="col col-md-4">
                                 <div class="form-group">
                                     <label class="form-label" for="id_cedula">Cedula</label>
-                                    {{ form_p.cedula|add_class:'form-control cedulaP'|attr:'placeholder:Introduzca la cedula' }}
+                                    {{ form_p.cedula|add_class:'form-control cedulaP'|attr:'placeholder:Introduzca la cedula'|attr:'onkeypress:return Solo_Numero(event)' }}
                                 </div>
                             </div>
                             <div class="col col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="id_nombres">Nombres</label>
-                                    {{ form_p.nombres|add_class:'form-control nombreP'|attr:'placeholder:Introduzca el nombre' }}
+                                    {{ form_p.nombres|add_class:'form-control nombreP'|attr:'placeholder:Introduzca el nombre'|attr:'onkeypress:return Solo_Texto(event)'  }}
                                 </div>
                             </div>
                         </div>
@@ -312,7 +312,7 @@
                             <div class="col col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="id_apellidos">Apellidos</label>
-                                    {{ form_p.apellidos|add_class:'form-control apellidoP'|attr:'placeholder:Introduzca el apellido' }}
+                                    {{ form_p.apellidos|add_class:'form-control apellidoP'|attr:'placeholder:Introduzca el apellido'|attr:'onkeypress:return Solo_Texto(event)'  }}
                                 </div>
                             </div>
                             <div class="col col-md-6">
@@ -330,7 +330,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    {{ form_p.telefono|add_class:'form-control'|attr:'placeholder:Introduzca el telefono'|attr:'maxlength:7'|attr:'minlength:7' }}
+                                    {{ form_p.telefono|add_class:'form-control'|attr:'placeholder:Introduzca el telefono'|attr:'maxlength:7'|attr:'minlength:7'|attr:'onkeypress:return Solo_Numero(event)' }}
                                 </div>
                             </div>
                         </div>
@@ -369,7 +369,7 @@
                             <div class="col col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="id_direccion">Direccion</label>
-                                    {{ form_p.direccion|add_class:'form-control'|attr:'placeholder:Introduzca la direccion'|attr:'rows:3' }}
+                                    {{ form_p.direccion|add_class:'form-control'|attr:'placeholder:Introduzca la direccion'|attr:'rows:3'|attr:'onkeypress:return Texto_Numeros(event)' }}
                                 </div>
                             </div>
                         </div>
