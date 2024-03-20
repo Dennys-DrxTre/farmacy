@@ -6,6 +6,7 @@ from .forms import PerfilForm, ZonaForm, FormLanding
 from .permisos import permisos_usuarios
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.db import IntegrityError
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login, logout
@@ -101,100 +102,86 @@ class ListadoPerfiles(ListView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		context['sub_title'] = 'Lista de Usuarios'
+		context['form'] = PerfilForm()
 		return context
-	
-class RegistrarPerfil(SuccessMessageMixin, TemplateView):
-	template_name = 'pages/entidades/registrar_perfil.html'
-	success_message = 'El Usuario se ha registrado correctamente'
 
+from django.contrib.auth.models import User, Permission
+from django.http import JsonResponse
+from django.views import View
+
+class RegistrarPerfil(View):
 	def post(self, request, *args, **kwargs):
-
-		usuario = User()
-		username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
-		if not User.objects.filter(username = username):
-			usuario.username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
-			usuario.email = request.POST["email"]
-			usuario.set_password(request.POST["password"])
-			usuario.is_active = request.POST.get('is_active', False)
-			usuario.save()
-
-			permissions = Permission.objects.filter(codename__in=permisos_usuarios[request.POST["rol"]])
-			for permission in permissions:
-				usuario.user_permissions.add(permission)
-			usuario.save()
-		else:
-			messages.add_message(request, messages.ERROR, 'Usuario ya existe')
-
-		perfil = Perfil()
-		if not Perfil.objects.filter(cedula = request.POST["cedula"]):
-			perfil.nacionalidad = request.POST["nacionalidad"]
-			perfil.cedula = request.POST["cedula"]
-			perfil.nombres = request.POST["nombres"]
-			perfil.apellidos = request.POST["apellidos"]
-			perfil.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
-			perfil.genero = request.POST["genero"]
-			if request.POST["genero"] == 'MA':
-				perfil.embarazada = False
-			else:
-				perfil.embarazada = request.POST["embarazada"]
-			perfil.f_nacimiento = request.POST["f_nacimiento"]
-			if request.FILES.get("c_residencia"):
-				perfil.c_residencia = request.FILES.get("c_residencia")
-			perfil.zona = Zona.objects.get(id = request.POST["zona"])
-			perfil.direccion = request.POST["direccion"]
-			perfil.rol = request.POST["rol"]
-			perfil.usuario = User.objects.get(username = usuario.username)
-			perfil.save()
-		else:
-			messages.add_message(request, messages.ERROR, 'Perfil ya existe')
+		data = {}
+		action = request.POST['action']
 		
-		if not Beneficiado.objects.filter(cedula =request.POST["cedula"]):
-			beneficiado = Beneficiado()
-			beneficiado.perfil = Perfil.objects.get(cedula = perfil.cedula)
-			beneficiado.nacionalidad = request.POST["nacionalidad"]
-			beneficiado.cedula = request.POST["cedula"]
-			beneficiado.nombres = request.POST["nombres"]
-			beneficiado.apellidos = request.POST["apellidos"]
-			beneficiado.telefono = request.POST["telefono"]
-			beneficiado.genero = request.POST["genero"]
-			if request.POST["genero"] == 'MA':
-				beneficiado.embarazada = False
+		if action == 'nuevo_usuario':
+			username = f'{request.POST["nacionalidad"]}{request.POST["cedula"]}'
+			if not User.objects.filter(username=username).exists() and not Perfil.objects.filter(cedula = request.POST["cedula"]):
+				usuario = User()
+				usuario.username = username
+				usuario.first_name = request.POST["nombres"]
+				usuario.last_name = request.POST["apellidos"]
+				usuario.email = request.POST["email"]
+				usuario.is_active = request.POST.get('is_active', False)
+				usuario.set_password(request.POST["password1"])
+				usuario.save()
+
+				permissions = Permission.objects.filter(codename__in=permisos_usuarios[request.POST["rol"]])
+				usuario.user_permissions.set(permissions)
+				usuario.save()
+
+				
+				perfil = Perfil.objects.create(
+					nacionalidad=request.POST["nacionalidad"],
+					cedula=request.POST["cedula"],
+					nombres=request.POST["nombres"],
+					apellidos=request.POST["apellidos"],
+					telefono=f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}',
+					genero=request.POST["genero"],
+					embarazada=request.POST["genero"] == 'MA' or request.POST["embarazada"],
+					f_nacimiento=request.POST["f_nacimiento"],
+					c_residencia=request.FILES.get("c_residencia"),
+					zona=Zona.objects.get(id=request.POST["zona"]),
+					direccion=request.POST["direccion"],
+					rol=request.POST["rol"],
+					usuario=usuario
+				)
+
+				if not Beneficiado.objects.filter(cedula=request.POST["cedula"]).exists():
+					Beneficiado.objects.create(
+						perfil=perfil,
+						nacionalidad=request.POST["nacionalidad"],
+						cedula=request.POST["cedula"],
+						nombres=request.POST["nombres"],
+						apellidos=request.POST["apellidos"],
+						telefono=request.POST["telefono"],
+						genero=request.POST["genero"],
+						embarazada=request.POST["genero"] == 'MA' or request.POST["embarazada"],
+						f_nacimiento=request.POST["f_nacimiento"],
+						c_residencia=request.FILES.get("c_residencia"),
+						zona=Zona.objects.get(id=request.POST["zona"]),
+						direccion=request.POST["direccion"]
+					)
+				
+				else:
+					data['response'] = {'title': 'Ocurrió un error!', 'data': 'Beneficiado ya existe.', 'type_response': 'danger'}
+				
+				data['response'] = {'title': 'Exito!', 'data': 'Usuario creado correctamente.', 'type_response': 'success'}
+
 			else:
-				beneficiado.embarazada = request.POST["embarazada"]
-			beneficiado.f_nacimiento = request.POST["f_nacimiento"]
-			if request.FILES.get("c_residencia"):
-				beneficiado.c_residencia = request.FILES.get("c_residencia")
-			beneficiado.zona = Zona.objects.get(id = request.POST["zona"])
-			beneficiado.direccion = request.POST["direccion"]
-			beneficiado.save()
-		
+				data['response'] = {'title': 'Ocurrió un error!', 'data': 'Usuario ya esta registrado.', 'type_response': 'danger'}
 		else:
-			messages.add_message(request, messages.ERROR, 'Beneficiado ya existe')
-		# enviando el correo de registro
+			data['response'] = {'title': 'Ocurrió un error!', 'data': 'Error de solicitud.', 'type_response': 'danger'}
+				
+		
+		return JsonResponse(data, safe=False)
 
-		"""
-		# Cargar la plantilla HTML
-		html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
-
-		# Configurar el correo electrónico
-		subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
-		text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
-
-		msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-		msg.attach_alternative(html_content, "text/html")
-
-		# Enviar el correo electrónico
-		msg.send()
-		"""
-
-		# Redirige al usuario a la URL de éxito
-		return redirect(reverse_lazy('lista_perfiles'))
-	
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		context['form'] = PerfilForm()
 		return context
-		
+
+
 
 # control de acceso
 	
