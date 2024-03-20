@@ -25,17 +25,31 @@
                     <!-- <a href="#" id="btn_filter" class="btn btn-icon btn-light-dark ml-10" rel="btn_open_modal_report" data-bs-toggle="tooltip" data-bs-placement="top" title="Reportes">
                         <i class="fas fa-file-pdf"></i>
                     </a> -->
-                    {% comment %} <a href="{% url 'new_perfil' %}" class="btn btn-icon btn-info" data-bs-toggle="tooltip" title="Registrar usuario">
-                        <i class="fa fa-plus text-white"></i>
-                    </a> {% endcomment %}
-                    <button type="button" class="btn btn-primary mb-1" id="btn_nuevo_usuario">
-                        <i class="fa fa-plus text-white"></i>
-                    </button>
+                    <div class="input-group">
+                        <div class="col">
+                            <div class="input-group">
+                                <div class="input-group-btn mr-3">
+                                    <div class="btn-group">
+                                        <select name="select_filter" id="id_select_filter" class="form-control">
+                                            <option value="AD">Administrador</option>
+                                            <option value="AL">Almacen</option>
+                                            <option value="AT">Atención al cliente</option>
+                                            <option value="JC">Jefe de comunidad</option>
+                                            <option value="PA" selected>Paciente</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary mb-1" id="btn_nuevo_usuario">
+                                    <i class="fa fa-plus text-white"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
                 <div class="dt-responsive table-responsive">
-                    <table id="listado" class="table table-striped table-hover table-bordered nowrap">
+                    <table id="listado_usuarios" class="table table-striped table-hover table-bordered nowrap">
                         <thead>
                             <tr>
                                 <th>C.I</th>
@@ -48,24 +62,6 @@
                               </tr>
                         </thead>
                         <tbody>
-                            {% for x in perfiles %}
-                                <tr>
-                                    <td>{{x.nacionalidad}}{{x.cedula}}</td>
-                                    <td>{{ x.nombres }}</td>
-                                    <td>{{ x.apellidos }}</td>
-                                    <td>{{ x.genero }}</td>
-                                    <td>{{ x.telefono }}</td>
-                                    <td>{{ x.zona }}</td>
-                                    <td>
-                                        <a href="" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalle de ingreso">
-                                            <i class="fa fa-info"></i>
-                                        </a>
-                                        <!-- <a href="#" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar anuncio">
-                                            <i class="fa fa-edit"></i>
-                                        </a> -->
-                                    </td>
-                                </tr>
-                            {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
@@ -229,6 +225,8 @@
         </form>
     </div>
 </div>
+
+{% include 'pages/entidades/modal_reset_pass.html' %}
 
 {% endblock body %}
 

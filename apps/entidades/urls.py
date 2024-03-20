@@ -10,7 +10,8 @@ from .views import (
     ActualizarZona,
     Logout,
     CambiarClave,
-    ActualizarLanding
+    ActualizarLanding,
+    ResetPassword
 )
 
 urlpatterns = [
@@ -25,6 +26,7 @@ urlpatterns = [
     path('ingresar/', LoginPersonalidado.as_view(), name='login'),
     path('cerrar-sesion/', Logout.as_view(), name='logout'),
     path('actualizar-clave/', CambiarClave.as_view(), name='cambiar_clave'),
+    path('reset-password/', ResetPassword.as_view(), name='reset_pass'),
 
     path('listado-de-zonas/', ListaZona.as_view(), name='lista_zonas'),
     path('registro-de-zona/', RegistrarZona.as_view(), name='nueva_zona'),

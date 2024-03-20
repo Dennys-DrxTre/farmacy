@@ -208,6 +208,7 @@ let type_actions = {
 	'user': {
 		'cambiar_clave': '/actualizar-clave/',
 		'nuevo_usuario': '/registrar-perfil/',
+		'reset_password': '/reset-password/',
 	},
 	'landing': {
 		'edit_landing': '/actualizar-landing/',

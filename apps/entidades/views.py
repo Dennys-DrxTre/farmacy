@@ -93,21 +93,35 @@ class ActualizarLanding(ValidarUsuario, TemplateView):
 		context['form'] = FormLanding(instance=LandingPage.get_config())
 		return context
 		
-
-class ListadoPerfiles(ListView):
-	model = Perfil
+class ListadoPerfiles(TemplateView):
 	template_name = 'pages/entidades/listado_usuarios.html'
-	context_object_name = 'perfiles'
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		try:
+			action = request.POST['action']
+
+			if action == 'search_usuarios':
+				data = []
+				for i in Perfil.objects.filter(rol = request.POST['filter_id']):
+					item = i.toJSON()
+					data.append(item)
+				# Convertir la lista de datos en un JsonResponse
+				return JsonResponse(data, safe=False)
+				
+		except Exception as e:
+			data['error'] = str(e) # Ahora esto es válido porque data es un diccionario
+		return JsonResponse(data, safe=False)
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		context['sub_title'] = 'Lista de Usuarios'
 		context['form'] = PerfilForm()
 		return context
-
-from django.contrib.auth.models import User, Permission
-from django.http import JsonResponse
-from django.views import View
 
 class RegistrarPerfil(View):
 	def post(self, request, *args, **kwargs):
@@ -212,7 +226,7 @@ class LoginPersonalidado(TemplateView):
 					if not User.objects.filter(username = username):
 						data['response'] = {'title':'Ocurrió un error!', 'data': 'El usuario no existe.', 'type_response': 'danger'}
 					else:
-						data['response'] = {'title':'Ocurrió un error!', 'data': 'Contraseña incorrecta.', 'type_response': 'danger'}
+						data['response'] = {'title':'Ocurrió un error!', 'data': 'Contraseña incorrecta o usuario inactivo', 'type_response': 'danger'}
 
 		except Exception as e:
 			data['error'] = str(e)
@@ -249,6 +263,34 @@ class CambiarClave(View):
 				
 				else:
 					data['response'] = {'title':'Ocurrió un error!', 'data': 'Contraseña actual incorrecta.', 'type_response': 'danger'}
+			else:
+				data['response'] = {'title':'Ocurrió un error!', 'data': 'Solicitud invalida.', 'type_response': 'danger'}
+					
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+
+class ResetPassword(View):
+	#permission_required = 'core.change_password_users'
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		action = request.POST['action_reset']
+		try:
+			
+			if action == 'reset_password':
+
+				username = request.POST['username_reset']
+				password = request.POST['password1_reset']
+
+				usuario = User.objects.get(username = username)
+				usuario.set_password(password)
+				usuario.save()
+				data['response'] = {'title':'Exito!', 'data': 'Contraseña actualizada correctamente.', 'type_response': 'success'}
 			else:
 				data['response'] = {'title':'Ocurrió un error!', 'data': 'Solicitud invalida.', 'type_response': 'danger'}
 					

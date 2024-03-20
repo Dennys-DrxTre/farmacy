@@ -52,6 +52,10 @@ class Persona(models.Model):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		if self.c_residencia:
+			item['c_residencia'] = self.c_residencia.url
+		else:
+			item['c_residencia'] = None
 		return item
 
 class Perfil(Persona):
@@ -87,6 +91,12 @@ class Perfil(Persona):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		if self.c_residencia:
+			item['c_residencia'] = self.c_residencia.url
+		else:
+			item['c_residencia'] = None
+		item['usuario'] = {'id': self.usuario.pk, 'username': self.usuario.username, 'is_active': self.usuario.is_active}
+		item['zona'] = {'id': self.zona.pk, 'zona_residencia': self.zona.zona_residencia}
 		return item
 
 class Beneficiado(Persona):
@@ -101,6 +111,10 @@ class Beneficiado(Persona):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		if self.c_residencia:
+			item['c_residencia'] = self.c_residencia.url
+		else:
+			item['c_residencia'] = None
 		return item
 
 # personalizar landing
