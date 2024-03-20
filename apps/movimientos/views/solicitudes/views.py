@@ -352,9 +352,8 @@ class RegistrarPerfilFisico(View):
 					beneficiado.cedula = request.POST["cedula"]
 					beneficiado.nombres = request.POST["nombres"]
 					beneficiado.apellidos = request.POST["apellidos"]
-					beneficiado.telefono = request.POST["telefono"]
+					beneficiado.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
 					beneficiado.genero = request.POST["genero"]
-					print(request.POST["f_nacimiento"])
 					beneficiado.f_nacimiento = request.POST["f_nacimiento"]
 					if request.POST["genero"] == 'MA':
 						beneficiado.embarazada = False

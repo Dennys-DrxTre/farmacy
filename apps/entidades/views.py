@@ -161,24 +161,28 @@ class RegistrarPerfil(View):
 					usuario=usuario
 				)
 
-				if not Beneficiado.objects.filter(cedula=request.POST["cedula"]).exists():
-					Beneficiado.objects.create(
-						perfil=perfil,
-						nacionalidad=request.POST["nacionalidad"],
-						cedula=request.POST["cedula"],
-						nombres=request.POST["nombres"],
-						apellidos=request.POST["apellidos"],
-						telefono=request.POST["telefono"],
-						genero=request.POST["genero"],
-						embarazada=request.POST["genero"] == 'MA' or request.POST["embarazada"],
-						f_nacimiento=request.POST["f_nacimiento"],
-						c_residencia=request.FILES.get("c_residencia"),
-						zona=Zona.objects.get(id=request.POST["zona"]),
-						direccion=request.POST["direccion"]
-					)
-				
+				if Beneficiado.objects.filter(cedula=perfil.cedula).first():
+					beneficiado = Beneficiado.objects.filter(cedula=perfil.cedula).first()
 				else:
-					data['response'] = {'title': 'Ocurrió un error!', 'data': 'Beneficiado ya existe.', 'type_response': 'danger'}
+					beneficiado = Beneficiado()
+				beneficiado.perfil_id = perfil.pk
+				beneficiado.nacionalidad = request.POST["nacionalidad"]
+				beneficiado.cedula = request.POST["cedula"]
+				beneficiado.nombres = request.POST["nombres"]
+				beneficiado.apellidos = request.POST["apellidos"]
+				beneficiado.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
+				beneficiado.genero = request.POST["genero"]
+				print(request.POST["f_nacimiento"])
+				beneficiado.f_nacimiento = request.POST["f_nacimiento"]
+				if request.POST["genero"] == 'MA':
+					beneficiado.embarazada = False
+				else:
+					beneficiado.embarazada = request.POST["embarazada"]
+				if request.FILES.get("c_residencia"):
+					beneficiado.c_residencia = request.FILES.get("c_residencia")
+				beneficiado.zona_id = request.POST["zona"]
+				beneficiado.direccion = request.POST["direccion"]
+				beneficiado.save()
 				
 				data['response'] = {'title': 'Exito!', 'data': 'Usuario creado correctamente.', 'type_response': 'success'}
 
