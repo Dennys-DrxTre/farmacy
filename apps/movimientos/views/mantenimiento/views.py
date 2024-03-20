@@ -9,10 +9,14 @@ from django.views.generic import (
 	View, 
 	TemplateView
 )
+from apps.entidades.mixins import ValidarUsuario
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from apps.movimientos.models import TipoMov
 from apps.movimientos.forms import FormTipoMovi
 	
-class ListadoTipoMovi(TemplateView):
+class ListadoTipoMovi(ValidarUsuario, TemplateView):
+	permission_required = 'movimientos.view_tipomov'
 	template_name = "pages/mantenimiento/tipo_movi.html"
 
 	@method_decorator(csrf_exempt)
@@ -42,7 +46,7 @@ class ListadoTipoMovi(TemplateView):
 		context["form"] = FormTipoMovi()
 		return context
 	
-class RegistrarTipoMovi(View):
+class RegistrarTipoMovi(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -66,7 +70,7 @@ class RegistrarTipoMovi(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 	
-class ActualizarTipoMovi(View):
+class ActualizarTipoMovi(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):

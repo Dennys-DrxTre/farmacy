@@ -16,6 +16,9 @@ from django.views.generic import (
 	DetailView,
 	View
 )
+from apps.entidades.mixins import ValidarUsuario
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from ...forms import MiSolicitudForm, BeneficiadoForm
 
 from ...models import Solicitud, TipoMov, DetalleSolicitud, Historial
@@ -23,7 +26,8 @@ from apps.inventario.models import Inventario, Producto
 from apps.entidades.models import Beneficiado,Perfil
 # # Create your views here.
 
-class MisSolicitudesMedOnline(TemplateView):
+class MisSolicitudesMedOnline(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.ver_mis_solicitudes_de_medicamentos'
 	template_name = 'pages/movimientos/solicitudes_online/listado_solicitudes_med_online.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	
@@ -35,7 +39,8 @@ class MisSolicitudesMedOnline(TemplateView):
 		context['solicitudes'] = mis_solicitudes
 		return context
 
-class DetalleMiSolicitudOnline(TemplateView):
+class DetalleMiSolicitudOnline(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.ver_mis_solicitudes_de_medicamentos'
 	template_name = 'pages/movimientos/solicitudes_online/detalle_solicitud_med_online.html'
 	# permission_required = 'anuncios.requiere_secretria'
 
@@ -49,7 +54,8 @@ class DetalleMiSolicitudOnline(TemplateView):
 		except Solicitud.DoesNotExist:
 			return redirect('mis_solicitudes_medicamentos')
 	
-class RegistrarMiSolicitud(TemplateView):
+class RegistrarMiSolicitud(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.registrar_mi_solicitud_de_medicamentos'
 	template_name = 'pages/movimientos/solicitudes_online/registrar_mi_solicitud_de_med.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None
@@ -98,7 +104,7 @@ class RegistrarMiSolicitud(TemplateView):
 		context["form_b"] = BeneficiadoForm()
 		return context
 	
-class RegistrarBeneficiado(View):
+class RegistrarBeneficiado(LoginRequiredMixin, View):
 	# permission_required = 'anuncios.requiere_secretria'
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):

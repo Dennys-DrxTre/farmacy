@@ -15,6 +15,9 @@ from django.views.generic import (
 	DetailView,
 	View
 )
+from apps.entidades.mixins import ValidarUsuario
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from ...forms import IngresoForm
 
 from ...models import Ingreso, DetalleIngreso, TipoMov, Historial
@@ -22,7 +25,8 @@ from apps.inventario.models import Inventario, Producto
 from apps.entidades.models import Perfil
 # Create your views here.
 
-class ListadoIngresos(ListView):
+class ListadoIngresos(ValidarUsuario, ListView):
+	permission_required = 'movimientos.view_ingreso'
 	context_object_name = 'ingresos'
 	template_name = 'pages/movimientos/ingresos/listado_ingresos.html'
 	# permission_required = 'anuncios.requiere_secretria'
@@ -34,7 +38,8 @@ class ListadoIngresos(ListView):
 		context["sub_title"] = "Listado de ingresos"
 		return context
 
-class DetalleIngresoView(DetailView):
+class DetalleIngresoView(ValidarUsuario, DetailView):
+	permission_required = 'movimientos.view_ingreso'
 	template_name = 'pages/movimientos/ingresos/detalle_ingreso.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	model = Ingreso
@@ -45,7 +50,8 @@ class DetalleIngresoView(DetailView):
 		context["sub_title"] = "Detalles del ingreso"
 		return context
 	
-class RegistrarIngreso(TemplateView):
+class RegistrarIngreso(ValidarUsuario, TemplateView):
+	permission_required = 'movimientos.add_ingreso'
 	template_name = 'pages/movimientos/ingresos/registrar_ingreso.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None
@@ -107,8 +113,8 @@ class RegistrarIngreso(TemplateView):
 		context["form"] = IngresoForm
 		return context
 	
-class BuscarProductosView(View):
-	# permission_required = 'core.register_buy'
+class BuscarProductosView(ValidarUsuario, View):
+	permission_required = 'inventario.view_producto'
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):

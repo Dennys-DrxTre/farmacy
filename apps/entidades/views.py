@@ -16,7 +16,8 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from .mixins import ValidarUsuario
-
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Perfil
 from apps.inventario.models import Producto
@@ -56,7 +57,7 @@ class landing(TemplateView):
 		return context
 
 class ActualizarLanding(ValidarUsuario, TemplateView):
-	permission_required = 'entidades.change_imagen'
+	permission_required = 'entidades.change_landingpage'
 	template_name = 'landingPage/edit_landing.html'
 
 	@method_decorator(csrf_exempt)
@@ -93,7 +94,8 @@ class ActualizarLanding(ValidarUsuario, TemplateView):
 		context['form'] = FormLanding(instance=LandingPage.get_config())
 		return context
 		
-class ListadoPerfiles(TemplateView):
+class ListadoPerfiles(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.view_perfil'
 	template_name = 'pages/entidades/listado_usuarios.html'
 
 	@method_decorator(csrf_exempt)
@@ -123,7 +125,8 @@ class ListadoPerfiles(TemplateView):
 		context['form'] = PerfilForm()
 		return context
 
-class RegistrarPerfil(View):
+class RegistrarPerfil(LoginRequiredMixin, View):
+
 	def post(self, request, *args, **kwargs):
 		data = {}
 		action = request.POST['action']
@@ -198,9 +201,6 @@ class RegistrarPerfil(View):
 		context = super().get_context_data(**kwargs)
 		context['form'] = PerfilForm()
 		return context
-
-
-
 # control de acceso
 	
 class LoginPersonalidado(TemplateView):
@@ -240,8 +240,8 @@ class LoginPersonalidado(TemplateView):
 		context = super().get_context_data(**kwargs)
 		return context
 
-class CambiarClave(View):
-	#permission_required = 'core.change_password_users'
+class CambiarClave(LoginRequiredMixin, View):
+	# permission_required = 'core.change_password_users'
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -274,7 +274,7 @@ class CambiarClave(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 
-class ResetPassword(View):
+class ResetPassword(LoginRequiredMixin, View):
 	#permission_required = 'core.change_password_users'
 
 	@method_decorator(csrf_exempt)
@@ -307,7 +307,8 @@ class Logout(View):
 		logout(request)
 		return redirect('/')
 
-class ListaZona(TemplateView):
+class ListaZona(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.view_zona'
 	template_name = "pages/mantenimiento/listado_zonas.html"
 
 	@method_decorator(csrf_exempt)
@@ -336,7 +337,7 @@ class ListaZona(TemplateView):
 		context["sub_title"] = "Listado de zonas"
 		return context
 
-class RegistrarZona(View):
+class RegistrarZona(LoginRequiredMixin,View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -360,7 +361,7 @@ class RegistrarZona(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 	
-class ActualizarZona(View):
+class ActualizarZona(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):

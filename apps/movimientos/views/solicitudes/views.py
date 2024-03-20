@@ -22,13 +22,16 @@ from django.views.generic import (
 )
 from ...forms import BeneficiadoForm, SolicitudEditForm, SolicitudPresencialForm, PerfilForm
 from apps.entidades.permisos import permisos_usuarios
+from apps.entidades.mixins import ValidarUsuario
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ...models import Solicitud, TipoMov, DetalleSolicitud, Historial
-from apps.inventario.models import Inventario, Producto
-from apps.entidades.models import Beneficiado, Perfil, User, Zona
+from apps.inventario.models import Producto
+from apps.entidades.models import Beneficiado, Perfil, User
 # # Create your views here.
 
-class SolicitudesMed(TemplateView):
+class SolicitudesMed(ValidarUsuario, TemplateView):
+	permission_required = 'movimientos.view_solicitud'
 	template_name = 'pages/movimientos/solicitudes/listado_solicitudes_med.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	
@@ -40,7 +43,7 @@ class SolicitudesMed(TemplateView):
 		context['solicitudes'] = solicitudes
 		return context
 
-class DetalleSolicitudMed(DetailView):
+class DetalleSolicitudMed(ValidarUsuario, DetailView):
 	template_name = 'pages/movimientos/solicitudes/detalle_solicitud_med.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	model = Solicitud
@@ -51,7 +54,8 @@ class DetalleSolicitudMed(DetailView):
 		context["sub_title"] = "Detalle de Solicitud"
 		return context
 
-class EditarSolicitud(SuccessMessageMixin, UpdateView):
+class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
+	permission_required = 'movimientos.change_solicitud'
 	template_name = 'pages/movimientos/solicitudes/editar_solicitud_de_med.html'
 	model = Solicitud
 	form_class = SolicitudEditForm
@@ -188,7 +192,8 @@ class EditarSolicitud(SuccessMessageMixin, UpdateView):
 		context['tipo_solicitud'] = self.get_object().tipo_solicitud
 		return context
 
-class RegistrarSolicitudPresencial(TemplateView):
+class RegistrarSolicitudPresencial(ValidarUsuario, TemplateView):
+	permission_required = 'movimientos.add_solicitud'
 	template_name = 'pages/movimientos/solicitudes/registrar_solicitud_de_med_presencial.html'
 	# permission_required = 'anuncios.requiere_secretria'
 
@@ -239,7 +244,8 @@ class RegistrarSolicitudPresencial(TemplateView):
 		context['perfiles'] = Perfil.objects.all()
 		return context
 
-class MedicamentoEntregado(SuccessMessageMixin, View):
+class MedicamentoEntregado(ValidarUsuario, SuccessMessageMixin, View):
+	permission_required = 'entidades.cambiar_estado_solicitudes'
 	success_massage = 'El medicamento ha sido entregado correctamente'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None
@@ -264,7 +270,7 @@ class MedicamentoEntregado(SuccessMessageMixin, View):
 			print(e)
 		return redirect('listado_solicitudes_medicamentos')
 	
-class RegistrarBeneficiadoFisico(View):
+class RegistrarBeneficiadoFisico(LoginRequiredMixin, View):
 	# permission_required = 'anuncios.requiere_secretria'
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -299,7 +305,7 @@ class RegistrarBeneficiadoFisico(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 
-class RegistrarPerfilFisico(View):
+class RegistrarPerfilFisico(LoginRequiredMixin, View):
 	# permission_required = 'anuncios.requiere_secretria'
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):

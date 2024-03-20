@@ -13,6 +13,9 @@ from django.views.generic import (
 	View, 
 	TemplateView
 )
+from apps.entidades.mixins import ValidarUsuario
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .forms import FormLab, FormTipoInsu, FormAlmacen, FormProducto
 
 from .models import Producto, Inventario, Laboratorio, TipoInsumo, Almacen
@@ -20,7 +23,8 @@ from apps.movimientos.models import Historial
 
 # Create your views here.
 	
-class DetalleProductoView(DetailView):
+class DetalleProductoView(ValidarUsuario, DetailView):
+	permission_required = 'inventario.view_producto'
 	template_name = 'pages/productos/detalle_producto.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	model = Producto
@@ -43,7 +47,8 @@ class DetalleProductoView(DetailView):
 		context["sub_title"] = "Detalles del producto"
 		return context
 
-class ListadoProductos(TemplateView):
+class ListadoProductos(ValidarUsuario, TemplateView):
+	permission_required = 'inventario.view_producto'
 	template_name = 'pages/productos/listado_productos.html'
 
 	@method_decorator(csrf_exempt)
@@ -97,7 +102,7 @@ class RegistrarProducto(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 
-class ActualizarProducto(View):
+class ActualizarProducto(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -122,7 +127,8 @@ class ActualizarProducto(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)	
 
-class ListadoLaboratorio(TemplateView):
+class ListadoLaboratorio(ValidarUsuario, TemplateView):
+	permission_required = 'inventario.view_laboratorio'
 	template_name = "pages/mantenimiento/listado_lab.html"
 
 	@method_decorator(csrf_exempt)
@@ -151,7 +157,7 @@ class ListadoLaboratorio(TemplateView):
 		context["sub_title"] = "Listado de Laboratorios"
 		return context
 	
-class RegistrarLab(View):
+class RegistrarLab(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -176,7 +182,7 @@ class RegistrarLab(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 	
-class ActualizarLaboratorio(View):
+class ActualizarLaboratorio(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -200,7 +206,8 @@ class ActualizarLaboratorio(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)	
 	
-class ListadoTiposInsumos(TemplateView):
+class ListadoTiposInsumos(ValidarUsuario, TemplateView):
+	permission_required = 'inventario.view_tipoinsumo'
 	template_name = "pages/mantenimiento/tipo_insu.html"
 
 	@method_decorator(csrf_exempt)
@@ -229,7 +236,7 @@ class ListadoTiposInsumos(TemplateView):
 		context["sub_title"] = "Listado de tipos de insumos"
 		return context
 	
-class RegistrarTipoInsu(View):
+class RegistrarTipoInsu(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -253,7 +260,7 @@ class RegistrarTipoInsu(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 
-class ActualizarTipoInsumo(View):
+class ActualizarTipoInsumo(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -277,7 +284,8 @@ class ActualizarTipoInsumo(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)	
 	
-class ListadoAlmacen(TemplateView):
+class ListadoAlmacen(ValidarUsuario, TemplateView):
+	permission_required = 'inventario.view_almacen'
 	template_name = "pages/mantenimiento/listado_almacen.html"
 
 	@method_decorator(csrf_exempt)
@@ -306,7 +314,7 @@ class ListadoAlmacen(TemplateView):
 		context["sub_title"] = "Listado de almacenes"
 		return context
 
-class RegistrarAlmacen(View):
+class RegistrarAlmacen(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
@@ -330,7 +338,7 @@ class RegistrarAlmacen(View):
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 	
-class ActualizarAlmacen(View):
+class ActualizarAlmacen(LoginRequiredMixin, View):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):

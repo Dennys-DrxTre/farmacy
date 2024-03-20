@@ -60,8 +60,11 @@ permisos_usuarios = {
         'view_detallesolicitud',
         'add_solicitud',
         'change_solicitud',
-        'view_solicitud'
-
+        'view_solicitud',
+        'change_landingpage',
+        'add_landingpage',
+        'delete_landingpage',
+        'view_landingpage',
     ],
     'AL': [
         'ver_inicio',
