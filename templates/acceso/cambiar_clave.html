@@ -18,17 +18,17 @@
                             </div>
                             <div class="col">
                                 <label for="id_password_actual">Contraseña actual</label>
-                                <input type="password" name="password_actual" id="id_password_actual" required class="form-control">
+                                <input type="password"  onkeypress="return Texto_Numeros(event)" name="password_actual" id="id_password_actual" required class="form-control">
                             </div>
                         </div>
                         <div class="row g-2">
                             <div class="col">
                                 <label for="id_new_password">Contraseña nueva</label>
-                                <input type="password" name="new_password" id="id_new_password" class="form-control">
+                                <input type="password"  onkeypress="return Texto_Numeros(event)" minlength="6" name="new_password" id="id_new_password" class="form-control">
                             </div>
                             <div class="col">
                                 <label for="id_new_password2">Confirme contraseña</label>
-                                <input type="password" name="new_password2" id="id_new_password2" class="form-control">
+                                <input type="password"  onkeypress="return Texto_Numeros(event)" minlength="6" name="new_password2" id="id_new_password2" class="form-control">
                             </div>
                         </div>
                     </div>

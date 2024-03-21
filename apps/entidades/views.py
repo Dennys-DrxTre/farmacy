@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView, View
+from django.views.generic import TemplateView, ListView, View, DetailView
 from apps.entidades.models import Perfil, Persona, User, Beneficiado, Zona, LandingPage
 from django.contrib.auth.models import Permission
 from .forms import PerfilForm, ZonaForm, FormLanding
@@ -147,6 +147,10 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 				usuario.user_permissions.set(permissions)
 				usuario.save()
 
+				if request.POST["genero"] == 'MA':
+					embarazada = False
+				else:
+					embarazada = request.POST["embarazada"]
 				
 				perfil = Perfil.objects.create(
 					nacionalidad=request.POST["nacionalidad"],
@@ -155,7 +159,7 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 					apellidos=request.POST["apellidos"],
 					telefono=f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}',
 					genero=request.POST["genero"],
-					embarazada=request.POST["genero"] == 'MA' or request.POST["embarazada"],
+					embarazada=embarazada, # Usa el valor calculado aquí
 					f_nacimiento=request.POST["f_nacimiento"],
 					c_residencia=request.FILES.get("c_residencia"),
 					zona=Zona.objects.get(id=request.POST["zona"]),
@@ -175,7 +179,6 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 				beneficiado.apellidos = request.POST["apellidos"]
 				beneficiado.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
 				beneficiado.genero = request.POST["genero"]
-				print(request.POST["f_nacimiento"])
 				beneficiado.f_nacimiento = request.POST["f_nacimiento"]
 				if request.POST["genero"] == 'MA':
 					beneficiado.embarazada = False
@@ -201,6 +204,19 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 		context = super().get_context_data(**kwargs)
 		context['form'] = PerfilForm()
 		return context
+
+class DetallesUsuario(DetailView):
+	template_name = template_name = 'pages/entidades/detalle_usuario.html'
+	model = Perfil
+	
+	def get(self, request, pk, *args, **kwargs):
+
+		perfil = Perfil.objects.get(pk = pk)
+		beneficiados = Beneficiado.objects.filter(perfil__cedula = perfil.cedula)
+
+		
+		return render(request, self.template_name, {'perfil': perfil, 'beneficiado': beneficiados})
+
 # control de acceso
 	
 class LoginPersonalidado(TemplateView):

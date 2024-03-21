@@ -39,8 +39,9 @@ let getData = async (filter_id='PA') => {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    let buttons = '<a href="#" rel="edit" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Usuario"><i class="fa fa-edit"></i></a>';
-                    buttons += '<a href="#" rel="btn_recuperar_clave" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Restablecer contraseña"><i class="fa fa-unlock"></i></a>';
+                    // let buttons = '<a href="#" rel="edit" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Usuario"><i class="fa fa-edit"></i></a>';
+                    let buttons = '<a href="#" rel="btn_recuperar_clave" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Restablecer contraseña"><i class="fa fa-unlock"></i></a>';
+                    buttons += '<a href="#" rel="detalle_user" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles de usuario"><i class="fa fa-info"></i></a>';
                     return buttons
                 }
             },
@@ -59,11 +60,15 @@ $( async function () {
 	form_user.addEventListener('submit', async (e) => {
         e.preventDefault();
         let parameters = new FormData(form_user);
-        await SendDataJsonForm(type_actions['user'][action.value], parameters, async () => {  
-            await getData($('select[name="select_filter"]').val());
-            $('#smallmodal').modal('hide');   
-            $("#form_user")[0].reset(); 
-        });
+        if ($('input[name="password1"]').val() === $('input[name="password2"]').val() ) {
+            await SendDataJsonForm(type_actions['user'][action.value], parameters, async () => {  
+                await getData($('select[name="select_filter"]').val());
+                $('#smallmodal').modal('hide');   
+                $("#form_user")[0].reset(); 
+            });
+        }else{
+            notifier.show('Ocurrió un error!', 'Las contraseñas no coinciden', 'danger', 4000);
+        }
     });
 
     // REGISTER USUARIO
@@ -101,12 +106,30 @@ $( async function () {
         });
     });
 
-
     form_filter.addEventListener('change', async (e) =>{
         e.preventDefault();
         await getData($('select[name="select_filter"]').val())
         notifier.show('Exito!', 'Filtro realizado con exito', 'success', '', 4000);
         page_title.innerHTML = title_usuarios[$('select[name="select_filter"]').val()]
     });
+
+    // detalles de usuario
+    $('#listado_usuarios tbody').on('click', 'a[rel="detalle_user"]', function () {
+        var tr = tblCate.cell($(this).closest('td, li')).index();
+        var data = tblCate.row(tr.row).data();
+
+        window.location.replace(`/detalle-de-perfil/${data.id}/`)
+    });
     
+    $('#id_genero').change(function () {
+        if ($(this).val() == "MA") {
+            // Deshabilitar checkboxes
+            $('.deshabilitar').prop('disabled', true);
+            $('#inline-radio2').prop('checked', true)
+        } else {
+            // Habilitar checkboxes
+            $('.deshabilitar').prop('disabled', false);
+        }
+    }).trigger('change'); // Trigger para establecer el estado inicial
+
 });
