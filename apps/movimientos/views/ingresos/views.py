@@ -114,7 +114,7 @@ class RegistrarIngreso(ValidarUsuario, TemplateView):
 		return context
 	
 class BuscarProductosView(ValidarUsuario, View):
-	permission_required = 'inventario.view_producto'
+	permission_required = 'entidades.ver_inicio'
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):

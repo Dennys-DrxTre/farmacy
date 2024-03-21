@@ -45,7 +45,7 @@ class SolicitudesMed(ValidarUsuario, TemplateView):
 
 class DetalleSolicitudMed(ValidarUsuario, DetailView):
 	template_name = 'pages/movimientos/solicitudes/detalle_solicitud_med.html'
-	# permission_required = 'anuncios.requiere_secretria'
+	permission_required = 'movimientos.view_solicitud'
 	model = Solicitud
 	context_object_name = 'solicitud'
 
@@ -90,7 +90,7 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 	def descontar_stock(self, inventario, cantidad):
 
 		perfil = Perfil.objects.filter(usuario=self.request.user).first()
-		tipo_ingreso, created = TipoMov.objects.get_or_create(nombre='SOLICITUD DE MEDICAMENTO')
+		tipo_ingreso, created = TipoMov.objects.get_or_create(nombre='SOLICITUD DE MEDICAMENTO', operacion='-')
 		movimiento = {
 			'tipo_mov': tipo_ingreso,
 			'perfil': perfil,
@@ -371,17 +371,17 @@ class RegistrarPerfilFisico(LoginRequiredMixin, View):
 					beneficiado.direccion = request.POST["direccion"]
 					beneficiado.save()
 
-					# enviando el correo de registro
+					# # enviando el correo de registro
 
-					# Cargar la plantilla HTML
-					html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
-					# Configurar el correo electrónico
-					subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
-					text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
-					msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-					msg.attach_alternative(html_content, "text/html")
-					# Enviar el correo electrónico
-					msg.send()
+					# # Cargar la plantilla HTML
+					# html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
+					# # Configurar el correo electrónico
+					# subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
+					# text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
+					# msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+					# msg.attach_alternative(html_content, "text/html")
+					# # Enviar el correo electrónico
+					# msg.send()
 
 					data['response'] = {'title':'Exito!', 'data': 'El titular se registro correctamente', 'type_response': 'success'}
 				else:

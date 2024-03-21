@@ -52,7 +52,7 @@
                         </ul>
                     </li>
                     
-                    {% if not request.user.perfil.rol == "PA" and not request.user.perfil.rol == "JC" %}
+                    {% if not request.user.perfil.rol == "PA" and not request.user.perfil.rol == "JC" and not request.user.perfil.rol == "AT" %}
                         <li class="menu-item-has-children dropdown">
                             <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-book"></i>Registros</a>
                             <ul class="sub-menu children dropdown-menu">
@@ -63,16 +63,19 @@
                                 <li><i class="fa fa-table"></i><a href="{% url 'listado_productos' %}">Productos</a></li>
                             </ul>
                         </li>
-
-
+                    {% endif %}
+                    {% if not request.user.perfil.rol == "PA" and not request.user.perfil.rol == "JC" %}
                         <li class="menu-item-has-children dropdown">
                             <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-laptop"></i>Movimientos</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-table"></i><a href="{% url 'listado_ingresos' %}">Listado de ingresos</a></li>
+                                {% if request.user.perfil.rol == "AD" or request.user.perfil.rol == "AL" %}
+                                    <li><i class="fa fa-table"></i><a href="{% url 'listado_ingresos' %}">Listado de ingresos</a></li>
+                                {% endif %}
                                 <li><i class="fa fa-table"></i><a href="{% url 'listado_solicitudes_medicamentos' %}">Solicitud de medicamentos</a></li>
                                 <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
                             </ul>
                          </li>
+                    {% endif %}
 
                         {% if request.user.perfil.rol == "AD" %}
 
@@ -83,7 +86,6 @@
                                 </ul>
                             </li>
                         {% endif %}
-                    {% endif %}
                     <hr width="100%">
 
                     {% if request.user.perfil.rol == "AD" %}
@@ -91,10 +93,10 @@
                         <li class="menu-item-has-children dropdown">
                             <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Soporte</a>
                             <ul class="sub-menu children dropdown-menu">
-                                <li><i class="fa fa-table"></i><a href="#">Gestión de usuarios</a></li>
+                                <!-- <li><i class="fa fa-table"></i><a href="#">Gestión de usuarios</a></li> -->
                                 <li><i class="fa fa-table"></i><a href="{% url 'edit_landing' %}">Edicion del Landing Page</a></li>
-                                <li><i class="fa fa-table"></i><a href="#">Respaldo</a></li>
-                                <li><i class="fa fa-table"></i><a href="#">Restauración</a></li>
+                                <!-- <li><i class="fa fa-table"></i><a href="#">Respaldo</a></li>
+                                <li><i class="fa fa-table"></i><a href="#">Restauración</a></li> -->
                             </ul>
                         </li>
 

@@ -33,9 +33,9 @@ class MisSolicitudesMedOnline(ValidarUsuario, TemplateView):
 	
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		mis_solicitudes = Solicitud.objects.filter(beneficiado__cedula=self.request.user.perfil.cedula).order_by('-pk')
-
-		context["sub_title"] = "Mis Solicitudes online"
+		mis_solicitudes = Solicitud.objects.filter(perfil__cedula=self.request.user.perfil.cedula).order_by('-pk')
+		print(mis_solicitudes)
+		context["sub_title"] = "Mis Solicitudes online"	
 		context['solicitudes'] = mis_solicitudes
 		return context
 
@@ -57,7 +57,6 @@ class DetalleMiSolicitudOnline(ValidarUsuario, TemplateView):
 class RegistrarMiSolicitud(ValidarUsuario, TemplateView):
 	permission_required = 'entidades.registrar_mi_solicitud_de_medicamentos'
 	template_name = 'pages/movimientos/solicitudes_online/registrar_mi_solicitud_de_med.html'
-	# permission_required = 'anuncios.requiere_secretria'
 	object = None
 
 	@method_decorator(csrf_exempt)
@@ -66,35 +65,35 @@ class RegistrarMiSolicitud(ValidarUsuario, TemplateView):
 
 	def post(self, request, *args, **kwargs):
 		data = {}
-		try:
-			with transaction.atomic():
-				vents = json.loads(request.POST['vents'])
+		# try:
+		with transaction.atomic():
+			vents = json.loads(request.POST['vents'])
+			print(vents['beneficiado'], request.user.perfil.pk)
+			solicitud = Solicitud()
+			solicitud.fecha_soli = date.today()
+			solicitud.descripcion = vents['descripcion']
+			solicitud.beneficiado_id = vents['beneficiado']
+			solicitud.perfil_id = request.user.perfil.pk
+			solicitud.recipe = request.FILES['recipe']
+			solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
+			solicitud.tipo_solicitud = solicitud.TipoSoli.ONLINE
+			solicitud.estado = solicitud.Status.EN_PROCRESO 
+			solicitud.save()
 
-				solicitud = Solicitud()
-				solicitud.fecha_soli = date.today()
-				solicitud.descripcion = vents['descripcion']
-				solicitud.beneficiado_id = vents['beneficiado']
-				solicitud.perfil_id = request.user.perfil.pk
-				solicitud.recipe = request.FILES['recipe']
-				solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
-				solicitud.tipo_solicitud = solicitud.TipoSoli.ONLINE
-				solicitud.estado = solicitud.Status.EN_PROCRESO 
-				solicitud.save()
+			for det in vents['det']:
+				producto = Producto.objects.filter(pk=det['id']).first()
 
-				for det in vents['det']:
-					producto = Producto.objects.filter(pk=det['id']).first()
+				detalle = DetalleSolicitud()
+				detalle.solicitud = solicitud
+				detalle.producto = producto
+				detalle.cant_solicitada = det['cantidad']
+				detalle.save()
 
-					detalle = DetalleSolicitud()
-					detalle.solicitud = solicitud
-					detalle.producto = producto
-					detalle.cant_solicitada = det['cantidad']
-					detalle.save()
-
-				messages.success(request,'Solicitud de medicamento registrado correctamente')
-				data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
-		except Exception as e:
-			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
-			data['error'] = str(e)
+			messages.success(request,'Solicitud de medicamento registrado correctamente')
+			data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
+		# except Exception as e:
+		# 	data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
+		# 	data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 
 	def get_context_data(self, **kwargs):

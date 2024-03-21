@@ -110,7 +110,6 @@ permisos_usuarios = {
         'add_detallesolicitud',
         'change_detallesolicitud',
         'view_detallesolicitud',
-        'add_solicitud',
         'change_solicitud',
         'view_solicitud',
         'add_zona',
@@ -121,8 +120,8 @@ permisos_usuarios = {
         'cambiar_password',
         'cambiar_estado_jornada',
         'cambiar_estado_solicitudes',
-        'aprobar_solicitud_medicamentos',
-        'aprobar_jornada_medicamentos',
+        'entregar_solicitud_medicamentos',
+        'entregar_jornada_medicamentos',
         'registrar_mi_solicitud_de_medicamentos',
         'registrar_mi_jornada_medicamentos',
         'ver_mis_solicitudes_de_medicamentos',
@@ -139,7 +138,7 @@ permisos_usuarios = {
         'view_solicitud',
         'view_jornada',
         'ver_inicio',
-
+        'add_solicitud',
     ],
     'JC': [
         'ver_inicio',
