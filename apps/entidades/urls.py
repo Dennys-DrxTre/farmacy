@@ -11,7 +11,8 @@ from .views import (
     Logout,
     CambiarClave,
     ActualizarLanding,
-    ResetPassword
+    ResetPassword,
+    DetallesUsuario
 )
 
 urlpatterns = [
@@ -21,6 +22,7 @@ urlpatterns = [
 
     path('registrar-perfil/', RegistrarPerfil.as_view(), name='new_perfil'),
     path('listado-de-perfiles/', ListadoPerfiles.as_view(), name='lista_perfiles'),
+    path('detalle-de-perfil/<int:pk>/', DetallesUsuario.as_view(), name='detalle_perfiles'),
 
     # control de acceso
     path('ingresar/', LoginPersonalidado.as_view(), name='login'),

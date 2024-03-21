@@ -108,7 +108,7 @@
                                                 {{form.nacionalidad|add_class:'form-control'|attr:'required'}}
                                             </div>
                                         </div>
-                                        {{form.cedula|add_class:'form-control'|attr:'required'}}
+                                        {{form.cedula|add_class:'form-control'|attr:'required'|attr:'onkeypress:return Solo_Numero_ci(event)'}}
                                     </div>
                                 </div>
                             </div>
@@ -117,11 +117,11 @@
                             <div class="input-group">
                                 <div class="col-6 p-0">
                                     <label for="" class="form-control-label">Nombres</label>
-                                    {{form.nombres|add_class:'form-control'|attr:'required'}}
+                                    {{form.nombres|add_class:'form-control'|attr:'required'|attr:'onkeypress:return Solo_Texto(event)'}}
                                 </div>
                                 <div class="col-6 p-0">
                                     <label for="">Apellidos</label>
-                                    {{form.apellidos|add_class:'form-control'|attr:'required'}}
+                                    {{form.apellidos|add_class:'form-control'|attr:'required'|attr:'onkeypress:return Solo_Texto(event)'}}
                                 </div>
                             </div>
                         </div>
@@ -141,7 +141,7 @@
                                                 {{form.codigo_tlf|add_class:'form-control'|attr:'required'}}
                                             </div>
                                         </div>
-                                        {{form.telefono|add_class:'form-control'|attr:'required'}}
+                                        {{form.telefono|add_class:'form-control'|attr:'required'|attr:'onkeypress:return Solo_Numero(event)'|attr:'maxlength:7'}}
                                     </div>
                                 </div>
                             </div>
@@ -187,7 +187,7 @@
                     <div class="row">
                         <div class="col">
                             <label for="">Ubicación</label>
-                            {{form.direccion|add_class:'form-control'|attr:'style:resize:none'|attr:'rows:3'|attr:'required'}}
+                            {{form.direccion|add_class:'form-control'|attr:'style:resize:none'|attr:'rows:3'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'}}
                         </div>
                     </div>
                     <hr>
@@ -201,11 +201,11 @@
                                 <div class="input-group">
                                     <div class="col-6 p-1">
                                         <label for="">Definir contraseña</label>
-                                        {{form.password1|add_class:'form-control'|attr:'required'}}
+                                        {{form.password1|add_class:'form-control'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'|attr:'minlength:6'}}
                                     </div>
                                     <div class="col-6 p-1">
                                         <label for="">Confirmar contraseña</label>
-                                        {{form.password2|add_class:'form-control'|attr:'required'}}
+                                        {{form.password2|add_class:'form-control'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'|attr:'minlength:6'}}
                                     </div>
                                 </div>
                             </div>
@@ -213,7 +213,7 @@
                     </div>
                     <div class="form-check-inline form-check">
                         <label for="inline-checkbox1" class="form-check-label ">
-                            <input type="checkbox" id="inline-checkbox1" name="is_active" value="True" class="form-check-input">Activar usuario
+                            <input type="checkbox" id="inline-checkbox1" name="is_active" value="True" checked class="form-check-input">Activar usuario
                         </label>
                     </div>
                 </div>
