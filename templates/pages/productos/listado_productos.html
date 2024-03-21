@@ -92,7 +92,7 @@
                         <div class="row g-2 mb-3">
                             <div class="col">
                                 <label for="id_nombre">Nombre del producto</label>
-                                {{form.nombre|add_class:'form-control'}}
+                                {{form.nombre|add_class:'form-control'|attr:'onkeypress:return Texto_Numeros(event)'}}
                             </div>
                             <div class="col">
                                 <label for="id_almacen">Almacen</label>

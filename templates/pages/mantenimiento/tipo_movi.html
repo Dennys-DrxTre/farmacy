@@ -91,7 +91,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <label for="id_nombre_lab">Nombre del tipo de movimiento</label>
-                            {{form.nombre|add_class:'form-control'|attr:'type:required'}}
+                            {{form.nombre|add_class:'form-control'|attr:'type:required'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'}}
                         </div>
                         <div class="row">
                             <label for="">Operacion</label>
