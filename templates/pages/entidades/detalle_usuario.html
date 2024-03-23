@@ -57,7 +57,7 @@
                             {% if perfil.genero == 'MA' %}
                                 <p class="card-text">No aplica.</p>
                             {% else %}
-                            <p class="card-text">{{perfil.embarazada}}.</p>
+                            <p class="card-text">{{perfil.embarazada|yesno:'Si,No'}}.</p>
                             {% endif %}
                         </div>
                         <div class="col col-md-4">
@@ -119,7 +119,7 @@
                                         {% if x.genero == 'MA' %}
                                             <td>NO APLICA</td>
                                         {% else %}
-                                            <td>{{ x.embarazada }}</td>
+                                            <td>{{ x.embarazada|yesno:'Si,No' }}</td>
                                         {% endif %}
                                     </tr>
                                 {% endfor %}

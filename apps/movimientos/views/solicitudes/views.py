@@ -123,7 +123,7 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 			solicitud.estado = vents['estado']
 			solicitud.beneficiado_id = vents['beneficiado']
 			# solicitud.perfil_id = vents['perfil']
-
+			usuario = User.objects.filter(username=f'{solicitud.perfil.nacionalidad}{solicitud.perfil.cedula}').first()
 			if request.FILES.get('recipe'):
 				solicitud.recipe = request.FILES['recipe']
 
@@ -160,6 +160,17 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 							# Si no hay inventarios próximos a vencer, se detiene el proceso
 							break
 					producto.contar_productos()
+					# # # enviando el correo de registro
+
+					# Cargar la plantilla HTML
+					html_content = render_to_string('templates/email/email_registro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+					# Configurar el correo electrónico
+					subject, from_email, to = 'SU SOLICITUD HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
+					text_content = 'Puede ir a la sede a retirar los medicamentos solicitados.'
+					msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+					msg.attach_alternative(html_content, "text/html")
+					# Enviar el correo electrónico
+					msg.send()
 
 			messages.success(request,'Solicitud de medicamento registrado correctamente')
 			data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
@@ -371,17 +382,17 @@ class RegistrarPerfilFisico(LoginRequiredMixin, View):
 					beneficiado.direccion = request.POST["direccion"]
 					beneficiado.save()
 
-					# # enviando el correo de registro
+					# enviando el correo de registro
 
-					# # Cargar la plantilla HTML
-					# html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
-					# # Configurar el correo electrónico
-					# subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
-					# text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
-					# msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-					# msg.attach_alternative(html_content, "text/html")
-					# # Enviar el correo electrónico
-					# msg.send()
+					# Cargar la plantilla HTML
+					html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
+					# Configurar el correo electrónico
+					subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
+					text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
+					msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+					msg.attach_alternative(html_content, "text/html")
+					# Enviar el correo electrónico
+					msg.send()
 
 					data['response'] = {'title':'Exito!', 'data': 'El titular se registro correctamente', 'type_response': 'success'}
 				else:

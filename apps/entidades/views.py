@@ -189,6 +189,18 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 				beneficiado.zona_id = request.POST["zona"]
 				beneficiado.direccion = request.POST["direccion"]
 				beneficiado.save()
+
+				# enviando el correo de registro
+
+				# Cargar la plantilla HTML
+				html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
+				# Configurar el correo electrónico
+				subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
+				text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
+				msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+				msg.attach_alternative(html_content, "text/html")
+				# Enviar el correo electrónico
+				msg.send()
 				
 				data['response'] = {'title': 'Exito!', 'data': 'Usuario creado correctamente.', 'type_response': 'success'}
 
