@@ -131,6 +131,16 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 
 			if vents['estado'] == 'AP':
 					solicitud.proceso_actual = Solicitud.FaseProceso.ALMACENISTA
+			elif vents['estado'] == 'RE':
+				usuario = User.objects.filter(username=f'{solicitud.perfil.nacionalidad}{solicitud.perfil.cedula}').first()
+				solicitud.motivo_rechazo = vents['motivo_rechazo']
+				solicitud.proceso_actual = Solicitud.FaseProceso.FINALIZADO
+				# Cargar la plantilla HTML
+				html_content = render_to_string('templates/email/email_registro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+				# Configurar el correo electrónico
+				subject, from_email, to = 'SU SOLICITUD HA SIDO RECHAZADA', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
+				text_content = f'Motivo: {solicitud.motivo_rechazo}'
+				EmailThread(subject, text_content, from_email, [to], True, html_content).start()
 			solicitud.save()
 
 			DetalleIventarioSolicitud.objects.filter(detsolicitud__solicitud=self.get_object()).delete()
@@ -359,6 +369,44 @@ class MedicamentoEnEsperaEntrega(ValidarUsuario, SuccessMessageMixin, View):
 				else:
 					messages.error(request, 'La solicitud no existe.')
 				# messages.success(request,'Solicitud de medicamento registrado correctamente')
+		except Exception as e:
+			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
+		return redirect('listado_solicitudes_medicamentos')
+	
+class RechazarSolicitudMedicamento(ValidarUsuario, SuccessMessageMixin, View):
+	permission_required = 'entidades.cambiar_estado_solicitudes'
+	success_massage = 'La solicitud de medicamento ha sido rechazada'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+		
+	def post(self, request, *args, **kwargs):
+		try:
+			with transaction.atomic():
+				motivo_del_rechazo = request.POST.get('motivo_rechazo')
+				pk = request.POST.get('pk')
+				solicitud = Solicitud.objects.filter(pk=pk).first()
+				usuario = User.objects.filter(username=f'{solicitud.perfil.nacionalidad}{solicitud.perfil.cedula}').first()
+				if solicitud:
+					if request.user.perfil.rol == 'AD' or request.user.perfil.rol == 'AT':
+						if solicitud.estado == 'PR' or solicitud.estado == 'DV':
+							solicitud.estado = Solicitud.Status.RECHAZADO
+							solicitud.proceso_actual = Solicitud.FaseProceso.FINALIZADO
+							solicitud.motivo_rechazo = motivo_del_rechazo
+							solicitud.save()
+							# Cargar la plantilla HTML
+							html_content = render_to_string('templates/email/email_registro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+							# Configurar el correo electrónico
+							subject, from_email, to = 'SU SOLICITUD HA SIDO RECHAZADA', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
+							text_content = f'Motivo: {solicitud.motivo_rechazo}'
+							EmailThread(subject, text_content, from_email, [to], True, html_content).start()
+			
+							messages.success(request, self.success_massage)
+						else:
+							messages.error(request, 'La solicitud debe estar en proceso o en datos verificados para realizar esta accion.')
+					else:
+						messages.error(request, 'No tienes permisos para realizar esta acción.')
+				else:
+					messages.error(request, 'La solicitud no existe.')
 		except Exception as e:
 			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
 		return redirect('listado_solicitudes_medicamentos')

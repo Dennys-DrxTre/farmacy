@@ -67,6 +67,13 @@
                                 {% endif %}
                             {% endif %}
                         {% endif %}
+                        {% if request.user.perfil.rol == 'AT' or request.user.perfil.rol == 'AD' %}
+                            {% if solicitud.estado == 'PR' or solicitud.estado == 'DV' %}
+                                <a href="#" rel="ban" class="btn btn-danger" data-bs-toggle="tooltip" title="Rechazar Solicitud">
+                                    Rechazar Solicitud
+                                </a>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
                 <div class="card-body">
@@ -110,6 +117,15 @@
                             <h4 class="card-title">Recipe</h4>
                             <a href="#" rel="ver_recipe" class="btn btn-info">Ver Recipe</a>
                         </div>
+                        
+                        {% if solicitud.motivo_rechazo %}
+                            <div class="col col-md-4">
+                                <h4 class="card-title">Motivo del rechazo</h4>
+                                <p class="card-text">{{ solicitud.motivo_rechazo }}.</p>
+                            </div>
+                        {% endif %}
+                            
+
                     </div>
     
                 </div>
@@ -156,6 +172,36 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modal_rechazo" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true" style="display: none;">
+        <form action="/rechazar-solicitud-de-medicamento/" method="post" id="form_motivo_rechazo">
+            {% csrf_token %}
+            <input type="hidden" name="pk" id="pk" value="{{ solicitud.pk }}">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="modal-title" id="mediumModalLabel">Motivo del Rechazo</h5>
+                            <div class="cart-tools">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label" for="id_motivo_rechazo">Motivo del rechazo</label>
+                            <textarea class="form-control form-control-sm" name="motivo_rechazo" id="id_motivo_rechazo" rows="4" onkeypress="return Texto_Numeros(event)" style="resize: none;"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Confirmar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <div class="modal fade" id="modal_recipe" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-lg" role="document">
@@ -194,6 +240,10 @@
         /** OPEN MODAL PRODUCT **/
         $('a[rel="ver_recipe"]').on('click', function () {
             $('#modal_recipe').modal('show');
+        });
+            /** OPEN MODAL RECHAZAR SOLICITUD **/
+        $('a[rel="ban"]').on('click', function () {
+            $('#modal_rechazo').modal('show');
         });
     </script>
 

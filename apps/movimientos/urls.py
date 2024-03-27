@@ -10,7 +10,8 @@ from .views.solicitudes.views import (
     RegistrarBeneficiadoFisico, 
     RegistrarPerfilFisico, 
     MedicamentoEnEsperaEntrega,
-    VerificarDatosSolicitudMed
+    VerificarDatosSolicitudMed,
+    RechazarSolicitudMedicamento
 )
 from .views.mantenimiento.views import ListadoTipoMovi, ActualizarTipoMovi, RegistrarTipoMovi
 
@@ -35,6 +36,7 @@ urlpatterns = [
     path('solicitud-de-medicamento-entregado/<int:pk>/', MedicamentoEntregado.as_view(), name='solicitud_de_medicamento_entregado'),
     path('solicitud-de-medicamento-en-espera-de-entrega/<int:pk>/', MedicamentoEnEsperaEntrega.as_view(), name='solicitud_de_medicamento_en_espera_entrega'),
     path('solicitud-de-medicamento-verificada/<int:pk>/', VerificarDatosSolicitudMed.as_view(), name='solicitud_de_medicamento_verificada'),
+    path('rechazar-solicitud-de-medicamento/', RechazarSolicitudMedicamento.as_view(), name='rechazar_solicitud_medicamento'),
     path('registrar-beneficiado-fisico-modal/', RegistrarBeneficiadoFisico.as_view(), name='registrar_beneficiado_fisico_modal'),
     path('registrar-perfil-fisico-modal/', RegistrarPerfilFisico.as_view(), name='registrar_perfil_fisico_modal'),
 

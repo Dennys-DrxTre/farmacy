@@ -18,6 +18,7 @@ let vents = {
 		beneficiado: '',
 		perfil:'',
 		recipe: '',
+		motivo_rechazo:'',
 		estado:'',
 		det: []
 	},
@@ -131,16 +132,16 @@ let vents = {
 						let cantidad = row.cantidad;
 						if (cantidad > total_stock) {
 							if (roles_sin_permisos.includes(rol)){
-								return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required readonly min="1" max="'+ parseInt(total_stock) +'" autocomplete="off">';
+								return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required readonly min="0" max="'+ parseInt(total_stock) +'" autocomplete="off">';
 							} else{
-								return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="1" max="'+ parseInt(total_stock) +'" autocomplete="off">';
+								return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" max="'+ parseInt(total_stock) +'" autocomplete="off">';
 							}
 
 						} else{
 							if (roles_sin_permisos.includes(rol)){
-								return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required readonly min="1" max="'+ parseInt(cantidad) +'" autocomplete="off">';
+								return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required readonly min="0" max="'+ parseInt(cantidad) +'" autocomplete="off">';
 							} else {
-								return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="1" max="'+ parseInt(cantidad) +'" autocomplete="off">';
+								return '<input type="number" value="'+ parseInt(data) +'" name="cantidad_entregada" class="form-control form-control-sm cantidad_entregada" required min="0" max="'+ parseInt(cantidad) +'" autocomplete="off">';
 							}
 						}                    
 					}
@@ -178,6 +179,17 @@ $('#id_estado').select2({
 	language: 'es',
 	placeholder: 'Selecionar el estado',
 	allowClear: true
+}).on('select2:select', function (e) {
+	var data = e.params.data;
+    if (data.text == 'Rechazado') {
+        // Muestra el campo cuando se selecciona 'Rechazado'
+        $('#id_motivo_rechazo').prop('required', true);
+        $('.campo_motivo').show();
+    } else {
+        // Oculta el campo cuando se selecciona cualquier otro valor
+        $('#id_motivo_rechazo').prop('required', false);
+        $('.campo_motivo').hide();
+    }
 });
 
 let estados_permisos = {
@@ -422,6 +434,10 @@ $(function () {
 		vents.items.beneficiado = $('select[name="beneficiado"]').val();
 		(tipo_solicitud == 'PR') ? vents.items.perfil = $('select[name="perfil"]').val(): '';
 		vents.items.estado = $('select[name="estado"]').val();
+		
+		if (vents.items.estado == 'RE') {
+			vents.items.motivo_rechazo = $('textarea[name="motivo_rechazo"]').val();
+		}
 
 		var parameters = new FormData();
 		parameters.append('vents', JSON.stringify(vents.items));
