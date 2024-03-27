@@ -95,7 +95,7 @@ class Perfil(Persona):
 			item['c_residencia'] = self.c_residencia.url
 		else:
 			item['c_residencia'] = None
-		item['usuario'] = {'id': self.usuario.pk, 'username': self.usuario.username, 'is_active': self.usuario.is_active}
+		item['usuario'] = {'id': self.usuario.pk, 'username': self.usuario.username, 'is_active': self.usuario.is_active, 'email': self.usuario.email}
 		item['zona'] = {'id': self.zona.pk, 'zona_residencia': self.zona.zona_residencia}
 		item['genero'] = self.get_genero_display()
 		return item

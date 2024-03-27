@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView, View, DetailView
+from django.views.generic import TemplateView, ListView, View, DetailView, UpdateView
 from apps.entidades.models import Perfil, Persona, User, Beneficiado, Zona, LandingPage
 from django.contrib.auth.models import Permission
-from .forms import PerfilForm, ZonaForm, FormLanding
+from .forms import PerfilForm, ZonaForm, FormLanding, FormEditPerfil
 from .permisos import permisos_usuarios
+from django import forms
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.db import IntegrityError
@@ -193,7 +194,7 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 				# enviando el correo de registro
 
 				# Cargar la plantilla HTML
-				html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
+				html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'],'user': f'{request.POST["nacionalidad"]}{request.POST["cedula"]}','nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
 				# Configurar el correo electrónico
 				subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
 				text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
@@ -228,6 +229,51 @@ class DetallesUsuario(DetailView):
 
 		
 		return render(request, self.template_name, {'perfil': perfil, 'beneficiado': beneficiados})
+
+class EditarUsuario(SuccessMessageMixin, UpdateView):
+	model = Perfil
+	form_class = FormEditPerfil
+	success_message = 'Perfil editado correctamente'
+	template_name = 'pages/entidades/editar_usuarios.html'
+	success_url = reverse_lazy('lista_perfiles')
+
+	def get_initial(self):
+		initial = super().get_initial()
+		perfil = Perfil.objects.get(id = self.object.pk)
+		user = User.objects.get(username = f'{perfil.nacionalidad}{perfil.cedula}')
+		# Aquí puedes agregar los datos iniciales para tus campos de formulario.
+		# Por ejemplo, si tienes un campo llamado 'nombre' en tu formulario, puedes hacer:
+		initial['email'] = user.email
+		return initial
+
+	def form_valid(self, form):
+
+		perfil = Perfil.objects.get(id = self.object.pk)
+		user = User.objects.get(username = f'{perfil.nacionalidad}{perfil.cedula}')
+
+		self.object = form.save()
+
+		user.first_name = form.cleaned_data['nombres']
+		user.last_name = form.cleaned_data['apellidos']
+		user.user_permissions.clear()
+		user.email = form.cleaned_data['email']
+		permissions = Permission.objects.filter(codename__in=permisos_usuarios[form.cleaned_data['rol']])
+		user.user_permissions.set(permissions)
+		user.save()
+
+		bene = Beneficiado.objects.get(id = self.object.pk)
+		bene.nombres = form.cleaned_data['nombres']
+		bene.apellidos = form.cleaned_data['apellidos']
+		bene.genero = form.cleaned_data['genero']
+		bene.f_nacimiento = form.cleaned_data['f_nacimiento']
+		bene.embarazada = form.cleaned_data['embarazada']
+		bene.telefono = form.cleaned_data['telefono']
+		bene.zona = form.cleaned_data['zona']
+		bene.c_residencia = form.cleaned_data['c_residencia']
+		bene.direccion = form.cleaned_data['direccion']
+		bene.save()
+
+		return super().form_valid(form)
 
 # control de acceso
 	

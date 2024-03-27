@@ -28,3 +28,10 @@ class FormLanding(forms.ModelForm):
 	class Meta:
 		model = LandingPage
 		fields = '__all__'
+
+class FormEditPerfil(forms.ModelForm):
+	email = forms.EmailField(label = 'Correo', widget=forms.EmailInput)
+	class Meta:
+		model = Perfil
+		fields = '__all__'
+		exclude = ['nacionalidad', 'cedula', 'usuario']

@@ -467,7 +467,7 @@ class RegistrarPerfilFisico(LoginRequiredMixin, View):
 					# enviando el correo de registro
 
 					# Cargar la plantilla HTML
-					html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'], 'nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
+					html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'],'user': f'{request.POST["nacionalidad"]}{request.POST["cedula"]}','nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
 					# Configurar el correo electrónico
 					subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
 					text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
