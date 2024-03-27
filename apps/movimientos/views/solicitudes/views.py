@@ -12,7 +12,6 @@ from django.contrib.auth.models import Permission
 from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
 from apps.movimientos.email_utils import EmailThread
 from django.views.generic import (
 	TemplateView,
@@ -132,15 +131,8 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 			if vents['estado'] == 'AP':
 					solicitud.proceso_actual = Solicitud.FaseProceso.ALMACENISTA
 			elif vents['estado'] == 'RE':
-				usuario = User.objects.filter(username=f'{solicitud.perfil.nacionalidad}{solicitud.perfil.cedula}').first()
 				solicitud.motivo_rechazo = vents['motivo_rechazo']
 				solicitud.proceso_actual = Solicitud.FaseProceso.FINALIZADO
-				# Cargar la plantilla HTML
-				html_content = render_to_string('templates/email/email_registro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
-				# Configurar el correo electrónico
-				subject, from_email, to = 'SU SOLICITUD HA SIDO RECHAZADA', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
-				text_content = f'Motivo: {solicitud.motivo_rechazo}'
-				EmailThread(subject, text_content, from_email, [to], True, html_content).start()
 			solicitud.save()
 
 			DetalleIventarioSolicitud.objects.filter(detsolicitud__solicitud=self.get_object()).delete()
@@ -355,7 +347,7 @@ class MedicamentoEnEsperaEntrega(ValidarUsuario, SuccessMessageMixin, View):
 							solicitud.proceso_actual = Solicitud.FaseProceso.AT_CLIENTE
 							solicitud.save()
 							# Cargar la plantilla HTML
-							html_content = render_to_string('templates/email/email_registro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+							html_content = render_to_string('templates/email/email_solicitud_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
 							# Configurar el correo electrónico
 							subject, from_email, to = 'SU SOLICITUD HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
 							text_content = 'Puede ir a la sede a retirar los medicamentos solicitados.'
@@ -393,12 +385,6 @@ class RechazarSolicitudMedicamento(ValidarUsuario, SuccessMessageMixin, View):
 							solicitud.proceso_actual = Solicitud.FaseProceso.FINALIZADO
 							solicitud.motivo_rechazo = motivo_del_rechazo
 							solicitud.save()
-							# Cargar la plantilla HTML
-							html_content = render_to_string('templates/email/email_registro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
-							# Configurar el correo electrónico
-							subject, from_email, to = 'SU SOLICITUD HA SIDO RECHAZADA', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
-							text_content = f'Motivo: {solicitud.motivo_rechazo}'
-							EmailThread(subject, text_content, from_email, [to], True, html_content).start()
 			
 							messages.success(request, self.success_massage)
 						else:

@@ -1,9 +1,12 @@
 from django.http import HttpResponseRedirect
 from django.utils import timezone
+from django.template.loader import render_to_string
+from apps.movimientos.email_utils import EmailThread
 
 from apps.movimientos.models import Solicitud, DetalleSolicitud, DetalleIventarioSolicitud, TipoMov, Historial
 from apps.inventario.models import Inventario, Producto
 from apps.entidades.models import Perfil
+from django.contrib.auth.models import User
 
 class TemplateErrorMiddleware:
     def __init__(self, get_response):
@@ -26,6 +29,14 @@ def check_solicitudes_en_espera(get_response):
             solicitud.estado = Solicitud.Status.PACIENTE_NO_RETIRO
             solicitud.proceso_actual = Solicitud.FaseProceso.FINALIZADO
             solicitud.save()
+
+            usuario = User.objects.filter(username=f'{solicitud.perfil.nacionalidad}{solicitud.perfil.cedula}').first()
+            # Cargar la plantilla HTML
+            html_content = render_to_string('templates/email/email_solicitud_sin_retirar.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+            # Configurar el correo electrónico
+            subject, from_email, to = 'SU SOLICITUD HA SIDO CANCELADA', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
+            text_content = 'Su solicitud ha sido cancelada por no retirar los medicamentos.'
+            EmailThread(subject, text_content, from_email, [to], False, html_content).start()
 
             for det in DetalleSolicitud.objects.filter(solicitud_id=solicitud.pk):
                 detproductos = DetalleIventarioSolicitud.objects.filter(detsolicitud=det)

@@ -155,9 +155,10 @@
                                         <td>{{ det.cant_solicitada }}</td>
                                         {% if det.cant_entregada > 0 %}
                                             <td>{{ det.cant_entregada }}</td>
+                                        {% elif solicitud.estado == 'RE' %}
+                                             <td>Rechazado</td>
                                         {% else %}
-                                        <td>En espera</td>
-
+                                            <td>En espera</td>
                                         {% endif %}
                                             
                                     </tr>
