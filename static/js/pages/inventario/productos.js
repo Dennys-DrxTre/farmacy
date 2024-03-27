@@ -21,6 +21,7 @@ let getData = async () => {
             {"data": "almacen.nombre"},
             {"data": "laboratorio.nombre"},
             {"data": "total_stock"},
+            {"data": "comprometido"},
             {"data": "id"},
         ],
         [
@@ -65,6 +66,7 @@ $( async function () {
     $('#btn_nuevo_producto').on('click', function () {
         $('#form_producto')[0].reset();
         $('input[name="action"]').val('nuevo_producto');
+        $("#titulo_modal").text("Registrar producto");
         $('#smallmodal').modal('show');
     });
 
@@ -73,6 +75,7 @@ $( async function () {
         $('#form_producto')[0].reset();
         var tr = tblCate.cell($(this).closest('td, li')).index();
         var data = tblCate.row(tr.row).data();
+        $("#titulo_modal").text("Editar producto");
 
         $('input[name="action"]').val('edit_producto');
         $('input[name="id"]').val(data.id);
@@ -83,6 +86,7 @@ $( async function () {
         $('select[name="if_expire_date"]').val(data.if_expire_date);
         $('input[name="stock_minimo"]').val(data.stock_minimo);
         $('input[name="total_stock"]').val(data.total_stock);
+        $('input[name="comprometido"]').val(data.comprometido);
 
         $('#smallmodal').modal('show');
     });

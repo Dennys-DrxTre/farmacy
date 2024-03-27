@@ -59,8 +59,8 @@ class Producto(models.Model):
 	tipo_insumo = models.ForeignKey(TipoInsumo, verbose_name='Tipo de insumo', on_delete=models.PROTECT, blank=False, null=False)
 	laboratorio = models.ForeignKey(Laboratorio, verbose_name='Laboratorio', on_delete=models.PROTECT, blank=False, null=False)
 	if_expire_date = models.CharField(verbose_name='Si caduca', max_length = 2, choices = Seleccion.choices)
-	stock_minimo = models.IntegerField(blank=False, null=False)
-	total_stock = models.IntegerField(null = False, blank= False)
+	stock_minimo = models.IntegerField(default=0, blank=False, null=False)
+	total_stock = models.IntegerField(default=0, null = False, blank= False)
 	comprometido = models.IntegerField(default=0, verbose_name='Comprometido')
 
 	def contar_productos(self):

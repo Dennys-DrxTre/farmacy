@@ -118,7 +118,6 @@ class ActualizarProducto(LoginRequiredMixin, View):
 		action = request.POST['action']
 		try:
 			if action == 'edit_producto':
-				print(request.POST)
 				producto = Producto.objects.filter(id = request.POST['id']).first()
 				form = FormProducto(request.POST, instance=producto)
 
@@ -172,7 +171,6 @@ class RegistrarLab(LoginRequiredMixin, View):
 		data = {}
 		try:
 			action = request.POST['action']
-			print(request.POST)
 
 			if action == 'nuevo_lab':
 				form = FormLab(request.POST)
