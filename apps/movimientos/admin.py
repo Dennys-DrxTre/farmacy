@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Solicitud, DetalleSolicitud, Jornada, DetalleJornada, Ingreso, DetalleIngreso, TipoMov, Historial
+from .models import Solicitud, DetalleSolicitud, Jornada, DetalleJornada, Ingreso, DetalleIngreso, TipoMov, Historial, DetalleIventarioSolicitud
 # Register your models here.
 
 class SolicitudAdmin(admin.ModelAdmin):
@@ -13,6 +13,13 @@ class DetSolicitudAdmin(admin.ModelAdmin):
     list_display = ('pk', 'solicitud', 'producto', 'cant_solicitada', 'cant_entregada')
     list_filter = ('producto',)
     search_fields = ('pk', 'producto')
+    ordering = ('pk',)
+    # readonly_fields = ('date_of_birth',)
+
+class DetInventarioSolicitudAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'detsolicitud', 'inventario', 'cantidad')
+    list_filter = ('inventario',)
+    search_fields = ('pk', 'inventario')
     ordering = ('pk',)
     # readonly_fields = ('date_of_birth',)
 
@@ -65,3 +72,4 @@ admin.site.register(Ingreso, IngresoAdmin)
 admin.site.register(DetalleIngreso, DetIngresoAdmin)
 admin.site.register(TipoMov, TipoMoviAdmin)
 admin.site.register(Historial, HistorialAdmin)
+admin.site.register(DetalleIventarioSolicitud, DetInventarioSolicitudAdmin)

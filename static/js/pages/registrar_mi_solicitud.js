@@ -1,5 +1,7 @@
 let form_ingreso = document.getElementById('form_register');
 let form_search = document.getElementById('search-input');
+let perfil_id = document.getElementById('perfil_id');
+
 
 let vents = {
     items : {
@@ -245,38 +247,39 @@ $(function () {
         language: "es",
         allowClear: true
     });
+    $('#id_beneficiado').val(perfil_id.value).trigger('change'); 
 
-    /** OPEN MODAL BENEFICIADOS **/
-    $('a[rel="open_modal_beneficiado"]').on('click', function () {
-        $("#form_beneficiado")[0].reset();
-        $('#modal_beneficiados').modal('show');
-    });
+    // /** OPEN MODAL BENEFICIADOS **/
+    // $('a[rel="open_modal_beneficiado"]').on('click', function () {
+    //     $("#form_beneficiado")[0].reset();
+    //     $('#modal_beneficiados').modal('show');
+    // });
 
-    $('#form_beneficiado').on('submit', function (e) {
-        e.preventDefault();
-        var parameters = new FormData(this);
-        SendDataJsonForm('/registrar-beneficiado-modal/', parameters, function () {
-            $("#modal_beneficiados").modal('hide');
+    // $('#form_beneficiado').on('submit', function (e) {
+    //     e.preventDefault();
+    //     var parameters = new FormData(this);
+    //     SendDataJsonForm('/registrar-beneficiado-modal/', parameters, function () {
+    //         $("#modal_beneficiados").modal('hide');
 
-            var ci = $(".cedula").val();
-            var nombre = $(".nombre").val();
-            var apellido = $(".apellido").val();
+    //         var ci = $(".cedula").val();
+    //         var nombre = $(".nombre").val();
+    //         var apellido = $(".apellido").val();
 
-            var data = {
-                id: ci,
-                text: ci,
-                nombre: nombre,
-                apellido: apellido,
+    //         var data = {
+    //             id: ci,
+    //             text: ci,
+    //             nombre: nombre,
+    //             apellido: apellido,
 
-            };
-            var newOption = new Option(`${data.text }-${data.nombre}`, data.id, true, true);
-            $('.beneficiado').append(newOption).trigger('change');
+    //         };
+    //         var newOption = new Option(`${data.text }-${data.nombre}`, data.id, true, true);
+    //         $('.beneficiado').append(newOption).trigger('change');
     
-            $("#form_beneficiado")[0].reset();
-            // $('.titular_modal').val(null).trigger('change');
+    //         $("#form_beneficiado")[0].reset();
+    //         // $('.titular_modal').val(null).trigger('change');
             
-        });    
-    });
+    //     });    
+    // });
 
     // event submit
     $('#form_register').on('submit', async function (e) {

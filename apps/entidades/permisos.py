@@ -135,6 +135,7 @@ permisos_usuarios = {
         'add_user',
         'change_user',
         'view_user',
+        'change_solicitud',
         'view_solicitud',
         'view_jornada',
         'ver_inicio',

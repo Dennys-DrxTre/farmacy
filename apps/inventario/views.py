@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.db.models import Q
 from django.contrib import messages
 from django.views.generic import (
 	UpdateView,
@@ -34,7 +35,11 @@ class DetalleProductoView(ValidarUsuario, DetailView):
 		context = super().get_context_data(**kwargs)
 		# Aquí puedes agregar datos adicionales al contexto
 		producto = Producto.objects.filter(pk=self.kwargs.get('pk')).first()
-		inventario = Inventario.objects.filter(producto_id=producto.pk, f_vencimiento__gt=date.today(), stock__gt=0).order_by('f_vencimiento')
+		inventario = Inventario.objects.filter(
+			Q(comprometido__gt=0) | Q(stock__gt=0), 
+			producto_id=producto.pk, 
+			f_vencimiento__gt=date.today()
+		).order_by('f_vencimiento')
 		if inventario:
 			context["inventario"] = inventario
 

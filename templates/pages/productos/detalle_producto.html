@@ -58,6 +58,12 @@
                             <p class="card-text">{{ producto.total_stock }}.</p>
                         </div>
                     </div>
+                    <div class="row mt-4">
+                        <div class="col col-md-3">
+                            <h4 class="card-title">Comprometido </h4>
+                            <p class="card-text">{{ producto.comprometido }}.</p>
+                        </div>
+                    </div>
     
                 </div>
             </div>
@@ -78,6 +84,7 @@
                                     <th>Lote</th>
                                     <th>Fecha Vencimiento</th>
                                     <th>Stock</th>
+                                    <th>Comprometido</th>
                                   </tr>
                             </thead>
                             <tbody>         
@@ -87,6 +94,7 @@
                                             <td>{{ i.lote }}</td>
                                             <td>{{ i.f_vencimiento|date:'d/m/Y' }}</td>
                                             <td>{{ i.stock }}</td>
+                                            <td>{{ i.comprometido }}</td>
                                         </tr>
                                     {% endfor %}                                    
                             </tbody>

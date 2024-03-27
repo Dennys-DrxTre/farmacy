@@ -23,6 +23,7 @@
 {% block body %}
     <form action="" method="post" enctype="multipart/form-data" id="form_register">
         {% csrf_token %}
+        <input type="text" id="perfil_id" value="{{ request.user.perfil.pk }}" hidden>
         <div class="row">
             <div class="col-sm-4">
                 <!-- Basic Inputs -->
@@ -43,9 +44,9 @@
                             <label class="form-label" for="id_recipe">Beneficiado</label>
                             <div class="input-group">
                                 {{ form.beneficiado|add_class:'form-control form-control-sm beneficiado' }}
-                                <a class="btn btn-sm btn-dark" href="#" rel="open_modal_beneficiado">
+                                <!-- <a class="btn btn-sm btn-dark" href="#" rel="open_modal_beneficiado">
                                     <i class="fa fa-plus"></i>
-                                </a>
+                                </a> -->
                             </div>	
                         </div>
                         <button type="submit" class="btn btn-info me-2" id="btn_submit">Registrar</button>
@@ -185,7 +186,7 @@
                                 <div class="input-group">
                                     <div class="input-group-btn">
                                         <div class="btn-group">
-                                            <select name="codigo_tlf" id="" class="form-control" required>
+                                            <select name="codigo_tlf" class="form-control" required>
                                                 <option value="">----</option>
                                                 <option value="0412">0412</option>
                                                 <option value="0416">0416</option>

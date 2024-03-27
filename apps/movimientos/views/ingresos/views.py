@@ -112,7 +112,42 @@ class RegistrarIngreso(ValidarUsuario, TemplateView):
 		context["sub_title"] = "Registrar ingreso"
 		context["form"] = IngresoForm
 		return context
-	
+
+class BuscarProductosIngresoView(ValidarUsuario, View):
+	permission_required = 'entidades.ver_inicio'
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		# try:
+		action = request.POST['action']
+		if action == 'search_productos':
+			data = []
+			productos = Producto.objects.filter(nombre__icontains=request.POST.get('term'))
+			for i in productos[0:10]:
+				item = i.toJSON()
+				item['text'] = '{}'.format(i.nombre)
+				item['id'] = i.pk
+				data.append(item)
+
+		elif action == 'search_productos_table':
+			data = []
+			productos = Producto.objects.all()
+			for i in productos[0:10]:
+				item = i.toJSON()
+				item['text'] = '{}'.format(i.nombre)
+				item['id'] = i.pk
+				data.append(item)
+		else:
+			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
+
+		# except Exception as e:
+		# 	data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+
 class BuscarProductosView(ValidarUsuario, View):
 	permission_required = 'entidades.ver_inicio'
 

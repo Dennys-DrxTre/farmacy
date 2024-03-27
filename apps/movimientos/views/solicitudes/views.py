@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from apps.movimientos.email_utils import EmailThread
 from django.views.generic import (
 	TemplateView,
 	ListView,
@@ -25,8 +26,8 @@ from apps.entidades.permisos import permisos_usuarios
 from apps.entidades.mixins import ValidarUsuario
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from ...models import Solicitud, TipoMov, DetalleSolicitud, Historial
-from apps.inventario.models import Producto
+from ...models import Solicitud, TipoMov, DetalleSolicitud, Historial, DetalleIventarioSolicitud
+from apps.inventario.models import Producto, Inventario
 from apps.entidades.models import Beneficiado, Perfil, User
 # # Create your views here.
 
@@ -69,14 +70,20 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 			if self.get_object().tipo_solicitud == 'PR':
 				return redirect('listado_solicitudes_medicamentos')
 			elif self.get_object().tipo_solicitud == 'ON':
-				if self.get_object().estado in ['RE','ET','EE','AP']:
+				if self.get_object().estado in ['RE','ET','EE','AP','PR','NR']:
 					return redirect('listado_solicitudes_medicamentos')
 		if request.user.perfil.rol == "AL":
 			if self.get_object().tipo_solicitud == 'PR':
-				if self.get_object().estado in ['RE','ET','EE']:
+				if self.get_object().estado in ['RE','ET','EE','NR']:
 					return redirect('listado_solicitudes_medicamentos')
 			elif self.get_object().tipo_solicitud == 'ON':
-				if self.get_object().estado in ['PR','RE','EE','ET']:
+				return redirect('listado_solicitudes_medicamentos')
+		if request.user.perfil.rol == "AT":
+			if self.get_object().tipo_solicitud == 'PR':
+				if not self.get_object().estado in ['PR']:
+					return redirect('listado_solicitudes_medicamentos')
+			elif self.get_object().tipo_solicitud == 'ON':
+				if not self.get_object().estado in ['PR']:
 					return redirect('listado_solicitudes_medicamentos')
 		return super().dispatch(request, *args, **kwargs)
 
@@ -87,29 +94,25 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 		inventarios_proximos = producto.inventario.filter(f_vencimiento__gt=hoy, stock__gt=0).order_by('f_vencimiento')
 		return inventarios_proximos
 
-	def descontar_stock(self, inventario, cantidad):
-
-		perfil = Perfil.objects.filter(usuario=self.request.user).first()
-		tipo_ingreso, created = TipoMov.objects.get_or_create(nombre='SOLICITUD DE MEDICAMENTO', operacion='-')
-		movimiento = {
-			'tipo_mov': tipo_ingreso,
-			'perfil': perfil,
-			'producto': inventario,
-			'cantidad': 0
-		}
-
+	def descontar_stock(self, inventario, cantidad, detalle):
+		detsolicitud = DetalleIventarioSolicitud()
+		detsolicitud.detsolicitud = detalle
+		detsolicitud.inventario = inventario
+		
 		if inventario.stock >= cantidad:
 			inventario.stock -= cantidad
+			inventario.comprometido += cantidad
+			detsolicitud.cantidad = cantidad
+			detsolicitud.save()
 			inventario.save()
-			movimiento['cantidad'] = cantidad
-			Historial().crear_movimiento(movimiento)
 			return 0 # Indica que no hay cantidad restante
 		else:
 			restante = cantidad - inventario.stock
-			movimiento['cantidad'] = inventario.stock
+			detsolicitud.cantidad = inventario.stock
+			detsolicitud.save()
+			inventario.comprometido += inventario.stock
 			inventario.stock = 0
 			inventario.save()
-			Historial().crear_movimiento(movimiento)
 			return restante # Indica que no hay cantidad restante
 		
 	def post(self, request, *args, **kwargs):
@@ -123,21 +126,18 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 			solicitud.estado = vents['estado']
 			solicitud.beneficiado_id = vents['beneficiado']
 			# solicitud.perfil_id = vents['perfil']
-			usuario = User.objects.filter(username=f'{solicitud.perfil.nacionalidad}{solicitud.perfil.cedula}').first()
 			if request.FILES.get('recipe'):
 				solicitud.recipe = request.FILES['recipe']
 
 			if vents['estado'] == 'AP':
 					solicitud.proceso_actual = Solicitud.FaseProceso.ALMACENISTA
-			elif vents['estado'] == 'EE':
-				solicitud.proceso_actual = Solicitud.FaseProceso.AT_CLIENTE
-
 			solicitud.save()
 
+			DetalleIventarioSolicitud.objects.filter(detsolicitud__solicitud=self.get_object()).delete()
 			DetalleSolicitud.objects.filter(solicitud=self.get_object()).delete()
+
 			for det in vents['det']:
 				producto = Producto.objects.filter(pk=det['id']).first()
-
 
 				detalle = DetalleSolicitud() 
 				detalle.solicitud = solicitud
@@ -146,31 +146,19 @@ class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
 				detalle.cant_entregada = det['cantidad_entregada']
 				detalle.save()
 
-				if vents['estado'] == 'EE':
+				if vents['estado'] == 'AP':
 					cantidad_restante = det['cantidad_entregada']
 					while cantidad_restante > 0:
 						inventarios_proximos = self.producto_proximo_a_vencer(producto)
 						if inventarios_proximos.exists():
 							# Asume que se descontará del primer inventario próximo a vencer
 							inventario = inventarios_proximos.first()
-							cantidad_restante = self.descontar_stock(inventario, cantidad_restante)
-							detalle.inventario.add(inventario)
-							detalle.save()
+							cantidad_restante = self.descontar_stock(inventario, cantidad_restante, detalle)
 						else:
 							# Si no hay inventarios próximos a vencer, se detiene el proceso
 							break
 					producto.contar_productos()
 					# # # enviando el correo de registro
-
-					# Cargar la plantilla HTML
-					html_content = render_to_string('templates/email/email_registro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
-					# Configurar el correo electrónico
-					subject, from_email, to = 'SU SOLICITUD HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
-					text_content = 'Puede ir a la sede a retirar los medicamentos solicitados.'
-					msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-					msg.attach_alternative(html_content, "text/html")
-					# Enviar el correo electrónico
-					msg.send()
 
 			messages.success(request,'Solicitud de medicamento registrado correctamente')
 			data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
@@ -255,7 +243,90 @@ class RegistrarSolicitudPresencial(ValidarUsuario, TemplateView):
 		context['perfiles'] = Perfil.objects.all()
 		return context
 
+class VerificarDatosSolicitudMed(ValidarUsuario, SuccessMessageMixin, View):
+	permission_required = 'entidades.cambiar_estado_solicitudes'
+	success_massage = 'Los datos de la solicitud de medicamento ha sido verificada'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+		
+	def get(self, request, pk, *args, **kwargs):
+		try:
+			with transaction.atomic():
+				solicitud = Solicitud.objects.filter(pk=pk).first()
+
+				if solicitud:
+					if request.user.perfil.rol == 'AT':
+						if solicitud.estado == 'PR':
+							solicitud.estado = Solicitud.Status.DATOS_VERIFICADOS
+							if solicitud.tipo_solicitud == 'PR':
+								solicitud.proceso_actual = Solicitud.FaseProceso.ALMACENISTA
+							else:
+								solicitud.proceso_actual = Solicitud.FaseProceso.ADMINISTRADOR
+							solicitud.save()
+							messages.success(request, self.success_massage)
+						else:
+							messages.error(request, 'La solicitud debe estar en proceso para realizar esta accion.')
+					else:
+						messages.error(request, 'No tienes permisos para realizar esta acción.')
+				else:
+					messages.error(request, 'La solicitud no existe.')
+				# messages.success(request,'Solicitud de medicamento registrado correctamente')
+		except Exception as e:
+			print(e)
+			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
+		return redirect('listado_solicitudes_medicamentos')
+
 class MedicamentoEntregado(ValidarUsuario, SuccessMessageMixin, View):
+	permission_required = 'entidades.cambiar_estado_solicitudes'
+	success_massage = 'El medicamento ha sido entregado correctamente'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+		
+	def get(self, request, pk, *args, **kwargs):
+		try:
+			with transaction.atomic():
+				solicitud = Solicitud.objects.filter(pk=pk).first()
+
+				if solicitud:
+					if request.user.perfil.rol == 'AT':
+						if solicitud.estado == 'EE':
+							with transaction.atomic():
+								solicitud.estado = Solicitud.Status.ENTREGADO
+								solicitud.proceso_actual = Solicitud.FaseProceso.FINALIZADO
+								solicitud.save()
+								detalles = DetalleSolicitud.objects.filter(solicitud=solicitud)
+								for det in detalles:
+									producto = Producto.objects.filter(pk= det.producto.pk).first()
+									detsolicitud = DetalleIventarioSolicitud.objects.filter(detsolicitud=det)
+									for d in detsolicitud:
+										inventario = Inventario.objects.filter(pk=d.inventario.pk).first()
+										inventario.comprometido -= d.cantidad
+										inventario.save()
+
+										perfil = Perfil.objects.filter(usuario=self.request.user).first()
+										tipo_ingreso, created = TipoMov.objects.get_or_create(nombre='SOLICITUD DE MEDICAMENTO', operacion='-')
+										movimiento = {
+											'tipo_mov': tipo_ingreso,
+											'perfil': perfil,
+											'producto': d.inventario,
+											'cantidad': d.cantidad
+										}
+										Historial().crear_movimiento(movimiento)
+									producto.contar_productos()
+								messages.success(request, self.success_massage)
+						else:
+							messages.error(request, 'La solicitud debe estar en espera de entrega para realizar esta accion.')
+					else:
+						messages.error(request, 'No tienes permisos para realizar esta acción.')
+				else:
+					messages.error(request, 'La solicitud no existe.')
+				# messages.success(request,'Solicitud de medicamento registrado correctamente')
+		except Exception as e:
+			print(e)
+			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
+		return redirect('listado_solicitudes_medicamentos')
+
+class MedicamentoEnEsperaEntrega(ValidarUsuario, SuccessMessageMixin, View):
 	permission_required = 'entidades.cambiar_estado_solicitudes'
 	success_massage = 'El medicamento ha sido entregado correctamente'
 	# permission_required = 'anuncios.requiere_secretria'
@@ -266,11 +337,23 @@ class MedicamentoEntregado(ValidarUsuario, SuccessMessageMixin, View):
 			with transaction.atomic():
 
 				solicitud = Solicitud.objects.filter(pk=pk).first()
+				usuario = User.objects.filter(username=f'{solicitud.perfil.nacionalidad}{solicitud.perfil.cedula}').first()
 				if solicitud:
-					if request.user.perfil.rol == 'AT':
-						solicitud.estado = Solicitud.Status.ENTREGADO
-						solicitud.save()
-						messages.success(request, self.success_massage)
+					if request.user.perfil.rol == 'AL':
+						if solicitud.estado == 'AP':
+							solicitud.estado = Solicitud.Status.EN_ESPERA_DE_ENTREGA
+							solicitud.proceso_actual = Solicitud.FaseProceso.AT_CLIENTE
+							solicitud.save()
+							# Cargar la plantilla HTML
+							html_content = render_to_string('templates/email/email_registro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+							# Configurar el correo electrónico
+							subject, from_email, to = 'SU SOLICITUD HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
+							text_content = 'Puede ir a la sede a retirar los medicamentos solicitados.'
+							EmailThread(subject, text_content, from_email, [to], False, html_content).start()
+			
+							messages.success(request, self.success_massage)
+						else:
+							messages.error(request, 'La solicitud debe estar aprobada para realizar esta accion.')
 					else:
 						messages.error(request, 'No tienes permisos para realizar esta acción.')
 				else:
@@ -278,7 +361,6 @@ class MedicamentoEntregado(ValidarUsuario, SuccessMessageMixin, View):
 				# messages.success(request,'Solicitud de medicamento registrado correctamente')
 		except Exception as e:
 			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
-			print(e)
 		return redirect('listado_solicitudes_medicamentos')
 	
 class RegistrarBeneficiadoFisico(LoginRequiredMixin, View):
@@ -389,10 +471,7 @@ class RegistrarPerfilFisico(LoginRequiredMixin, View):
 					# Configurar el correo electrónico
 					subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
 					text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
-					msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-					msg.attach_alternative(html_content, "text/html")
-					# Enviar el correo electrónico
-					msg.send()
+					EmailThread(subject, text_content, from_email, [to], False, html_content).start()
 
 					data['response'] = {'title':'Exito!', 'data': 'El titular se registro correctamente', 'type_response': 'success'}
 				else:

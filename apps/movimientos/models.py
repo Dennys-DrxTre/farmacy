@@ -12,8 +12,10 @@ class Solicitud(models.Model):
 	
 	class Status(models.TextChoices):
 		EN_PROCRESO = 'PR', 'En Proceso'
+		DATOS_VERIFICADOS = 'DV', 'Datos Verificados'
 		APROBADO = 'AP', 'Aprobado'
 		EN_ESPERA_DE_ENTREGA = 'EE', 'En Espera de Entrega'
+		PACIENTE_NO_RETIRO = 'NR', 'Paciente no retiró'
 		ENTREGADO = 'ET', 'Entregado'
 		RECHAZADO = 'RE', 'Rechazado'
 	
@@ -25,11 +27,14 @@ class Solicitud(models.Model):
 		ADMINISTRADOR = 'AD', 'Administrador'
 		ALMACENISTA = 'AL', 'Almacenista'
 		AT_CLIENTE = 'AT', 'Atención al Cliente'
+		FINALIZADO = 'FI', 'Finalizado'
 
 	fecha_soli = models.DateField(auto_now=False, auto_now_add=False, blank=False, null=False)
+	fecha_en_espera = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
 	perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT, blank=False, null=False)
 	beneficiado = models.ForeignKey(Beneficiado, on_delete=models.PROTECT, blank=False, null=False)
 	descripcion = models.TextField(blank=False, null=False)
+	motivo_rechazo = models.TextField(blank=True, null=True)
 	recipe = models.ImageField(upload_to='recipes/', blank=False, null=False)
 	proceso_actual = models.CharField(max_length=2, choices= FaseProceso.choices, default=FaseProceso.AT_CLIENTE)
 	estado = models.CharField(max_length=2, choices=Status.choices, default=Status.EN_PROCRESO, blank=False, null=False)
@@ -51,7 +56,6 @@ class Solicitud(models.Model):
 class DetalleSolicitud(models.Model):
 	solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, related_name='detalle')
 	producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-	inventario = models.ManyToManyField(Inventario)
 	cant_solicitada = models.IntegerField(default=1)
 	cant_entregada = models.IntegerField(default=0)
 
@@ -59,6 +63,25 @@ class DetalleSolicitud(models.Model):
 		unique_together = ('solicitud', 'producto')  # Asegurar que no haya duplicados
 		verbose_name = 'Detalle de solicitud'
 		verbose_name_plural = 'Detalle de solicitudes'
+		ordering = ['pk']
+
+	def __str__(self):
+		return str(self.pk)
+
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item
+	
+# detalle de invenatario solicitado
+class DetalleIventarioSolicitud(models.Model):
+	detsolicitud = models.ForeignKey(DetalleSolicitud, on_delete=models.CASCADE, related_name='detalle_inventario')
+	inventario = models.ForeignKey(Inventario, on_delete=models.CASCADE)
+	cantidad = models.IntegerField(default=0)
+
+	class Meta:
+		unique_together = ('detsolicitud', 'inventario')  # Asegurar que no haya duplicados
+		verbose_name = 'Detalle de inventario solicitado'
+		verbose_name_plural = 'Detalles de inventario solicitados'
 		ordering = ['pk']
 
 	def __str__(self):

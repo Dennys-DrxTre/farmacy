@@ -61,11 +61,15 @@ class Producto(models.Model):
 	if_expire_date = models.CharField(verbose_name='Si caduca', max_length = 2, choices = Seleccion.choices)
 	stock_minimo = models.IntegerField(blank=False, null=False)
 	total_stock = models.IntegerField(null = False, blank= False)
+	comprometido = models.IntegerField(default=0, verbose_name='Comprometido')
 
 	def contar_productos(self):
 		self.total_stock = 0
-		for i in self.inventario.filter(f_vencimiento__gt=date.today(), stock__gt=0):
-			self.total_stock += i.stock
+		self.comprometido = 0
+		for s in self.inventario.filter(f_vencimiento__gt=date.today(), stock__gt=0):
+			self.total_stock += s.stock
+		for c in self.inventario.filter(f_vencimiento__gt=date.today(), comprometido__gt=0):
+			self.comprometido += c.comprometido
 		self.save()
 
 	class Meta:
@@ -87,6 +91,7 @@ class Inventario(models.Model):
 	lote = models.CharField(max_length=50,verbose_name='Codigo de lote')
 	f_vencimiento = models.DateField(auto_now=False, auto_now_add=False, verbose_name='Fecha de vencimiento')
 	stock = models.IntegerField(default=0, verbose_name='Stock')
+	comprometido = models.IntegerField(default=0, verbose_name='Comprometido')
 	producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='inventario', verbose_name='Producto')
 
 	class Meta:

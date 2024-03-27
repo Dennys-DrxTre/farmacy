@@ -16,8 +16,58 @@
     <div class="row">
         <div class="col col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <strong class="card-title">{{sub_title}}</strong>
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 id="page_title">{{ sub_title }}</h5>
+                    <div class="cart-tools">
+                        {% if solicitud.tipo_solicitud == 'ON' %}
+                            {% if request.user.perfil.rol == 'AD' %}
+                                {% if solicitud.estado == 'DV' %}
+                                    <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Mofificar Solicitud">
+                                        Modificar
+                                    </a>
+                                {% endif %}
+                            
+                            {% elif request.user.perfil.rol == 'AL' %}
+                                {% if solicitud.estado == 'AP' %}
+                                    <a href="{% url 'solicitud_de_medicamento_en_espera_entrega' solicitud.pk %}" rel="edit" class="btn btn-dark" data-bs-toggle="tooltip" title="En espera de entrega">
+                                        Marcar 'En espera de entrega'
+                                    </a>
+                                {% endif %}
+                            {% elif request.user.perfil.rol == 'AT' %}
+                                {% if solicitud.estado == 'EE' %}
+                                    <a href="{% url 'solicitud_de_medicamento_entregado' solicitud.pk %}" rel="entregar" class="btn btn-dark" data-bs-toggle="tooltip" title="Entregado al cliente">
+                                        Marcar 'Medicamento entregado'
+                                    </a>
+                                {% elif solicitud.estado == 'PR' %}
+                                    <a href="{% url 'solicitud_de_medicamento_verificada' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Verificar Datos">
+                                        Verificar Solicitud
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        {% elif solicitud.tipo_solicitud == 'PR' %}
+                            {% if request.user.perfil.rol == 'AL' %}
+                                {% if solicitud.estado == 'DV' %}
+                                    <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Mofificar Solicitud">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                {% elif solicitud.estado == 'AP' %}
+                                    <a href="{% url 'solicitud_de_medicamento_en_espera_entrega' solicitud.pk %}" rel="edit" class="btn btn-dark" data-bs-toggle="tooltip" title="En espera de entrega">
+                                        Marcar 'En espera de entrega'
+                                    </a>
+                                {% endif %}
+                            {% elif request.user.perfil.rol == 'AT' %}
+                                {% if solicitud.estado == 'EE' %}
+                                    <a href="{% url 'solicitud_de_medicamento_entregado' solicitud.pk %}" rel="entregar" class="btn btn-dark" data-bs-toggle="tooltip" title="Entregado al cliente">
+                                        Marcar 'Medicamento entregado'
+                                    </a>
+                                {% elif solicitud.estado == 'PR' %}
+                                    <a href="{% url 'solicitud_de_medicamento_verificada' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Verificar Datos">
+                                        Verificar Solicitud
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row">

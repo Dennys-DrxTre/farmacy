@@ -49,8 +49,8 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>fecha</th>
-                                <th>Tipo.Solicitud</th>
+                                <th>Fecha</th>
+                                <th>Tipo de Solicitud</th>
                                 <th>Proceso actual</th>
                                 <th>Estado</th>
                                 <th>Opciones</th>
@@ -71,36 +71,48 @@
                                         
                                         {% if solicitud.tipo_solicitud == 'ON' %}
                                             {% if request.user.perfil.rol == 'AD' %}
-                                                {% if solicitud.estado == 'PR' %}
+                                                {% if solicitud.estado == 'DV' %}
                                                     <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Mofificar Solicitud">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                 {% endif %}
                                             
                                             {% elif request.user.perfil.rol == 'AL' %}
-                                                {% if not solicitud.estado == 'EE' and not solicitud.estado == 'ET' and not solicitud.estado == 'RE' and not solicitud.estado == 'PR' %}
-                                                    <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Mofificar Solicitud">
-                                                        <i class="fa fa-edit"></i>
+                                                {% if solicitud.estado == 'AP' %}
+                                                    <a href="{% url 'solicitud_de_medicamento_en_espera_entrega' solicitud.pk %}" rel="edit" class="btn btn-dark" data-bs-toggle="tooltip" title="En espera de entrega">
+                                                        <i class="fa fa-envelope"></i>
                                                     </a>
                                                 {% endif %}
                                             {% elif request.user.perfil.rol == 'AT' %}
                                                 {% if solicitud.estado == 'EE' %}
                                                     <a href="{% url 'solicitud_de_medicamento_entregado' solicitud.pk %}" rel="entregar" class="btn btn-dark" data-bs-toggle="tooltip" title="Entregado al cliente">
                                                         <i class="fa fa-check-circle"></i>
+                                                    </a>
+                                                {% elif solicitud.estado == 'PR' %}
+                                                    <a href="{% url 'solicitud_de_medicamento_verificada' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Verificar Datos">
+                                                        <i class="fa fa-check-square"></i>
                                                     </a>
                                                 {% endif %}
                                             {% endif %}
                                         {% elif solicitud.tipo_solicitud == 'PR' %}
                                             {% if request.user.perfil.rol == 'AL' %}
-                                                {% if not solicitud.estado == 'EE' and not solicitud.estado == 'ET' and not solicitud.estado == 'RE' %}
+                                                {% if solicitud.estado == 'DV' %}
                                                     <a href="{% url 'modificar_solicitudes_medicamentos' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Mofificar Solicitud">
                                                         <i class="fa fa-edit"></i>
+                                                    </a>
+                                                {% elif solicitud.estado == 'AP' %}
+                                                    <a href="{% url 'solicitud_de_medicamento_en_espera_entrega' solicitud.pk %}" rel="edit" class="btn btn-dark" data-bs-toggle="tooltip" title="En espera de entrega">
+                                                        <i class="fa fa-envelope"></i>
                                                     </a>
                                                 {% endif %}
                                             {% elif request.user.perfil.rol == 'AT' %}
                                                 {% if solicitud.estado == 'EE' %}
                                                     <a href="{% url 'solicitud_de_medicamento_entregado' solicitud.pk %}" rel="entregar" class="btn btn-dark" data-bs-toggle="tooltip" title="Entregado al cliente">
                                                         <i class="fa fa-check-circle"></i>
+                                                    </a>
+                                                {% elif solicitud.estado == 'PR' %}
+                                                    <a href="{% url 'solicitud_de_medicamento_verificada' solicitud.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" title="Verificar Datos">
+                                                        <i class="fa fa-check-square"></i>
                                                     </a>
                                                 {% endif %}
                                             {% endif %}
@@ -112,8 +124,8 @@
                         <tfoot>
                             <tr>
                                 <th>ID</th>
-                                <th>fecha</th>
-                                <th>Descripción</th>
+                                <th>Fecha</th>
+                                <th>Tipo de Solicitud</th>
                                 <th>Proceso actual</th>
                                 <th>Estado</th>
                                 <th>Opciones</th>

@@ -34,7 +34,6 @@ class MisSolicitudesMedOnline(ValidarUsuario, TemplateView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		mis_solicitudes = Solicitud.objects.filter(perfil__cedula=self.request.user.perfil.cedula).order_by('-pk')
-		print(mis_solicitudes)
 		context["sub_title"] = "Mis Solicitudes online"	
 		context['solicitudes'] = mis_solicitudes
 		return context
@@ -68,7 +67,6 @@ class RegistrarMiSolicitud(ValidarUsuario, TemplateView):
 		# try:
 		with transaction.atomic():
 			vents = json.loads(request.POST['vents'])
-			print(vents['beneficiado'], request.user.perfil.pk)
 			solicitud = Solicitud()
 			solicitud.fecha_soli = date.today()
 			solicitud.descripcion = vents['descripcion']

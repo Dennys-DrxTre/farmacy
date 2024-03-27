@@ -1,19 +1,24 @@
 let form_ingreso = document.getElementById('form_register');
 let form_search = document.getElementById('search-input');
 
+let fechaHoy = new Date();
+let dia = fechaHoy.getDate();
+let mes = fechaHoy.getMonth() + 1; // Los meses en JavaScript comienzan en 0
+let año = fechaHoy.getFullYear();
+
+// Asegurarse de que el día y el mes tengan dos dígitos
+if (dia < 10) dia = '0' + dia;
+if (mes < 10) mes = '0' + mes;
+
+// Formatear la fecha en el formato YYYY-MM-DD
+let fechaFormateada = año + '-' + mes + '-' + dia;
+
 let vents = {
     items : {
         fecha: '',
         descripcion: '',
         tipo_ingreso: '',
         det: []
-    },
-    get_ids: function () {
-        var ids =  [];
-        $.each(this.items.det, function (key, value) {
-            ids.push(value.id);
-        });
-        return ids;
     },
     add: function (item) {
         this.items.det.push(item);
@@ -32,7 +37,6 @@ let vents = {
             '#id_datatable_productos',
             {
                 'action': 'search_productos_table',
-                'ids': JSON.stringify(vents.get_ids()),
             },
             [
                 {"data": "nombre"},
@@ -51,7 +55,7 @@ let vents = {
                     }
                 },
             ],
-            '/buscar-productos/'
+            '/buscar-productos-ingresos/'
         );
     },
     list: function () {
@@ -119,7 +123,7 @@ let vents = {
                     orderable: false,
                     render: function (data, type, row) {
 
-                        return '<input type="date" value="'+ data +'"name="f_vencimiento" class="form-control form-control-sm f_vencimiento" required autocomplete="off">';
+                        return '<input type="date" value="'+ data +'"name="f_vencimiento" class="form-control form-control-sm f_vencimiento" min="'+ fechaFormateada +'" required autocomplete="off">';
                     }
                 },
                 {
@@ -140,6 +144,14 @@ let vents = {
 
     },
 };
+
+document.addEventListener('DOMContentLoaded', function() {   
+    // Establecer los atributos min y max del input
+    let inputFecha = document.getElementById('id_fecha');
+    inputFecha.setAttribute('min', fechaFormateada);
+    inputFecha.setAttribute('max', fechaFormateada);
+    inputFecha.value = fechaFormateada;
+   });
 
 $('#id_tipo_ingreso').select2({
     theme: 'bootstrap4',
@@ -178,12 +190,11 @@ $(function () {
         ajax: {
             delay: 250,
             type: "POST", 
-            url: '/buscar-productos/',
+            url: '/buscar-productos-ingresos/',
             data: function (params) {
                 var queryParameters = {
                     term: params.term,
                     action: "search_productos",
-                    ids: JSON.stringify(vents.get_ids())
                 }
                 return queryParameters;
             },
