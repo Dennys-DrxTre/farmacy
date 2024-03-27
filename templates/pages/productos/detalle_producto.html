@@ -128,9 +128,15 @@
                                     {% for h in historial %}
                                         <tr>
                                             <td>{{ h.pk }}</td>
-                                            <td>{{ h.tipo_mov }}</td>
+                                            <td>{{ h.tipo_mov.nombre }}</td>
                                             <td>{{ h.fecha_mov|date:'d/m/Y' }}</td>
-                                            <td>{{ h.empleado.nombres }} {{ h.empleado.apellidos }}</td>
+                                            <td>
+                                                {% if h.tipo_mov.nombre == 'PACIENTE NO RETIRO SOLICITUD DE MEDICAMENTOS' %}
+                                                    SISTEMA
+                                                {% else %}
+                                                    {{ h.empleado.nombres }} {{ h.empleado.apellidos }}                                              
+                                                {% endif %}
+                                            </td>
                                             <td>{{ h.producto.producto }} - {{ h.producto.lote }}</td>
                                             
                                             {% if h.tipo_mov.operacion == '+' %}
