@@ -100,6 +100,36 @@ class Perfil(Persona):
 		item['genero'] = self.get_genero_display()
 		return item
 
+class Comunidad(models.Model):
+	
+	class Genero(models.TextChoices):
+		MASCULINO = 'MA', 'Masculino'
+		FEMENINO = 'FE', 'Femenino'	
+
+	class Nacionalidad(models.TextChoices):
+		VENEZOLANO = 'V-', 'V-'
+		EXTRANJERO = 'E-', 'E-'
+		JURIDICO = 'J-', 'J-'
+
+	nacionalidad = models.CharField(max_length=2, choices=Nacionalidad.choices, default=Nacionalidad.VENEZOLANO, blank=False, null=False)
+	cedula = models.CharField(max_length=8, blank=False, null=False)
+	nombres = models.CharField(max_length=50, blank=False, null=False)
+	apellidos = models.CharField(max_length=50, blank=False, null=False)
+	patologia = models.TextField(blank=True, null=True)
+	jefe_comunidad = models.ForeignKey(Perfil, on_delete=models.PROTECT, related_name='comunidad', blank=True, null=True)
+	genero = models.CharField(max_length=2, blank=False, null=False, choices=Genero.choices, default=Genero.MASCULINO)
+
+	def __str__(self):
+		return f'{self.cedula}-{self.nombres}'
+	
+	class Meta:
+		verbose_name = 'Comunidad'
+		verbose_name_plural = 'Comunidades'
+
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item
+
 class Beneficiado(Persona):
 	perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT, related_name='beneficiados')
 
