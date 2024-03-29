@@ -16,7 +16,7 @@ from .mixins import ValidarUsuario
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import PerfilForm, ZonaForm, FormLanding, FormEditPerfil, FormComunidad
+from .forms import PerfilForm, ZonaForm, FormLanding, FormEditPerfil, FormComunidad, BeneficiadoForm
 
 from apps.entidades.models import Perfil, User, Beneficiado, Zona, LandingPage, Comunidad
 
@@ -544,3 +544,37 @@ class ActualizarZona(LoginRequiredMixin, View):
 		except Exception as e:
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)	
+	
+# PERFIL DE USUARIO
+	
+class MiPerfil(TemplateView):
+	template_name = 'acceso/perfil.html'
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		try:
+			action = request.POST['action']
+
+			if action == 'nuevo_bene':
+				form = BeneficiadoForm(request.POST)
+
+				if form.is_valid():
+					if not Beneficiado.objects.filter(cedula = form.cleaned_data['cedula']).exists():
+						form.save()
+						data['response'] = {'title':'Exito!', 'data': 'Beneficiado registrado correctamente.', 'type_response': 'success'}
+					else:
+						data['response'] = {'title':'Ocurrió un error!', 'data': 'Beneficiado ya se encuentra registrado.', 'type_response': 'danger'}
+
+		except Exception as e:
+			data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+	
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		user = User.objects.get(username = self.request.user.username)
+		perfil = Perfil.objects.get(usuario = user)
+		beneficiados = Beneficiado.objects.filter(perfil = perfil)
+		# Aquí puedes agregar cualquier dato que desees pasar a la plantilla
+		context['mi_dato'] = perfil
+		context['bene'] = beneficiados
+		return context

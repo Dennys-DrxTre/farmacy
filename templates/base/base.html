@@ -150,7 +150,7 @@
                             <!-- <img class="user-avatar rounded-circle" src= "{% get_media_prefix %}{{ request.user.imagen }}" onerror="this.src='{% static 'images/admin.png' %}';"> -->
                         </a>
                         <div class="user-menu dropdown-menu">
-                            <!-- <a class="nav-link" href="#"><i class="fa fa-user"></i>Cambiar Perfil</a> -->
+                            <a class="nav-link" href="{% url 'perfil' %}"><i class="fa fa-user"></i>Perfil</a>
                             <a class="nav-link" href="#" rel="cambiar_clave"><i class="fa fa-lock"></i>Cambiar Contraseña</a>
                             <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-power-off"></i>Cerrar sesion</a>
                         </div>

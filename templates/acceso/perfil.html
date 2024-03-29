@@ -1,0 +1,108 @@
+{% extends 'base/base.html' %}
+{% block title %}Mi perfil{% endblock %}
+
+{% block body %}
+
+<div class="col">
+    <div class="card">
+        <div class="card-header">
+            <h4>Información personal</h4>
+        </div>
+        <div class="card-body">
+            <div class="default-tab">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active show" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="false">Mi Información personal</a>
+                        <a class="nav-item nav-link " id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="true">Mis Beneficiados</a>
+                    </div>
+                </nav>
+                <div class="tab-content pl-3 pt-2" id="nav-tabContent">
+                    <div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="row">
+                            <div class="col">
+                                <label for="">Cedula</label>
+                                <p>{{mi_dato.nacionalidad}}{{mi_dato.cedula}}</p>
+                            </div>
+                            <div class="col">
+                                <label for="">Nombres</label>
+                                <p>{{mi_dato.nombres}}</p>
+                            </div>
+                            <div class="col">
+                                <label for="">Apellidos</label>
+                                <p>{{mi_dato.apellidos}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="">Genero</label>
+                                <p>{{mi_dato.get_genero_display}}</p>
+                            </div>
+                            <div class="col">
+                                <label for="">Fecha de nacimiento</label>
+                                <p>{{mi_dato.f_nacimiento}}</p>
+                            </div>
+                            <div class="col">
+                                <label for="">¿Esta embarazada?</label>
+                                {% if genero == 'MA' %}
+                                    <p>NO APLICA</p>
+                                {% else %}
+                                <P>{{mi_dato.embarazada|yesno:"Sí,No"}}</P>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="">Telefono</label>
+                                <p>{{mi_dato.telefono}}</p>
+                            </div>
+                            <div class="col">
+                                <label for="">Zona</label>
+                                <p>{{mi_dato.zona}}</p>
+                            </div>
+                            <div class="col">
+                                <label for="">Constancia de residencia</label> <br>
+                                <a href="{{mi_dato.c_residencia.url}}" target="_blank" class="btn btn-sm btn-info">Visualizar</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="">Direccion habitacional</label>
+                                <p>{{mi_dato.direccion}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade " id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="row mb-3">
+                            <table class="table">
+                                <tr>
+                                    <th>Cedula</th>
+                                    <th>Nombres</th>
+                                    <th>Genero</th>
+                                    <th>Fecha N.</th>
+                                    <th>Embarazo</th>
+                                </tr>
+                                {% for x in bene %}
+                                    <tr>
+                                        <td>{{x.nacionalidad}}{{x.cedula}}</td>
+                                        <td>{{x.nombres}} {{x.apellidos}}</td>
+                                        <td>{{x.get_genero_display}}</td>
+                                        <td>{{x.f_nacimiento}}</td>
+                                        <td>
+                                            {% if x.genero == 'MA' %}
+                                                <p>NO APLICA</p>
+                                            {% else %}
+                                                <P>{{x.embarazada|yesno:"Sí,No"}}</P>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
