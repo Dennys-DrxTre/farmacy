@@ -16,13 +16,17 @@ from .views import (
     EditarUsuario,
     ListadoMicomunidad,
     RegistrarComunidad,
-    EditarComunidad
+    EditarComunidad,
+    MiPerfil
 )
 
 urlpatterns = [
     path('inicio/', Inicio.as_view(), name='vista'),
     path('', landing.as_view()),
     path('actualizar-landing/', ActualizarLanding.as_view(), name='edit_landing'),
+
+    # perfil de usuario
+    path('mi-perfil/', MiPerfil.as_view(), name='perfil'),
 
     path('registrar-perfil/', RegistrarPerfil.as_view(), name='new_perfil'),
     path('listado-de-perfiles/', ListadoPerfiles.as_view(), name='lista_perfiles'),

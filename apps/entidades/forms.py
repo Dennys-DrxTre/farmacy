@@ -1,5 +1,5 @@
 from django import forms
-from .models import Perfil, Zona, LandingPage, Comunidad
+from .models import Perfil, Zona, LandingPage, Comunidad, Beneficiado
 
 class FormComunidad(forms.ModelForm):
 	class Meta:
@@ -40,3 +40,8 @@ class FormEditPerfil(forms.ModelForm):
 		model = Perfil
 		fields = '__all__'
 		exclude = ['nacionalidad', 'cedula', 'usuario']
+
+class BeneficiadoForm(forms.ModelForm):
+	class Meta:
+		model = Beneficiado
+		fields = '__all__'
