@@ -1,7 +1,7 @@
 import json
 from datetime import date
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
@@ -21,7 +21,11 @@ from django.views.generic import (
 	View
 )
 
-from apps.movimientos.models import Jornada
+from apps.movimientos.models import Jornada, DetalleJornada
+from apps.inventario.models import Producto, Inventario
+from apps.entidades.models import Comunidad
+
+from apps.movimientos.forms import MiJornadaForm,ComunidadForm
 
 class MisSolicitudesJornadas(ValidarUsuario, TemplateView):
 	permission_required = 'entidades.ver_mis_jornada_medicamentos'
@@ -33,4 +37,67 @@ class MisSolicitudesJornadas(ValidarUsuario, TemplateView):
 		jornadas = Jornada.objects.filter(jefe_comunidad__cedula=self.request.user.perfil.cedula).order_by('-pk')
 		context["sub_title"] = "Mis Solicitudes de Jornadas"	
 		context['jornadas'] = jornadas
+		return context
+	
+class DetalleMiJornada(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.ver_mis_jornada_medicamentos'
+	template_name = 'pages/jornadas/detalle_mi_jornada.html'
+	# permission_required = 'anuncios.requiere_secretria'
+
+	def get(self, request, pk, *args, **kwargs):
+		context = {}
+		try:
+			mi_jornada = Jornada.objects.get(pk=pk, jefe_comunidad=request.user.perfil)
+			context['jornada'] = mi_jornada
+			context["sub_title"] = "Detalle de mi Jornada"
+			return render(request, self.template_name, context)
+		except Jornada.DoesNotExist:
+			return redirect('mi_listado_jornadas')
+
+class RegistrarMiJornada(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.registrar_mi_jornada_medicamentos'
+	template_name = 'pages/jornadas/registrar_mi_jornada.html'
+	object = None
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		# try:
+		with transaction.atomic():
+			vents = json.loads(request.POST['vents'])
+			jornada = Jornada()
+			jornada.fecha_solicitud = date.today()
+			jornada.descripcion = vents['descripcion']
+			jornada.jefe_comunidad_id = request.user.perfil.pk
+			jornada.proceso_actual = jornada.FaseProceso.ADMINISTRADOR
+			jornada.estado = jornada.Status.EN_PROCRESO 
+			for det in vents['comunidad']:
+				comunidad = Comunidad.objects.filter(pk=det['id']).first()
+				jornada.comunidad.add(comunidad)
+			jornada.save()
+
+			for det in vents['det']:
+				producto = Producto.objects.filter(pk=det['id']).first()
+
+				detalle = DetalleJornada()
+				detalle.jornada = jornada
+				detalle.producto = producto
+				detalle.cant_solicitada = det['cantidad']
+				detalle.save()
+
+			messages.success(request,'Solicitud de jornada registrada correctamente')
+			data['response'] = {'title':'Exito!', 'data': 'Solicitud de jornada registrada correctamente', 'type_response': 'success'}
+		# except Exception as e:
+		# 	data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
+		# 	data['error'] = str(e)
+		return JsonResponse(data, safe=False)
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["sub_title"] = "Registrar Mi Jornada"
+		context["form"] = MiJornadaForm()
+		context["form_c"] = ComunidadForm()
 		return context

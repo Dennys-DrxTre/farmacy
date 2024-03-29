@@ -43,7 +43,7 @@ function Texto_Numeros(e) {
 
 $(function() {
 
-	$('#listado').DataTable({
+	$('#listado, .listado').DataTable({
 		responsive: true,
 		autoWidth: false,
 		destroy: true,

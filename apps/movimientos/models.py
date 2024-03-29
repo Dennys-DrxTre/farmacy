@@ -148,7 +148,7 @@ class Jornada(models.Model):
 		return item
 
 class DetalleJornada(models.Model):
-	jornada = models.ForeignKey(Jornada, on_delete=models.CASCADE)
+	jornada = models.ForeignKey(Jornada, on_delete=models.CASCADE, related_name='detalle')
 	producto = models.ForeignKey(Producto, on_delete=models.CASCADE, blank=True, null=True)
 	cant_solicitada = models.IntegerField(default=1)
 	cant_aprobada = models.IntegerField(default=0)
@@ -159,7 +159,7 @@ class DetalleJornada(models.Model):
 		ordering = ['pk']
 
 	def __str__(self):
-		return self.pk
+		return str(self.pk)
 	
 	def toJSON(self):
 		item = model_to_dict(self)

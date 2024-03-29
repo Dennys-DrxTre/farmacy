@@ -14,7 +14,7 @@ from .views.solicitudes.views import (
     RechazarSolicitudMedicamento
 )
 from .views.mantenimiento.views import ListadoTipoMovi, ActualizarTipoMovi, RegistrarTipoMovi
-from .views.jornadas.views import MisSolicitudesJornadas
+from .views.jornadas.views import MisSolicitudesJornadas, DetalleMiJornada
 
 urlpatterns = [
     # INGRESOS
@@ -48,4 +48,6 @@ urlpatterns = [
 
     # JORNADAS
     path('mis-solicitudes-de-jornadas/', MisSolicitudesJornadas.as_view(), name='mi_listado_jornadas'),
+    path('detalle-de-mi-solicitud-de-jornada/<int:pk>/', DetalleMiJornada.as_view(), name='detalle_mi_jornada'),
+
 ]

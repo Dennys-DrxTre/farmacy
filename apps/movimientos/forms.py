@@ -1,6 +1,6 @@
 from django import forms
-from .models import Ingreso, Solicitud, TipoMov
-from apps.entidades.models import Beneficiado, User, Zona, Perfil
+from .models import Ingreso, Solicitud, TipoMov, Jornada
+from apps.entidades.models import Beneficiado, User, Zona, Perfil, Comunidad
 
 class IngresoForm(forms.ModelForm):
 	tipo_ingreso = forms.ModelChoiceField(queryset=TipoMov.objects.filter(operacion=TipoMov.Operacion.SUMA))	
@@ -60,4 +60,15 @@ class SolicitudEditForm(forms.ModelForm):
 class FormTipoMovi(forms.ModelForm):
 	class Meta:
 		model = TipoMov
+		fields = '__all__'
+
+class MiJornadaForm(forms.ModelForm):
+	class Meta:
+		model = Jornada
+		fields = '__all__'
+		exclude = ['encargados', 'fecha_jornada']
+
+class ComunidadForm(forms.ModelForm):
+	class Meta:
+		model = Comunidad
 		fields = '__all__'

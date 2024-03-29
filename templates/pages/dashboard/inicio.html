@@ -129,7 +129,8 @@ Bienvenido a tu Farmacia Comunitaria
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Fecha</th>
+                        <th scope="col">F.Solicitud</th>
+                        <th scope="col">F.Jornada</th>
                         <th scope="col">Proceso Actual</th>
                         <th scope="col">Estado</th>
                     </tr>
@@ -137,7 +138,16 @@ Bienvenido a tu Farmacia Comunitaria
                 <tbody>
                     {% for solicitud in mis_solicitudes_de_jornadas_de_medicamentos %}
                         <tr>
-                            <th scope="row">{{ solicitud.fecha|date:'d/m/Y' }}</th>
+                            <th scope="row">{{ solicitud.fecha_solicitud|date:'d/m/Y' }}</th>
+                            {% if jornada.estado == 'AP' %}
+                                {% if jornada.fecha_jornada %}
+                                    <td>{{ jornada.fecha_jornada|date:'d/m/Y' }}</td>
+                                {% else %}
+                                    <td> En Espera</td>
+                                {% endif %}
+                            {% else %}
+                                <td> En Espera</td>
+                            {% endif %}                            
                             <td>{{ solicitud.get_proceso_actual_display }}</td>
                             <td>{{ solicitud.get_estado_display }}</td>
                         </tr>
