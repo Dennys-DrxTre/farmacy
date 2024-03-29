@@ -4,7 +4,7 @@ from django.db import models
 from django.forms import model_to_dict
 from django.contrib.auth.models import User
 
-from apps.entidades.models import Beneficiado, Perfil
+from apps.entidades.models import Beneficiado, Perfil,Comunidad
 from apps.inventario.models import Producto, Inventario
 
 # solicitud de producto
@@ -129,10 +129,11 @@ class Jornada(models.Model):
 	encargados = models.TextField()
 	descripcion = models.TextField(blank=True, null=True)
 	fecha_solicitud = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
-	fecha_jornada = models.DateField(auto_now=False, auto_now_add=False)
+	fecha_jornada = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
 	jefe_comunidad = models.ForeignKey(Perfil, on_delete=models.PROTECT)
 	proceso_actual = models.CharField(max_length=2, choices= FaseProceso.choices, default=FaseProceso.ADMINISTRADOR)
 	estado = models.CharField(max_length=2, choices=Status.choices, default=Status.EN_PROCRESO, blank=False, null=False)
+	comunidad = models.ManyToManyField(Comunidad)
 
 	class Meta:
 		verbose_name = 'Jornada'
@@ -140,14 +141,14 @@ class Jornada(models.Model):
 		ordering = ['pk']
 
 	def __str__(self):
-		return self.pk
+		return str(self.pk)
 	
 	def toJSON(self):
 		item = model_to_dict(self)
 		return item
 
 class DetalleJornada(models.Model):
-	beneficiado = models.ForeignKey(Beneficiado, on_delete=models.PROTECT)
+	jornada = models.ForeignKey(Jornada, on_delete=models.CASCADE)
 	producto = models.ForeignKey(Producto, on_delete=models.CASCADE, blank=True, null=True)
 	cant_solicitada = models.IntegerField(default=1)
 	cant_aprobada = models.IntegerField(default=0)

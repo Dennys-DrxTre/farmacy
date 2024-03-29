@@ -14,6 +14,7 @@ from .views.solicitudes.views import (
     RechazarSolicitudMedicamento
 )
 from .views.mantenimiento.views import ListadoTipoMovi, ActualizarTipoMovi, RegistrarTipoMovi
+from .views.jornadas.views import MisSolicitudesJornadas
 
 urlpatterns = [
     # INGRESOS
@@ -44,4 +45,7 @@ urlpatterns = [
     path('listado-de-tipos-movimientos/', ListadoTipoMovi.as_view(), name='listado_tipo_movi'),
     path('agregar-tipos-movimientos/', RegistrarTipoMovi.as_view(), name='nuevo_tipo_movi'),
     path('editar-tipos-movimientos/', ActualizarTipoMovi.as_view(), name='edit_tipo_movi'),
+
+    # JORNADAS
+    path('mis-solicitudes-de-jornadas/', MisSolicitudesJornadas.as_view(), name='mi_listado_jornadas'),
 ]

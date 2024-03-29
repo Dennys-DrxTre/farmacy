@@ -16,7 +16,8 @@ from .views import (
     EditarUsuario,
     ListadoMicomunidad,
     RegistrarComunidad,
-    EditarComunidad
+    EditarComunidad,
+    EliminarComunidad
 )
 
 urlpatterns = [
@@ -33,6 +34,7 @@ urlpatterns = [
     path('listado-de-mi-comunidad/', ListadoMicomunidad.as_view(), name='listado_mi_comunidad'),
     path('registrar-beneficiado-jornada/', RegistrarComunidad.as_view(), name='registrar_beneficiado_jornada'),
     path('editar-beneficiado/<int:pk>/', EditarComunidad.as_view(), name='editar_comunidad'),
+    path('eliminar-beneficiado/<int:pk>/', EliminarComunidad.as_view(), name='eliminar_comunidad'),
 
     # control de acceso
     path('ingresar/', LoginPersonalidado.as_view(), name='login'),

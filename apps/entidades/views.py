@@ -353,13 +353,13 @@ class EliminarComunidad(ValidarUsuario, View):
 	def get(self, request, pk):
 		comunidad = Comunidad.objects.filter(pk=pk).first()
 		# Verificar si la comunidad está relacionada con alguna jornada
-		if Jornada.objects.filter(jefe_comunidad=comunidad.jefe_comunidad).exists():
-			messages.error(request, 'No se puede eliminar la comunidad porque está relacionada con una jornada.')
+		if Jornada.objects.filter(comunidad=comunidad).exists():
+			messages.error(request, 'No se puede eliminar el beneficiado porque está relacionada con una jornada.')
 			return redirect('listado_mi_comunidad')
-		
-		# Si no hay jornadas relacionadas, proceder con la eliminación
-		comunidad.delete()
-		messages.success(request, 'El beneficiado ha sido eliminado correctamente.')
+		else:
+			# Si no hay jornadas relacionadas, proceder con la eliminación
+			comunidad.delete()
+			messages.success(request, 'El beneficiado ha sido eliminado correctamente.')
 		return redirect('listado_mi_comunidad')
 
 # control de acceso	

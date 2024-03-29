@@ -29,13 +29,23 @@
             </div>
             {% if messages %}
                 {% for message in messages %}
-                    <div class="sufee-alert alert with-close alert-success alert-dismissible fade show">
-                        <span class="badge badge-pill badge-success">Exito!</span>
-                        {{ message }}.
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
+                    {% if message.tags == 'success' %}
+                        <div class="sufee-alert alert with-close alert-success alert-dismissible fade show">
+                            <span class="badge badge-pill badge-success">Exito!</span>
+                            {{ message }}.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    {% elif message.tags == 'error' %}
+                        <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                            <span class="badge badge-pill badge-danger">Error!</span>
+                            {{ message }}.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
             <div class="card-body">
@@ -64,9 +74,9 @@
                                         <a href="{% url 'editar_comunidad' c.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Beneficiado">
                                             <i class="fa fa-edit"></i>
                                         </a>
-                                        <!-- <a href="#" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar anuncio">
-                                            <i class="fa fa-edit"></i>
-                                        </a> -->
+                                        <a href="{% url 'eliminar_comunidad' c.pk %}" rel="delete" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Beneficiado">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}

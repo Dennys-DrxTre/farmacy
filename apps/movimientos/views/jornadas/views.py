@@ -25,7 +25,7 @@ from apps.movimientos.models import Jornada
 
 class MisSolicitudesJornadas(ValidarUsuario, TemplateView):
 	permission_required = 'entidades.ver_mis_jornada_medicamentos'
-	template_name = 'pages/movimientos/jornadas/mis_solicitudes_jornadas.html'
+	template_name = 'pages/jornadas/mis_solicitudes_jornadas.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	
 	def get_context_data(self, **kwargs):

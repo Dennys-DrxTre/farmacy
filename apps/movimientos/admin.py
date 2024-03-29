@@ -31,9 +31,8 @@ class JornadaAdmin(admin.ModelAdmin):
     # readonly_fields = ('date_of_birth',)
 
 class DetJornadaAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'beneficiado', 'cant_solicitada', 'cant_aprobada')
-    list_filter = ('beneficiado',)
-    search_fields = ('pk', 'beneficiado')
+    list_display = ('pk', 'cant_solicitada', 'cant_aprobada')
+    search_fields = ('pk',)
     ordering = ('pk',)
     # readonly_fields = ('date_of_birth',)
 
