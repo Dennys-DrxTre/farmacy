@@ -119,12 +119,17 @@ class Jornada(models.Model):
 		EN_PROCRESO = 'PR', 'En Proceso'
 		APROBADO = 'AP', 'Aprobado'
 		RECHAZADO = 'RE', 'Rechazado'
+		ENTREGADO = 'ET', 'Entregado'
 
 	class FaseProceso(models.TextChoices):
 		ADMINISTRADOR = 'AD', 'Administrador'
+		ALMACENISTA = 'AL', 'Almacenista'
+		FINALIZADO = 'FI', 'Finalizado'
 
 	encargados = models.TextField()
-	fecha = models.DateField(auto_now=False, auto_now_add=False)
+	descripcion = models.TextField(blank=True, null=True)
+	fecha_solicitud = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
+	fecha_jornada = models.DateField(auto_now=False, auto_now_add=False)
 	jefe_comunidad = models.ForeignKey(Perfil, on_delete=models.PROTECT)
 	proceso_actual = models.CharField(max_length=2, choices= FaseProceso.choices, default=FaseProceso.ADMINISTRADOR)
 	estado = models.CharField(max_length=2, choices=Status.choices, default=Status.EN_PROCRESO, blank=False, null=False)
@@ -143,9 +148,9 @@ class Jornada(models.Model):
 
 class DetalleJornada(models.Model):
 	beneficiado = models.ForeignKey(Beneficiado, on_delete=models.PROTECT)
-	productos = models.ManyToManyField(Producto)
-	cant_solicitada = models.IntegerField()
-	cant_aprobada = models.IntegerField()
+	producto = models.ForeignKey(Producto, on_delete=models.CASCADE, blank=True, null=True)
+	cant_solicitada = models.IntegerField(default=1)
+	cant_aprobada = models.IntegerField(default=0)
 
 	class Meta:
 		verbose_name = 'Detalle de Jornada'
@@ -155,6 +160,24 @@ class DetalleJornada(models.Model):
 	def __str__(self):
 		return self.pk
 	
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item
+
+class DetalleIventarioJornada(models.Model):
+	detjornada = models.ForeignKey(DetalleJornada, on_delete=models.CASCADE, related_name='detalle_inventario')
+	inventario = models.ForeignKey(Inventario, on_delete=models.CASCADE)
+	cantidad = models.IntegerField(default=0)
+
+	class Meta:
+		unique_together = ('detjornada', 'inventario')  # Asegurar que no haya duplicados
+		verbose_name = 'Detalle de inventario jornada'
+		verbose_name_plural = 'Detalles de inventario jornadas'
+		ordering = ['pk']
+
+	def __str__(self):
+		return str(self.pk)
+
 	def toJSON(self):
 		item = model_to_dict(self)
 		return item

@@ -1,9 +1,7 @@
-
 import json
-from datetime import date, timedelta
+from datetime import date
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
@@ -15,7 +13,6 @@ from django.template.loader import render_to_string
 from apps.movimientos.email_utils import EmailThread
 from django.views.generic import (
 	TemplateView,
-	ListView,
 	UpdateView,
 	DetailView,
 	View

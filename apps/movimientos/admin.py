@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Solicitud, DetalleSolicitud, Jornada, DetalleJornada, Ingreso, DetalleIngreso, TipoMov, Historial, DetalleIventarioSolicitud
+from .models import Solicitud, DetalleSolicitud, Jornada, DetalleJornada, Ingreso, DetalleIngreso, TipoMov, Historial, DetalleIventarioSolicitud, DetalleIventarioJornada
 # Register your models here.
 
 class SolicitudAdmin(admin.ModelAdmin):
@@ -24,16 +24,23 @@ class DetInventarioSolicitudAdmin(admin.ModelAdmin):
     # readonly_fields = ('date_of_birth',)
 
 class JornadaAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'fecha', 'jefe_comunidad', 'proceso_actual', 'estado')
+    list_display = ('pk', 'fecha_solicitud', 'fecha_jornada', 'jefe_comunidad', 'proceso_actual', 'estado')
     list_filter = ('jefe_comunidad', 'proceso_actual', 'estado')
     search_fields = ('pk', 'jefe_comunidad')
-    ordering = ('pk', 'fecha')
+    ordering = ('pk', 'fecha_solicitud', 'fecha_jornada')
     # readonly_fields = ('date_of_birth',)
 
 class DetJornadaAdmin(admin.ModelAdmin):
     list_display = ('pk', 'beneficiado', 'cant_solicitada', 'cant_aprobada')
     list_filter = ('beneficiado',)
     search_fields = ('pk', 'beneficiado')
+    ordering = ('pk',)
+    # readonly_fields = ('date_of_birth',)
+
+class DetInventarioJornadaAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'detjornada', 'inventario', 'cantidad')
+    list_filter = ('inventario',)
+    search_fields = ('pk', 'inventario')
     ordering = ('pk',)
     # readonly_fields = ('date_of_birth',)
 
@@ -73,3 +80,4 @@ admin.site.register(DetalleIngreso, DetIngresoAdmin)
 admin.site.register(TipoMov, TipoMoviAdmin)
 admin.site.register(Historial, HistorialAdmin)
 admin.site.register(DetalleIventarioSolicitud, DetInventarioSolicitudAdmin)
+admin.site.register(DetalleIventarioJornada, DetInventarioJornadaAdmin)
