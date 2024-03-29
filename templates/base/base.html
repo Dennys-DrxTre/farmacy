@@ -45,9 +45,10 @@
                     <li class="menu-item-has-children dropdown">
                         <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-envelope"></i>Mis solicitudes</a>
                         <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-table"></i><a href="{% url 'mis_solicitudes_medicamentos' %}">Solicitud de medicamentos</a></li>
+                            <li><i class="fa fa-table"></i><a href="{% url 'mis_solicitudes_medicamentos' %}">Mis Solicitudes de medicamentos</a></li>
                             {% if request.user.perfil.rol == "JC" %}
-                                <li><i class="fa fa-table"></i><a href="#">Solicitud de jornada de medicamentos</a></li>
+                                <li><i class="fa fa-table"></i><a href="#">Mis Solicitud de jornada de medicamentos</a></li>
+                                <li><i class="fa fa-table"></i><a href="{% url 'listado_mi_comunidad' %}">Mi Comunidad</a></li>
                             {% endif %}
                         </ul>
                     </li>

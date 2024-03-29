@@ -1,26 +1,25 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView, View, DetailView, UpdateView
-from apps.entidades.models import Perfil, Persona, User, Beneficiado, Zona, LandingPage
+from django.views.generic import TemplateView, View, DetailView, UpdateView, DeleteView
 from django.contrib.auth.models import Permission
-from .forms import PerfilForm, ZonaForm, FormLanding, FormEditPerfil
 from .permisos import permisos_usuarios
-from django import forms
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from django.db import IntegrityError
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from .mixins import ValidarUsuario
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Perfil
+from .forms import PerfilForm, ZonaForm, FormLanding, FormEditPerfil, FormComunidad
+
+from apps.entidades.models import Perfil, User, Beneficiado, Zona, LandingPage, Comunidad
+
 from apps.inventario.models import Producto
 from apps.movimientos.models import Solicitud, Jornada
 # Create your views here.
@@ -275,8 +274,95 @@ class EditarUsuario(SuccessMessageMixin, UpdateView):
 
 		return super().form_valid(form)
 
-# control de acceso
+class ListadoMicomunidad(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.view_comunidad'
+	template_name = 'pages/mi_comunidad/listado_mi_comunidad.html'
 	
+	def get(self, request, *args, **kwargs):
+		perfil = Perfil.objects.filter(usuario = request.user).first()
+		if perfil:
+			mi_comunidad = Comunidad.objects.filter(jefe_comunidad = perfil)
+		return render(request, self.template_name, {'mi_comunidad': mi_comunidad, 'sub_title':'Listado de mi comunidad'})
+
+class RegistrarComunidad(ValidarUsuario, TemplateView):
+	permission_required = 'entidades.add_comunidad'
+	template_name = 'pages/mi_comunidad/registrar_beneficiado.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["sub_title"] = "Registrar Beneficiado"
+		context["form"] = FormComunidad(self.request.POST or None)
+		return context
+
+	def post(self, request, *args, **kwargs):
+		try:
+			comunidad = Comunidad.objects.filter(cedula=request.POST.get('cedula')).first()
+			perfil = Perfil.objects.filter(usuario=request.user).first()
+			if not comunidad:
+				comunidad = Comunidad()
+				comunidad.nacionalidad = request.POST.get('nacionalidad')
+				comunidad.cedula = request.POST.get('cedula')
+				comunidad.nombres = request.POST.get('nombres')
+				comunidad.apellidos = request.POST.get('apellidos')
+				comunidad.genero = request.POST.get('genero')
+				comunidad.patologia = request.POST.get('patologia')
+				comunidad.jefe_comunidad_id = perfil.pk
+				comunidad.save()
+				messages.success(request, 'Se ha registrado correctamente.')
+			else:
+				messages.error(request, 'Este beneficiado ya existe.')
+				return render(request, self.template_name, self.get_context_data(**kwargs))
+		except Exception as e:
+			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
+		return redirect('listado_mi_comunidad')
+
+class EditarComunidad(ValidarUsuario, UpdateView):
+	permission_required = 'entidades.change_comunidad'
+	template_name = 'pages/mi_comunidad/editar_comunidad.html'
+	model = Comunidad
+	form_class = FormComunidad
+
+	def get_success_url(self):
+		return reverse('listado_mi_comunidad')
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["sub_title"] = "Editar Comunidad"
+		return context
+
+	def form_valid(self, form):
+		# Validación de que la cédula no existe
+		cedula = form.cleaned_data.get('cedula')
+		if Comunidad.objects.filter(cedula=cedula).exclude(pk=self.object.pk).exists():
+			messages.error(self.request, 'La cédula ya existe.')
+			return self.form_invalid(form)
+		
+		# Asignación de jefe_comunidad
+		perfil = Perfil.objects.filter(usuario=self.request.user).first()
+		if perfil:
+			form.instance.jefe_comunidad = perfil
+		else:
+			messages.error(self.request, 'El perfil del usuario no existe.')
+			return self.form_invalid(form)
+		messages.success(self.request, 'El beneficiado ha sido actualizado correctamente.')
+		return super().form_valid(form)
+
+class EliminarComunidad(ValidarUsuario, View):
+	permission_required = 'entidades.delete_comunidad'
+	
+	def get(self, request, pk):
+		comunidad = Comunidad.objects.filter(pk=pk).first()
+		# Verificar si la comunidad está relacionada con alguna jornada
+		if Jornada.objects.filter(jefe_comunidad=comunidad.jefe_comunidad).exists():
+			messages.error(request, 'No se puede eliminar la comunidad porque está relacionada con una jornada.')
+			return redirect('listado_mi_comunidad')
+		
+		# Si no hay jornadas relacionadas, proceder con la eliminación
+		comunidad.delete()
+		messages.success(request, 'El beneficiado ha sido eliminado correctamente.')
+		return redirect('listado_mi_comunidad')
+
+# control de acceso	
 class LoginPersonalidado(TemplateView):
 	template_name = 'acceso/login.html'
 

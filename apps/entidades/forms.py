@@ -1,5 +1,10 @@
 from django import forms
-from .models import Perfil, Zona, LandingPage
+from .models import Perfil, Zona, LandingPage, Comunidad
+
+class FormComunidad(forms.ModelForm):
+	class Meta:
+		model = Comunidad
+		fields = '__all__'
 
 class PerfilForm(forms.ModelForm):
 

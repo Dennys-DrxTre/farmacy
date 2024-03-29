@@ -13,7 +13,10 @@ from .views import (
     ActualizarLanding,
     ResetPassword,
     DetallesUsuario,
-    EditarUsuario
+    EditarUsuario,
+    ListadoMicomunidad,
+    RegistrarComunidad,
+    EditarComunidad
 )
 
 urlpatterns = [
@@ -25,6 +28,11 @@ urlpatterns = [
     path('listado-de-perfiles/', ListadoPerfiles.as_view(), name='lista_perfiles'),
     path('detalle-de-perfil/<int:pk>/', DetallesUsuario.as_view(), name='detalle_perfiles'),
     path('editar-perfil/<int:pk>/', EditarUsuario.as_view(), name='editar_perfil'),
+
+    # mi comuniad    
+    path('listado-de-mi-comunidad/', ListadoMicomunidad.as_view(), name='listado_mi_comunidad'),
+    path('registrar-beneficiado-jornada/', RegistrarComunidad.as_view(), name='registrar_beneficiado_jornada'),
+    path('editar-beneficiado/<int:pk>/', EditarComunidad.as_view(), name='editar_comunidad'),
 
     # control de acceso
     path('ingresar/', LoginPersonalidado.as_view(), name='login'),

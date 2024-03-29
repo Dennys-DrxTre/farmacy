@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Beneficiado, Perfil, Zona
+from .models import Beneficiado, Perfil, Zona, Comunidad
 # Register your models here.
 
 class ZonaAdmin(admin.ModelAdmin):
@@ -18,6 +18,13 @@ class PerfilAdmin(admin.ModelAdmin):
     # readonly_fields = ('date_of_birth',)
 
 
+class ComunidadAdmin(admin.ModelAdmin):
+    list_display = ('nacionalidad','cedula', 'nombres', 'apellidos', 'genero')
+    list_filter = ('nacionalidad',)
+    search_fields = ('cedula', 'nombres')
+    ordering = ('nombres',)
+    # readonly_fields = ('date_of_birth',)
+
 class BeneficiadoAdmin(admin.ModelAdmin):
     list_display = ('cedula', 'nombres', 'apellidos', 'zona')
     list_filter = ('zona',)
@@ -28,4 +35,5 @@ class BeneficiadoAdmin(admin.ModelAdmin):
 
 admin.site.register(Zona, ZonaAdmin)
 admin.site.register(Perfil, PerfilAdmin)
+admin.site.register(Comunidad, ComunidadAdmin)
 admin.site.register(Beneficiado, BeneficiadoAdmin)
