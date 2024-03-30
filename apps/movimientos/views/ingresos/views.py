@@ -136,7 +136,7 @@ class BuscarProductosIngresoView(ValidarUsuario, View):
 		elif action == 'search_productos_table':
 			data = []
 			productos = Producto.objects.all()
-			for i in productos[0:10]:
+			for i in productos:
 				item = i.toJSON()
 				item['text'] = '{}'.format(i.nombre)
 				item['id'] = i.pk
@@ -173,7 +173,7 @@ class BuscarProductosView(ValidarUsuario, View):
 			data = []
 			ids_exclude = json.loads(request.POST.get('ids'))
 			productos = Producto.objects.all()
-			for i in productos.exclude(pk__in=ids_exclude)[0:10]:
+			for i in productos.exclude(pk__in=ids_exclude):
 				item = i.toJSON()
 				item['text'] = '{}'.format(i.nombre)
 				item['id'] = i.pk

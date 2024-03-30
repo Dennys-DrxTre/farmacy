@@ -128,6 +128,7 @@ class Comunidad(models.Model):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		item['genero'] = self.get_genero_display()
 		return item
 
 class Beneficiado(Persona):

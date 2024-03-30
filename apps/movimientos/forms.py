@@ -65,8 +65,7 @@ class FormTipoMovi(forms.ModelForm):
 class MiJornadaForm(forms.ModelForm):
 	class Meta:
 		model = Jornada
-		fields = '__all__'
-		exclude = ['encargados', 'fecha_jornada']
+		fields = ['descripcion']
 
 class ComunidadForm(forms.ModelForm):
 	class Meta:

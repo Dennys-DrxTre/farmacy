@@ -14,7 +14,14 @@ from .views.solicitudes.views import (
     RechazarSolicitudMedicamento
 )
 from .views.mantenimiento.views import ListadoTipoMovi, ActualizarTipoMovi, RegistrarTipoMovi
-from .views.jornadas.views import MisSolicitudesJornadas, DetalleMiJornada
+from .views.jornadas.views import (
+    MisSolicitudesJornadas, 
+    DetalleMiJornada, 
+    RegistrarMiJornada,
+    BuscarBeneficiadoComunidadView,
+    SolicitudesJornadas,
+    DetalleJornada
+)
 
 urlpatterns = [
     # INGRESOS
@@ -49,5 +56,9 @@ urlpatterns = [
     # JORNADAS
     path('mis-solicitudes-de-jornadas/', MisSolicitudesJornadas.as_view(), name='mi_listado_jornadas'),
     path('detalle-de-mi-solicitud-de-jornada/<int:pk>/', DetalleMiJornada.as_view(), name='detalle_mi_jornada'),
+    path('registrar-mi-jornada/', RegistrarMiJornada.as_view(), name='registrar_mi_jornada'),
+    path('cargar-comunidad/', BuscarBeneficiadoComunidadView.as_view(), name='cargar_comunidad'),
+    path('solicitudes-de-jornadas/', SolicitudesJornadas.as_view(), name='listado_jornadas'),
+    path('detalle-de-solicitud-de-jornada/<int:pk>/', DetalleJornada.as_view(), name='detalle_jornada'),
 
 ]

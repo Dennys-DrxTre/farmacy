@@ -73,7 +73,7 @@
                                     <td>{{ jornada.get_proceso_actual_display }}</td>
                                     <td>{{ jornada.get_estado_display }}</td>
                                     <td>
-                                        <a href="{% url 'detalle_mi_jornada' jornada.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" title="Detalle de mi jornada">
+                                        <a href="{% url 'detalle_jornada' jornada.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" title="Detalle de mi jornada">
                                             <i class="fa fa-info"></i>
                                         </a>
                                         <!-- <a href="#" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar anuncio">

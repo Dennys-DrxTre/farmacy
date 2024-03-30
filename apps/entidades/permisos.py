@@ -147,6 +147,10 @@ permisos_usuarios = {
         'ver_mis_jornada_medicamentos',
         'registrar_mi_solicitud_de_medicamentos',
         'registrar_mi_jornada_medicamentos',
+        'add_comunidad',
+        'change_comunidad',
+        'delete_comunidad',
+        'view_comunidad',
     ],
     'PA': [
         'ver_inicio',
