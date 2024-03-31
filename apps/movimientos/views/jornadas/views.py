@@ -13,8 +13,6 @@ from django.template.loader import render_to_string
 from apps.movimientos.email_utils import EmailThread
 from apps.entidades.mixins import ValidarUsuario
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.template.loader import render_to_string
-from apps.movimientos.email_utils import EmailThread
 from django.db.models import Q
 
 from django.views.generic import (
@@ -45,7 +43,7 @@ class MisSolicitudesJornadas(ValidarUsuario, TemplateView):
 		return context
 	
 class SolicitudesJornadas(ValidarUsuario, TemplateView):
-	permission_required = 'entidades.view_jornada'
+	permission_required = 'movimientos.view_jornada'
 	template_name = 'pages/jornadas/solicitudes_jornadas.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	
@@ -72,7 +70,7 @@ class DetalleMiJornada(ValidarUsuario, TemplateView):
 			return redirect('mi_listado_jornadas')
 		
 class DetalleJornadaView(ValidarUsuario, TemplateView):
-	permission_required = 'entidades.view_jornada'
+	permission_required = 'movimientos.view_jornada'
 	template_name = 'pages/jornadas/detalle_jornada.html'
 	# permission_required = 'anuncios.requiere_secretria'
 
@@ -360,7 +358,7 @@ class RechazarSolicitudJornada(ValidarUsuario, SuccessMessageMixin, View):
 		return redirect('listado_jornadas')
 
 class ActualizarJornada(ValidarUsuario, SuccessMessageMixin, View):
-	permission_required = 'entidades.change_jornada'
+	permission_required = 'movimientos.change_jornada'
 	success_massage = 'La jornada ha sido actualizada'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None

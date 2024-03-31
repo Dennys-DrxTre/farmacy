@@ -1,6 +1,6 @@
 let form_ingreso = document.getElementById('form_register');
 let form_search = document.getElementById('search-input');
-let perfil_id = document.getElementById('perfil_id');
+let beneficiado_pk = document.getElementById('perfil_id');
 
 
 let vents = {
@@ -247,7 +247,7 @@ $(function () {
         language: "es",
         allowClear: true
     });
-    $('#id_beneficiado').val(perfil_id.value).trigger('change'); 
+    $('#id_beneficiado').val(beneficiado_pk.value).trigger('change'); 
 
     // /** OPEN MODAL BENEFICIADOS **/
     // $('a[rel="open_modal_beneficiado"]').on('click', function () {
