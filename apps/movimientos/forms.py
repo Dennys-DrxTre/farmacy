@@ -1,6 +1,8 @@
 from django import forms
 from .models import Ingreso, Solicitud, TipoMov, Jornada
 from apps.entidades.models import Beneficiado, User, Zona, Perfil, Comunidad
+from django.forms import DateInput
+from django.utils import timezone
 
 class IngresoForm(forms.ModelForm):
 	tipo_ingreso = forms.ModelChoiceField(queryset=TipoMov.objects.filter(operacion=TipoMov.Operacion.SUMA))	
@@ -66,6 +68,18 @@ class MiJornadaForm(forms.ModelForm):
 	class Meta:
 		model = Jornada
 		fields = ['descripcion']
+
+class JornadaEditForm(forms.ModelForm):
+	fecha_jornada = forms.DateField(
+		input_formats=['%d/%m/%Y'], # Formato de entrada esperado
+		widget=DateInput(format='%Y-%m-%d'), # Formato de salida
+		label="Fecha Jornada",
+		error_messages={'invalid': 'Por favor, ingrese una fecha válida.'}
+	)
+
+	class Meta:
+		model = Jornada
+		exclude = ['proceso_actual', 'comunidad']
 
 class ComunidadForm(forms.ModelForm):
 	class Meta:

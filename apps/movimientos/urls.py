@@ -19,8 +19,10 @@ from .views.jornadas.views import (
     DetalleMiJornada, 
     RegistrarMiJornada,
     BuscarBeneficiadoComunidadView,
+    BuscarBeneficiadoComunidadModificacionView,
     SolicitudesJornadas,
-    DetalleJornada
+    DetalleJornadaView,
+    EditarJornada
 )
 
 urlpatterns = [
@@ -58,7 +60,9 @@ urlpatterns = [
     path('detalle-de-mi-solicitud-de-jornada/<int:pk>/', DetalleMiJornada.as_view(), name='detalle_mi_jornada'),
     path('registrar-mi-jornada/', RegistrarMiJornada.as_view(), name='registrar_mi_jornada'),
     path('cargar-comunidad/', BuscarBeneficiadoComunidadView.as_view(), name='cargar_comunidad'),
+    path('cargar-comunidad-modificacion/', BuscarBeneficiadoComunidadModificacionView.as_view(), name='cargar_comunidad_modificacion'),
     path('solicitudes-de-jornadas/', SolicitudesJornadas.as_view(), name='listado_jornadas'),
-    path('detalle-de-solicitud-de-jornada/<int:pk>/', DetalleJornada.as_view(), name='detalle_jornada'),
+    path('detalle-de-solicitud-de-jornada/<int:pk>/', DetalleJornadaView.as_view(), name='detalle_jornada'),
+    path('modificar-jornada/<int:pk>/', EditarJornada.as_view(), name='modificar_jornada'),
 
 ]
