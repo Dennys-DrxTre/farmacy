@@ -5,7 +5,7 @@ from .permisos import permisos_usuarios
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
+from apps.movimientos.email_utils import EmailThread
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.shortcuts import redirect
@@ -197,10 +197,7 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 				# Configurar el correo electrónico
 				subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
 				text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
-				msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-				msg.attach_alternative(html_content, "text/html")
-				# Enviar el correo electrónico
-				msg.send()
+				EmailThread(subject, text_content, from_email, [to], False, html_content).start()
 				
 				data['response'] = {'title': 'Exito!', 'data': 'Usuario creado correctamente.', 'type_response': 'success'}
 

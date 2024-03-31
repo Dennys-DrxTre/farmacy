@@ -99,6 +99,8 @@ class RegistrarMiSolicitud(ValidarUsuario, TemplateView):
 		context["sub_title"] = "Registrar ingreso"
 		context["form"] = MiSolicitudForm(user=self.request.user)
 		context["form_b"] = BeneficiadoForm()
+		beneficiado = Beneficiado.objects.filter(perfil_id=self.request.user.perfil.pk).first()
+		context['beneficiado_pk'] = beneficiado.pk
 		return context
 	
 class RegistrarBeneficiado(LoginRequiredMixin, View):

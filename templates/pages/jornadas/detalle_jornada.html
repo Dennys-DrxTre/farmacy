@@ -16,8 +16,30 @@
     <div class="row">
         <div class="col col-md-4">
             <div class="card">
-                <div class="card-header">
-                    <strong class="card-title">{{sub_title}}</strong>
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 id="page_title">{{ sub_title }}</h5>
+                    <div class="cart-tools">
+                        {% if request.user.perfil.rol == 'AD' %}
+                            {% if jornada.estado == 'PR' %}
+                                <a href="{% url 'modificar_jornada' jornada.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar Jornada">
+                                    Modificar
+                                </a>
+                                <a href="#" rel="ban" class="btn btn-danger" data-bs-toggle="tooltip" title="Rechazar Jornada">
+                                    Rechazar
+                                </a>
+                            {% elif jornada.estado == 'AP' %}
+                                <a href="#" rel="update" class="btn btn-secondary" data-bs-toggle="tooltip" title="Actualizar Jornada">
+                                    Actualizar
+                                </a>
+                            {% endif %}
+                        {% elif request.user.perfil.rol == 'AL' %}
+                            {% if jornada.estado == 'AP' %}
+                                <a href="{% url 'jornada_completada' jornada.pk %}" rel="edit" class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Jornada Completada">
+                                    Marcar como Completada
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -60,6 +82,18 @@
                             <h4 class="card-title">Descripcion</h4>
                             <p class="card-text">{{jornada.descripcion}}</p>
                         </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        
+                        {% if jornada.estado == 'RE' %}
+                            <div class="col">
+                                <h4 class="card-title">Motivo Rechazo</h4>
+                                <p class="card-text">{{jornada.motivo_rechazo}}</p>
+                            </div>
+                        {% endif %}
+                            
+
                     </div>
                 </div>
             </div>
@@ -124,8 +158,8 @@
                                     <tr>
                                         <td>{{ det.producto.nombre }}</td>
                                         <td>{{ det.cant_solicitada }}</td>
-                                        {% if det.cant_entregada > 0 %}
-                                            <td>{{ det.cant_entregada }}</td>
+                                        {% if det.cant_aprobada > 0 %}
+                                            <td>{{ det.cant_aprobada }}</td>
                                         {% else %}
                                         <td>En espera</td>
 
@@ -144,6 +178,36 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modal_rechazo" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true" style="display: none;">
+        <form action="/rechazar-jornada-de-medicamento/" method="post" id="form_motivo_rechazo">
+            {% csrf_token %}
+            <input type="hidden" name="pk" id="pk" value="{{ jornada.pk }}">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="modal-title" id="mediumModalLabel">Motivo del Rechazo</h5>
+                            <div class="cart-tools">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label" for="id_motivo_rechazo">Motivo del rechazo</label>
+                            <textarea class="form-control form-control-sm" name="motivo_rechazo" id="id_motivo_rechazo" rows="4" onkeypress="return Texto_Numeros(event)" style="resize: none;"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Confirmar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <div class="modal fade" id="modal_recipe" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-lg" role="document">
@@ -169,6 +233,41 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modal_actualizar" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true" style="display: none;">
+        <form action="/actualizar-jornada-de-medicamento/" method="post" id="form_actualizar">
+            {% csrf_token %}
+            <input type="hidden" name="pk_a" id="pk_a" value="{{ jornada.pk }}">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="modal-title" id="mediumModalLabel">Actualizar jornada</h5>
+                            <div class="cart-tools">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label" for="id_motivo_rechazo">Encargados</label>
+                            <textarea class="form-control form-control-sm" name="encargados" id="id_encargados" rows="4" onkeypress="return Texto_Numeros(event)" style="resize: none;">{{ jornada.encargados }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="id_fecha_jornada">Fecha Jornada</label>
+                            <input type="date" class="form-control form-control-sm" value="{{ jornada.fecha_jornada|date:'Y-m-d' }}" name="fecha_jornada" id="id_fecha_jornada">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Confirmar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock body %}
 
 {% block extrajs %}
@@ -179,9 +278,31 @@
 	<script src="{% static 'js/plugins/responsive.bootstrap5.min.js' %}"></script>     
 
     <script>
+        let fechaHoy = new Date();
+        let dia = fechaHoy.getDate();
+        let mes = fechaHoy.getMonth() + 1; // Los meses en JavaScript comienzan en 0
+        let año = fechaHoy.getFullYear();
+        // Asegurarse de que el día y el mes tengan dos dígitos
+        if (dia < 10) dia = '0' + dia;
+        if (mes < 10) mes = '0' + mes;
+        // Formatear la fecha en el formato YYYY-MM-DD
+        let fechaFormateadaa = año + '-' + mes + '-' + dia;
+        id_fecha_jornada.min = fechaFormateadaa
+
+
         /** OPEN MODAL PRODUCT **/
         $('a[rel="ver_recipe"]').on('click', function () {
             $('#modal_recipe').modal('show');
+        });
+
+        $('a[rel="ban"]').on('click', function () {
+            $('#modal_rechazo').modal('show');
+        });
+
+       // MOSTRAR MODAL ACTUALIZAR
+       $('a[rel="update"]').on('click', function () {
+            $('#form_actualizar')[0].reset();
+            $('#modal_actualizar').modal('show');
         });
 
         $('#btn_medicamentos').on('click', function () {

@@ -88,7 +88,13 @@
                                     </div>
                                     <div class="col">
                                         <label for="">Constancia de residencia</label> <br>
-                                        <a href="{{mi_dato.c_residencia.url}}" target="_blank" class="btn btn-sm btn-info">Visualizar</a>
+                                        
+                                        {% if mi_dato.c_residencia %}
+                                            <a href="{{mi_dato.c_residencia.url}}" target="_blank" class="btn btn-sm btn-info">Visualizar</a>
+                                        {% else %}
+                                            Vacio
+                                        {% endif %}
+                                            
                                     </div>
                                 </div>
                                 <div class="row">

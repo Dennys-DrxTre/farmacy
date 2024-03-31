@@ -40,8 +40,8 @@ let getData = async (filter_id='PA') => {
                 orderable: false,
                 render: function (data, type, row) {
                     let buttons = '<a href="#" rel="edit" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Usuario"><i class="fa fa-edit"></i></a>';
-                    buttons += '<a href="#" rel="btn_recuperar_clave" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Restablecer contraseña"><i class="fa fa-unlock"></i></a>';
-                    buttons += '<a href="#" rel="detalle_user" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles de usuario"><i class="fa fa-info"></i></a>';
+                    buttons += ' <a href="#" rel="btn_recuperar_clave" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Restablecer contraseña"><i class="fa fa-unlock"></i></a>';
+                    buttons += ' <a href="#" rel="detalle_user" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles de usuario"><i class="fa fa-info"></i></a>';
                     return buttons
                 }
             },

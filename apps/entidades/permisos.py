@@ -95,8 +95,6 @@ permisos_usuarios = {
         'add_ingreso',
         'change_ingreso',
         'view_ingreso',
-        'add_jornada',
-        'change_jornada',
         'view_jornada',
         'add_tipomov',
         'change_tipomov',
