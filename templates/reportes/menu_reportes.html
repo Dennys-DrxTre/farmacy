@@ -1,0 +1,86 @@
+{% extends 'base/base.html' %}
+{% block title %}Menu de reportes{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-lg-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-content">
+                    <div class="text-left dib">
+                        <div class="stat-heading">Listado de perfiles</div>
+                        <div class="stat-text"><a href="{% url 't_perfiles' %}" target="_blank" class="btn btn-primary mt-3">Ver</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-content">
+                    <div class="text-left dib">
+                        <div class="stat-heading">Listado de Beneficiados</div>
+                        <div class="stat-text"><a href="{% url 't_beneficiados' %}" target="_blank" class="btn btn-primary mt-3">Ver</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-content">
+                    <div class="text-left dib">
+                        <div class="stat-heading">Listado de Productos</div>
+                        <div class="stat-text"><a href="{% url 'l_productos' %}" target="_blank" class="btn btn-primary mt-3">Ver</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-content">
+                    <div class="text-left dib">
+                        <div class="stat-heading">Listado de Solicitudes</div>
+                        <div class="stat-text"><a href="{% url 't_solicitudes' %}" target="_blank" class="btn btn-primary mt-3">Ver</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-content">
+                    <div class="text-left dib">
+                        <div class="stat-heading">Listado de jornadas por zonas</div>
+                        <select name="" id="id_zona" class="form-control mb-3 mt-3">
+                            {% for x in zonas %}
+                                <option value="{{x.pk}}">{{x.zona_residencia}}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="stat-text"><button class="btn btn-primary" type="button" id="btn_ver">Ver</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block extrajs %}
+    <script>
+        document.getElementById('btn_ver').addEventListener('click', function() {
+            var selectElement = document.getElementById('id_zona');
+            var valorSeleccionado = selectElement.value;
+            window.open('/reporte/listado-de-jornada-zona/'+ valorSeleccionado+'/');
+        });
+    </script>
+{% endblock extrajs %}
+    

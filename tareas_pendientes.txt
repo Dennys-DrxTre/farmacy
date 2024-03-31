@@ -8,6 +8,10 @@ TAREAS & CORRECIONES JOSE
             listado de perfiles (listo),
             listado de beneficiados (listo),
             listado de productos (listo)
+            Todas las jornadas por zonas (listo)
+            listado general de solicitudes (listo)
+            
+
             reportes de solicitudes realizas, tanto por comunidad como ,
             detales de ingresos, por rango de fechas,
             detalles de solicitudes,

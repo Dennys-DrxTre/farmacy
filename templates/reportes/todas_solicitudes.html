@@ -120,22 +120,22 @@
 		<table id="invoice">
 			<thead>
 				<tr>
-					<th>DESCRIPCION</th>
-					<th>ENCARGADOS</th>
+					<th>PERFIL</th>
+					<th>BENEFICIADO</th>
 					<th>FECHA S.</th>
-					<th>FECHA J.</th>
-					<th>JEFE C.</th>
+					<th>DESCRIPCION</th>
+					<th>TIPO S.</th>
 					<th>ESTADO</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for x in jornada %}
+				{% for x in solicitudes %}
 					<tr>
-						<td class="cosa">{{ x.descripcion }}</td>
-						<td class="cosa">{{x.encargados}}</td>
-                        <td class="cosa">{{x.fecha_solicitud|date:'d/m/Y'}}</td>
-						<td class="cosa">{{x.fecha_jornada|date:'d/m/Y'}}</td>
-						<td class="cosa">{{x.jefe_comunidad.nacionalidad}}{{x.jefe_comunidad.cedula}}</td>
+						<td class="cosa">{{ x.perfil.nacionalidad }}{{ x.perfil.cedula }}</td>
+						<td class="cosa">{{ x.beneficiado.perfil.nacionalidad }}{{ x.beneficiado.perfil.cedula }}</td>
+                        <td class="cosa">{{x.fecha_soli|date:'d/m/Y'}}</td>
+						<td class="cosa">{{x.descripcion}}</td>
+						<td class="cosa">{{x.tipo_solicitud}}</td>
                         <td class="cosa">{{x.estado}}</td></td>
 					</tr>
 				{% empty %}

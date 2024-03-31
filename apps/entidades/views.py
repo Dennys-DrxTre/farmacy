@@ -647,3 +647,11 @@ class MiPerfil(TemplateView):
 		context['bene'] = beneficiados
 		context['form'] = BeneficiadoForm()
 		return context
+	
+class MenuReportes(TemplateView):
+	template_name = 'reportes/menu_reportes.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['zonas'] = Zona.objects.all()
+		return context
