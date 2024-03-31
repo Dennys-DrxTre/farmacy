@@ -544,29 +544,99 @@ class ActualizarZona(LoginRequiredMixin, View):
 		except Exception as e:
 			data['error'] = str(e)
 		return JsonResponse(data, safe=False)	
+
+class ActualizarInfo(LoginRequiredMixin, View):
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		data = {}
+		action = request.POST['action_edit']
+		
+		if action == 'editar_info':
+			perfil = Perfil.objects.get(usuario__username = self.request.user.username)
+			user = User.objects.get(username = self.request.user.username)
+			user.email = request.POST['email']
+			user.save()
+
+			perfil.telefono = request.POST['telefono']
+			if request.POST.get('embarazada') == 'on':
+				perfil.embarazada = True
+			else:
+				perfil.embarazada = False
+			perfil.zona = Zona.objects.get(zona_residencia = request.POST['zona'])
+			if request.FILES.get("c_residencia"):
+				perfil.c_residencia = request.FILES.get("c_residencia")
+			perfil.direccion = request.POST['direccion']
+			perfil.save()
+
+			data['response'] = {'title':'Exito!', 'data': 'Perfil actualizado correctamente.', 'type_response': 'success'}
+
+		else:
+			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ocurrió un error inesperado.', 'type_response': 'danger'}
+	
+
+		return JsonResponse(data, safe=False)	
 	
 # PERFIL DE USUARIO
 	
 class MiPerfil(TemplateView):
 	template_name = 'acceso/perfil.html'
 
+	@method_decorator(csrf_exempt)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+
 	def post(self, request, *args, **kwargs):
 		data = {}
-		try:
-			action = request.POST['action']
+		
+		action = request.POST['action']
 
-			if action == 'nuevo_bene':
-				form = BeneficiadoForm(request.POST)
+		if action == 'search_beneficiados':
+			user = User.objects.get(username = self.request.user.username)
+			perfil = Perfil.objects.get(usuario = user)
+			data = []
+			for i in Beneficiado.objects.filter(perfil = perfil):
+				item = i.toJSON()
+				data.append(item)
+			# Convertir la lista de datos en un JsonResponse
+			return JsonResponse(data, safe=False)
 
-				if form.is_valid():
-					if not Beneficiado.objects.filter(cedula = form.cleaned_data['cedula']).exists():
-						form.save()
-						data['response'] = {'title':'Exito!', 'data': 'Beneficiado registrado correctamente.', 'type_response': 'success'}
-					else:
-						data['response'] = {'title':'Ocurrió un error!', 'data': 'Beneficiado ya se encuentra registrado.', 'type_response': 'danger'}
+		if action == 'nuevo_bene':
+			
+			bene = Beneficiado()
+			if not Beneficiado.objects.filter(cedula = request.POST['cedula']).exists():
+				bene.perfil = Perfil.objects.get(usuario__username = self.request.user.username ) 
+				bene.nacionalidad = request.POST['nacionalidad']
+				bene.cedula = request.POST['cedula']
+				bene.nombres = request.POST['nombres']
+				bene.apellidos = request.POST['apellidos']
+				bene.f_nacimiento = request.POST['f_nacimiento']
+				bene.telefono = request.POST['telefono']
+				bene.genero = request.POST['genero']
+				if request.POST.get('embarazada') == 'on':
+					bene.embarazada = True
+				else:
+					bene.embarazada = False
+				bene.zona = Zona.objects.get(id = request.POST['zona'] ) 
+				if request.FILES.get("c_residencia"):
+					bene.c_residencia = request.FILES.get("c_residencia")
+				bene.direccion = request.POST['direccion']
+				bene.rol = 'PA'
+				bene.save()
+				data['response'] = {'title':'Exito!', 'data': 'Beneficiado registrado correctamente.', 'type_response': 'success'}
+					
+			else:
+				data['response'] = {'title':'Ocurrió un error!', 'data': 'Beneficiado ya se encuentra registrado.', 'type_response': 'danger'}
 
-		except Exception as e:
-			data['error'] = str(e)
+		if action == 'editar_info':
+			perfil = Perfil.objects.get(usuario = self.request.user.username)
+			print(perfil)
+			data['response'] = {'title':'Exito!', 'data': 'Beneficiado registrado correctamente.', 'type_response': 'success'}
+
+		
 		return JsonResponse(data, safe=False)
 	
 	def get_context_data(self, **kwargs):
@@ -576,5 +646,7 @@ class MiPerfil(TemplateView):
 		beneficiados = Beneficiado.objects.filter(perfil = perfil)
 		# Aquí puedes agregar cualquier dato que desees pasar a la plantilla
 		context['mi_dato'] = perfil
+		context['zonas'] = Zona.objects.exclude(zona_residencia= perfil.zona)
 		context['bene'] = beneficiados
+		context['form'] = BeneficiadoForm()
 		return context

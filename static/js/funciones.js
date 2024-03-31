@@ -212,7 +212,12 @@ let type_actions = {
 	},
 	'landing': {
 		'edit_landing': '/actualizar-landing/',
-		'edit_producto': '/actualizar-producto/',
+	},
+	'perfil_edit': {
+		'editar_info': '/actualizar-mi-informacion/',
+	},
+	'benefi': {
+		'nuevo_bene': '/mi-perfil/',
 	}
 }
 

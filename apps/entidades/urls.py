@@ -18,7 +18,13 @@ from .views import (
     RegistrarComunidad,
     EditarComunidad,
     EliminarComunidad,
-    MiPerfil
+    MiPerfil, 
+    ActualizarInfo
+)
+
+from .reportes import (
+    TodosPerfiles,
+    TodosBeneficiados
 )
 
 urlpatterns = [
@@ -28,6 +34,7 @@ urlpatterns = [
 
     # perfil de usuario
     path('mi-perfil/', MiPerfil.as_view(), name='perfil'),
+    path('actualizar-mi-informacion/', ActualizarInfo.as_view(), name='edit_info'),
 
     path('registrar-perfil/', RegistrarPerfil.as_view(), name='new_perfil'),
     path('listado-de-perfiles/', ListadoPerfiles.as_view(), name='lista_perfiles'),
@@ -49,4 +56,8 @@ urlpatterns = [
     path('listado-de-zonas/', ListaZona.as_view(), name='lista_zonas'),
     path('registro-de-zona/', RegistrarZona.as_view(), name='nueva_zona'),
     path('actualizar-zona/', ActualizarZona.as_view(), name='actualizar_zona'),
+
+    # reportes
+    path('reportes/todos-los-perfiles/', TodosPerfiles.as_view(), name='t_perfiles'),
+     path('reportes/todos-los-beneficiados/', TodosBeneficiados.as_view(), name='t_beneficiados'),
 ]

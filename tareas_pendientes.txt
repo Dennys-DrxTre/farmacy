@@ -4,7 +4,11 @@ TAREAS & CORRECIONES JOSE
 
     # TAREAS
         - VALIDAR Y TESTEAR CADA INPUT DE LOS FORMULARIOS (LISTO)
-        - REPORTES EN CADA MODULOS
+        - REPORTES EN CADA MODULOS {
+            listado de perfiles (listo),
+            listado de beneficiados (listo),
+            
+        }
         - EDICION DE USUARIOS (LISTO)
 
 	    - MODULO DE EGRESOS (SALIDA DE MEDICAMENTOS)
