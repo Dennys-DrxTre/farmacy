@@ -25,6 +25,10 @@ from .views.jornadas.views import (
     EditarJornada
 )
 
+from .reportes import (
+    TodasLasJornadas
+)
+
 urlpatterns = [
     # INGRESOS
     path('listado-de-ingresos/', ListadoIngresos.as_view(), name='listado_ingresos'),
@@ -64,5 +68,8 @@ urlpatterns = [
     path('solicitudes-de-jornadas/', SolicitudesJornadas.as_view(), name='listado_jornadas'),
     path('detalle-de-solicitud-de-jornada/<int:pk>/', DetalleJornadaView.as_view(), name='detalle_jornada'),
     path('modificar-jornada/<int:pk>/', EditarJornada.as_view(), name='modificar_jornada'),
+
+    # reportes
+    path('reporte/listado-de-jornada-zona/<int:pk>/', TodasLasJornadas.as_view(), name='l_jornada'),
 
 ]

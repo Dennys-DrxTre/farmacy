@@ -7,7 +7,11 @@ TAREAS & CORRECIONES JOSE
         - REPORTES EN CADA MODULOS {
             listado de perfiles (listo),
             listado de beneficiados (listo),
-            
+            listado de productos (listo)
+            reportes de solicitudes realizas, tanto por comunidad como ,
+            detales de ingresos, por rango de fechas,
+            detalles de solicitudes,
+            solicitudes por estados,
         }
         - EDICION DE USUARIOS (LISTO)
 

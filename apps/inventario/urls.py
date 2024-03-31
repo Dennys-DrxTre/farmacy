@@ -16,6 +16,10 @@ from .views import (
     ActualizarProducto
 )
 
+from .reportes import (
+    TodosLosProductos
+)
+
 urlpatterns = [
     path('listado-de-productos/', ListadoProductos.as_view(), name='listado_productos'),
     path('registro-de-productos/', RegistrarProducto.as_view(), name='nuevo_producto'),
@@ -34,4 +38,7 @@ urlpatterns = [
     path('listado-de-almacenes/', ListadoAlmacen.as_view(), name='listado_almacen'),
     path('registro-de-almacen/', RegistrarAlmacen.as_view(), name='nuevo_almacen'),
     path('actualizar-almacen/', ActualizarAlmacen.as_view(), name='edit_almacen'),
+
+    # reportes
+    path('reporte/listado-de-productos/', TodosLosProductos.as_view(), name='l_productos'),
 ]
