@@ -22,7 +22,10 @@ from .views.jornadas.views import (
     BuscarBeneficiadoComunidadModificacionView,
     SolicitudesJornadas,
     DetalleJornadaView,
-    EditarJornada
+    EditarJornada,
+    JornadaCompletada,
+    RechazarSolicitudJornada,
+    ActualizarJornada
 )
 
 urlpatterns = [
@@ -64,5 +67,8 @@ urlpatterns = [
     path('solicitudes-de-jornadas/', SolicitudesJornadas.as_view(), name='listado_jornadas'),
     path('detalle-de-solicitud-de-jornada/<int:pk>/', DetalleJornadaView.as_view(), name='detalle_jornada'),
     path('modificar-jornada/<int:pk>/', EditarJornada.as_view(), name='modificar_jornada'),
+    path('jornada-completada/<int:pk>/', JornadaCompletada.as_view(), name='jornada_completada'),
+    path('rechazar-jornada-de-medicamento/', RechazarSolicitudJornada.as_view(), name='rechazar_jornada_medicamento'),
+    path('actualizar-jornada-de-medicamento/', ActualizarJornada.as_view(), name='actualizar_jornada_medicamento'),
 
 ]

@@ -1,5 +1,5 @@
 import json
-from datetime import date
+from datetime import date, datetime
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
@@ -25,9 +25,9 @@ from django.views.generic import (
 	View
 )
 
-from apps.movimientos.models import Jornada, DetalleJornada,DetalleIventarioJornada
+from apps.movimientos.models import Jornada, DetalleJornada, DetalleIventarioJornada, TipoMov, Historial
 from apps.inventario.models import Producto, Inventario
-from apps.entidades.models import Comunidad
+from apps.entidades.models import Comunidad, Perfil
 from django.contrib.auth.models import User
 
 from apps.movimientos.forms import MiJornadaForm,ComunidadForm, JornadaEditForm
@@ -145,7 +145,10 @@ class EditarJornada(ValidarUsuario, SuccessMessageMixin, UpdateView):
 
 	@method_decorator(csrf_exempt)
 	def dispatch(self, request, *args, **kwargs):
-		if not request.user.perfil.rol == 'AD':
+		if request.user.perfil.rol == 'AD':
+			if not self.get_object().estado == 'PR':
+				return redirect('listado_jornadas')
+		else:
 			return redirect('listado_jornadas')
 		return super().dispatch(request, *args, **kwargs)
 
@@ -210,7 +213,7 @@ class EditarJornada(ValidarUsuario, SuccessMessageMixin, UpdateView):
 				detalle.save()
 
 				if vents['estado'] == 'AP':
-					cantidad_restante = det['cantidad_entregada']
+					cantidad_restante = det['cant_aprobada']
 					while cantidad_restante > 0:
 						inventarios_proximos = self.producto_proximo_a_vencer(producto)
 						if inventarios_proximos.exists():
@@ -224,10 +227,15 @@ class EditarJornada(ValidarUsuario, SuccessMessageMixin, UpdateView):
 					# # # enviando el correo de registro
 					# Cargar la plantilla HTML
 					usuario = User.objects.filter(username=f'{jornada.jefe_comunidad.nacionalidad}{jornada.jefe_comunidad.cedula}').first()
-					html_content = render_to_string('templates/email/email_jornada_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+					
+					fecha_datetime = datetime.strptime(jornada.fecha_jornada, "%Y-%m-%d")
+					# Formatear el objeto datetime al formato deseado 'DD/MM/YYYY'
+					fecha_formateada = fecha_datetime.strftime("%d/%m/%Y")
+					mensaje = 'Su solicitud de jornada fue aprobada para la fecha:'
+					html_content = render_to_string('templates/email/email_jornada_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos,'fecha':fecha_formateada,'mensaje':mensaje})
 					# Configurar el correo electrónico
 					subject, from_email, to = 'SU JORNADA HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
-					text_content = f'Su solicitud de jornada fue aprobada para la fecha:{jornada.fecha_jornada}.'
+					text_content = mensaje
 					EmailThread(subject, text_content, from_email, [to], False, html_content).start()
 			messages.success(request,'Solicitud de jornada modificado correctamente')
 			data['response'] = {'title':'Exito!', 'data': 'Solicitud de jornada modificado correctamente', 'type_response': 'success'}
@@ -269,6 +277,134 @@ class EditarJornada(ValidarUsuario, SuccessMessageMixin, UpdateView):
 		context['comunidad'] = json.dumps(self.get_comunidad(),  sort_keys=True,indent=1, cls=DjangoJSONEncoder)
 		context['jefe_comunidad'] = self.get_object().jefe_comunidad.pk
 		return context
+	
+class JornadaCompletada(ValidarUsuario, SuccessMessageMixin, View):
+	permission_required = 'entidades.cambiar_estado_jornada'
+	success_massage = 'La jornada ha sido completada correctamente'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+		
+	def get(self, request, pk, *args, **kwargs):
+		try:
+			with transaction.atomic():
+				jornada = Jornada.objects.filter(pk=pk).first()
+
+				if jornada:
+					if request.user.perfil.rol == 'AL':
+						if jornada.estado == 'AP':
+							with transaction.atomic():
+								jornada.estado = Jornada.Status.ENTREGADO
+								jornada.proceso_actual = Jornada.FaseProceso.FINALIZADO
+								jornada.save()
+								detalles = DetalleJornada.objects.filter(jornada=jornada)
+								for det in detalles:
+									producto = Producto.objects.filter(pk=det.producto.pk).first()
+									detjornada = DetalleIventarioJornada.objects.filter(detjornada=det)
+									for d in detjornada:
+										inventario = Inventario.objects.filter(pk=d.inventario.pk).first()
+										inventario.comprometido -= d.cantidad
+										inventario.save()
+
+										perfil = Perfil.objects.filter(usuario=self.request.user).first()
+										tipo_ingreso, created = TipoMov.objects.get_or_create(nombre='SOLICITUD DE JORNADA', operacion='-')
+										movimiento = {
+											'tipo_mov': tipo_ingreso,
+											'perfil': perfil,
+											'producto': d.inventario,
+											'cantidad': d.cantidad
+										}
+										Historial().crear_movimiento(movimiento)
+									producto.contar_productos()
+								messages.success(request, self.success_massage)
+						else:
+							messages.error(request, 'La jornada debe estar aprobada para realizar esta accion.')
+					else:
+						messages.error(request, 'No tienes permisos para realizar esta acción.')
+				else:
+					messages.error(request, 'La jornada no existe.')
+				# messages.success(request,'Solicitud de medicamento registrado correctamente')
+		except Exception as e:
+			print(e)
+			messages.error(request, 'Ocurrió un error al procesar la jornada.')
+		return redirect('listado_jornadas')
+
+class RechazarSolicitudJornada(ValidarUsuario, SuccessMessageMixin, View):
+	permission_required = 'entidades.cambiar_estado_jornada'
+	success_massage = 'La jornada ha sido rechazada'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+		
+	def post(self, request, *args, **kwargs):
+		try:
+			with transaction.atomic():
+				motivo_del_rechazo = request.POST.get('motivo_rechazo')
+				pk = request.POST.get('pk')
+				jornada = Jornada.objects.filter(pk=pk).first()
+				if jornada:
+					if request.user.perfil.rol == 'AD':
+						if jornada.estado == 'PR':
+							jornada.estado = Jornada.Status.RECHAZADO
+							jornada.proceso_actual = Jornada.FaseProceso.FINALIZADO
+							jornada.motivo_rechazo = motivo_del_rechazo
+							jornada.save()
+			
+							messages.success(request, self.success_massage)
+						else:
+							messages.error(request, 'La jornada debe estar en proceso para realizar esta accion.')
+					else:
+						messages.error(request, 'No tienes permisos para realizar esta acción.')
+				else:
+					messages.error(request, 'La jornada no existe.')
+		except Exception as e:
+			messages.error(request, 'Ocurrió un error al procesar la jornada.')
+		return redirect('listado_jornadas')
+
+class ActualizarJornada(ValidarUsuario, SuccessMessageMixin, View):
+	permission_required = 'entidades.change_jornada'
+	success_massage = 'La jornada ha sido actualizada'
+	# permission_required = 'anuncios.requiere_secretria'
+	object = None
+		
+	def post(self, request, *args, **kwargs):
+		try:
+			with transaction.atomic():
+				motivo_del_rechazo = request.POST.get('encargados')
+				fecha_jornada = request.POST.get('fecha_jornada')
+				pk = request.POST.get('pk_a')
+				jornada = Jornada.objects.filter(pk=pk).first()
+				if jornada:
+					if request.user.perfil.rol == 'AD':
+						if jornada.estado == 'AP':
+							jornada.motivo_rechazo = motivo_del_rechazo
+							if str(fecha_jornada) != str(jornada.fecha_jornada):
+								# # # enviando el correo de registro
+								# Cargar la plantilla HTML
+								usuario = User.objects.filter(username=f'{jornada.jefe_comunidad.nacionalidad}{jornada.jefe_comunidad.cedula}').first()
+								
+								fecha_datetime = datetime.strptime(fecha_jornada, "%Y-%m-%d")
+								# Formatear el objeto datetime al formato deseado 'DD/MM/YYYY'
+								fecha_formateada = fecha_datetime.strftime("%d/%m/%Y")
+								mensaje = 'Su solicitud de jornada fue actualizada para la fecha:'
+								html_content = render_to_string('templates/email/email_jornada_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos,'fecha':fecha_formateada,'mensaje':mensaje})
+								# Configurar el correo electrónico
+								subject, from_email, to = 'SU JORNADA HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
+								text_content = mensaje
+								EmailThread(subject, text_content, from_email, [to], False, html_content).start()
+
+							jornada.fecha_jornada = fecha_jornada
+							jornada.save()
+
+							messages.success(request, self.success_massage)
+						else:
+							messages.error(request, 'La jornada debe estar aprobada para realizar esta accion.')
+					else:
+						messages.error(request, 'No tienes permisos para realizar esta acción.')
+				else:
+					messages.error(request, 'La jornada no existe.')
+		except Exception as e:
+			print(e)
+			messages.error(request, 'Ocurrió un error al procesar la jornada.')
+		return redirect('listado_jornadas')
 	
 class BuscarBeneficiadoComunidadView(ValidarUsuario, View):
 	permission_required = 'entidades.ver_inicio'

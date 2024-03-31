@@ -169,7 +169,7 @@ let vents = {
 					class: 'text-center',
 					orderable: false,
 					render: function (data, type, row, meta) {                        
-						return '<input type="number" value="'+ parseInt(data) +'" name="cantidad" class="form-control form-control-sm cantidad" required min="1" readonly autocomplete="off">';
+						return '<input type="number" value="'+ parseInt(data) +'" name="cantidad" class="form-control form-control-sm cantidad" required min="1" autocomplete="off">';
 					}
 				},
 				{
@@ -437,6 +437,7 @@ $(function () {
                     results.push({
                         id: res.id,
                         text: res.nombre,
+                        total_stock: res.total_stock,
                     });
                 });
     
@@ -452,9 +453,9 @@ $(function () {
         templateResult: formatRepo,
     }).on('select2:select', function (e) {
         var data = e.params.data;
-        data.cantidad = 1;
         data.nombre = data.text;
-        data.cant_aprobada = 0;
+        data.cantidad = 1
+        data.cant_aprobada = 0
         vents.add(data);
         $(this).val('').trigger('change.select2');
     });
@@ -511,14 +512,15 @@ $(function () {
     $('#detalle tbody').on('change keyup', '.cantidad', function () {
         let cantidad = $(this).val();
         var tr = tblMedi.cell($(this).closest('td, li')).index();
-            vents.items.det[tr.row].cantidad = parseInt(cantidad);
+        vents.items.det[tr.row].cantidad = parseInt(cantidad);
+        $(this).closest('tr').find('.cant_aprobada').attr('max', cantidad);
     });
 
 	// asignar valor cantidad
 	$('#detalle tbody').on('change keyup', '.cant_aprobada', function () {
 		let cant_aprobada = $(this).val();
 		var tr = tblMedi.cell($(this).closest('td, li')).index();
-			vents.items.det[tr.row].cant_aprobada = parseInt(cant_aprobada);
+		vents.items.det[tr.row].cant_aprobada = parseInt(cant_aprobada);
 	});
 
     // delete individual element
@@ -572,7 +574,9 @@ $(function () {
             id: productos.id,
             text: productos.nombre,
             nombre: productos.nombre,
+            total_stock: productos.total_stock,
             cantidad: 1,
+            cant_aprobada:0
         }
         vents.add(data);
         $('#modal_search_product').modal('hide');   
