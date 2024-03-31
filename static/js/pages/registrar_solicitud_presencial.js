@@ -364,11 +364,10 @@ $(function () {
         vents.items.recipe = imagefield.files[0]
         vents.items.beneficiado = $('select[name="beneficiado"]').val();
         vents.items.perfil = $('select[name="perfil"]').val();
-
+        console.log($('select[name="beneficiado"]').val(), $('select[name="perfil"]').val());
         var parameters = new FormData();
         parameters.append('vents', JSON.stringify(vents.items));
         parameters.append('recipe', imagefield.files[0]);
-        console.log(vents.items);
 
         // btn_submit.disabled = true;
         await SendDataJsonForm(window.location.pathname, parameters, function () {

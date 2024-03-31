@@ -17,6 +17,8 @@ from django.views.generic import (
 	DetailView,
 	View
 )
+from django.db.models import Q
+
 from ...forms import BeneficiadoForm, SolicitudEditForm, SolicitudPresencialForm, PerfilForm
 from apps.entidades.permisos import permisos_usuarios
 from apps.entidades.mixins import ValidarUsuario
@@ -201,35 +203,36 @@ class RegistrarSolicitudPresencial(ValidarUsuario, TemplateView):
 
 	def post(self, request, *args, **kwargs):
 		data = {}
-		try:
-			with transaction.atomic():
-				vents = json.loads(request.POST['vents'])
+		# try:
+		with transaction.atomic():
+			vents = json.loads(request.POST['vents'])
 
-				solicitud = Solicitud()
-				solicitud.fecha_soli = date.today()
-				solicitud.descripcion = vents['descripcion']
-				solicitud.beneficiado= Beneficiado.objects.filter(cedula=vents['beneficiado']).first()
-				solicitud.perfil_id = vents['perfil']
-				solicitud.recipe = request.FILES['recipe']
-				solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
-				solicitud.tipo_solicitud = solicitud.TipoSoli.PRESENCIAL
-				solicitud.estado = solicitud.Status.EN_PROCRESO 
-				solicitud.save()
+			solicitud = Solicitud()
+			solicitud.fecha_soli = date.today()
+			solicitud.descripcion = vents['descripcion']
+			solicitud.beneficiado= Beneficiado.objects.filter(cedula=vents['beneficiado']).first()
+			solicitud.perfil_id = Perfil.objects.filter(Q(cedula=vents['perfil']) | Q(pk=vents['perfil'])).first().pk
+			solicitud.recipe = request.FILES['recipe']
+			solicitud.proceso_actual = solicitud.FaseProceso.AT_CLIENTE
+			solicitud.tipo_solicitud = solicitud.TipoSoli.PRESENCIAL
+			solicitud.estado = solicitud.Status.EN_PROCRESO 
+			solicitud.save()
 
-				for det in vents['det']:
-					producto = Producto.objects.filter(pk=det['id']).first()
+			for det in vents['det']:
+				producto = Producto.objects.filter(pk=det['id']).first()
 
-					detalle = DetalleSolicitud()
-					detalle.solicitud = solicitud
-					detalle.producto = producto
-					detalle.cant_solicitada = det['cantidad']
-					detalle.save()
+				detalle = DetalleSolicitud()
+				detalle.solicitud = solicitud
+				detalle.producto = producto
+				detalle.cant_solicitada = det['cantidad']
+				detalle.save()
 
-				messages.success(request,'Solicitud de medicamento registrado correctamente')
-				data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
-		except Exception as e:
-			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
-			data['error'] = str(e)
+			messages.success(request,'Solicitud de medicamento registrado correctamente')
+			data['response'] = {'title':'Exito!', 'data': 'Solicitud de medicamento registrado correctamente', 'type_response': 'success'}
+		# except Exception as e:
+		# 	print(e)
+		# 	data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}
+		# 	data['error'] = str(e)
 		return JsonResponse(data, safe=False)
 
 	def get_context_data(self, **kwargs):

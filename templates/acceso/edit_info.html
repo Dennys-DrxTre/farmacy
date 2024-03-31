@@ -13,7 +13,7 @@
                     <div class="row g-2 mb-3">
                         <div class="col">
                             <label for="">Telefono</label>
-                            <input type="text" name="telefono" class="form-control" value="{{mi_dato.telefono}}" required>
+                            <input type="text" name="telefono" class="form-control" maxlength="11" value="{{mi_dato.telefono}}" required>
                         </div>
                         {% if not mi_dato.genero == 'MA' %}
                             <div class="col">
