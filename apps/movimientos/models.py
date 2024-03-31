@@ -128,6 +128,7 @@ class Jornada(models.Model):
 
 	encargados = models.TextField()
 	descripcion = models.TextField(blank=True, null=True)
+	motivo_rechazo = models.TextField(blank=True, null=True)
 	fecha_solicitud = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
 	fecha_jornada = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
 	jefe_comunidad = models.ForeignKey(Perfil, on_delete=models.PROTECT)
@@ -229,7 +230,7 @@ class Ingreso(models.Model):
 		return item
 	
 class DetalleIngreso(models.Model):
-	ingreso = models.ForeignKey(Ingreso, on_delete=models.PROTECT, related_name='detalle')
+	ingreso = models.ForeignKey(Ingreso, on_delete=models.CASCADE, related_name='detalle')
 	inventario = models.ForeignKey(Inventario, on_delete=models.PROTECT)
 	cantidad = models.IntegerField()
 	lote = models.CharField(max_length=50)

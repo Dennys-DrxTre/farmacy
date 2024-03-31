@@ -76,9 +76,9 @@
                                         <a href="{% url 'detalle_jornada' jornada.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" title="Detalle de mi jornada">
                                             <i class="fa fa-info"></i>
                                         </a>
-                                        <!-- <a href="#" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar anuncio">
+                                        <a href="{% url 'modificar_jornada' jornada.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar anuncio">
                                             <i class="fa fa-edit"></i>
-                                        </a> -->
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}
