@@ -147,6 +147,7 @@ class Beneficiado(Persona):
 			item['c_residencia'] = self.c_residencia.url
 		else:
 			item['c_residencia'] = None
+		item['genero'] = self.get_genero_display()
 		return item
 
 # personalizar landing

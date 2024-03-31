@@ -45,3 +45,4 @@ class BeneficiadoForm(forms.ModelForm):
 	class Meta:
 		model = Beneficiado
 		fields = '__all__'
+
