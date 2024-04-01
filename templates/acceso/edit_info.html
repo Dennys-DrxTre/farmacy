@@ -13,7 +13,7 @@
                     <div class="row g-2 mb-3">
                         <div class="col">
                             <label for="">Telefono</label>
-                            <input type="text" name="telefono" class="form-control" maxlength="11" value="{{mi_dato.telefono}}" required>
+                            <input type="text" name="telefono" class="form-control" maxlength="11" minlength="11" value="{{mi_dato.telefono}}" required onkeypress="return Solo_Numero(event)">
                         </div>
                         {% if not mi_dato.genero == 'MA' %}
                             <div class="col">
@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="col-4">
                                     <label for="">Constancia de residencia</label>
-                                    <input type="file" class="form-control-file" name="c_residencia" required>
+                                    <input type="file" class="form-control-file" name="c_residencia">
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                     <div class="row">
                         <div class="col">
                             <label for="">Ubicación</label>
-                            <textarea name="direccion" cols="30" rows="3" class="form-control" required style="resize: none;">{{mi_dato.direccion}}</textarea>
+                            <textarea name="direccion" cols="30" rows="3" class="form-control" required style="resize: none;" onkeypress="return Texto_Numeros(event)">{{mi_dato.direccion}}</textarea>
                         </div>
                     </div>
                 </div>

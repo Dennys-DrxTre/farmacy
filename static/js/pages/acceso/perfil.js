@@ -75,7 +75,7 @@ $( async function () {
         e.preventDefault();
         let parameters = new FormData(form_nuevo_bene);
         
-        await SendDataJsonForm(type_actions['benefi'][action.value], parameters, async () => {  
+        await SendDataJsonForm(type_actions['benefi'][action_bene.value], parameters, async () => {  
             await getData();
             $('#modal_nuevo_bene').modal('hide');   
             $("#form_nuevo_bene")[0].reset(); 
