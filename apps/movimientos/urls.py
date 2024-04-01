@@ -29,7 +29,8 @@ from .views.jornadas.views import (
 )
 
 from .reportes import (
-    TodasLasJornadas
+    TodasLasJornadas,
+    TodasLasSolicitudes
 )
 
 urlpatterns = [
@@ -77,5 +78,6 @@ urlpatterns = [
 
     # reportes
     path('reporte/listado-de-jornada-zona/<int:pk>/', TodasLasJornadas.as_view(), name='l_jornada'),
+    path('reporte/listado-de-solicitudes/', TodasLasSolicitudes.as_view(), name='t_solicitudes'),
 
 ]

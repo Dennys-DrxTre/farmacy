@@ -19,7 +19,8 @@ from .views import (
     EditarComunidad,
     EliminarComunidad,
     MiPerfil, 
-    ActualizarInfo
+    ActualizarInfo,
+    MenuReportes
 )
 
 from .reportes import (
@@ -31,6 +32,7 @@ urlpatterns = [
     path('inicio/', Inicio.as_view(), name='vista'),
     path('', landing.as_view()),
     path('actualizar-landing/', ActualizarLanding.as_view(), name='edit_landing'),
+    path('menu-de-reportes/', MenuReportes.as_view(), name='reportes'),
 
     # perfil de usuario
     path('mi-perfil/', MiPerfil.as_view(), name='perfil'),
@@ -59,5 +61,5 @@ urlpatterns = [
 
     # reportes
     path('reportes/todos-los-perfiles/', TodosPerfiles.as_view(), name='t_perfiles'),
-     path('reportes/todos-los-beneficiados/', TodosBeneficiados.as_view(), name='t_beneficiados'),
+    path('reportes/todos-los-beneficiados/', TodosBeneficiados.as_view(), name='t_beneficiados'),
 ]
