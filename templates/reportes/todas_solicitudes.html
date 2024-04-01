@@ -135,8 +135,8 @@
 						<td class="cosa">{{ x.beneficiado.perfil.nacionalidad }}{{ x.beneficiado.perfil.cedula }}</td>
                         <td class="cosa">{{x.fecha_soli|date:'d/m/Y'}}</td>
 						<td class="cosa">{{x.descripcion}}</td>
-						<td class="cosa">{{x.tipo_solicitud}}</td>
-                        <td class="cosa">{{x.estado}}</td></td>
+						<td class="cosa">{{x.get_tipo_solicitud_display}}</td>
+                        <td class="cosa">{{x.get_estado_display}}</td></td>
 					</tr>
 				{% empty %}
 					<tr>
