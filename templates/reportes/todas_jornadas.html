@@ -136,7 +136,7 @@
                         <td class="cosa">{{x.fecha_solicitud|date:'d/m/Y'}}</td>
 						<td class="cosa">{{x.fecha_jornada|date:'d/m/Y'}}</td>
 						<td class="cosa">{{x.jefe_comunidad.nacionalidad}}{{x.jefe_comunidad.cedula}}</td>
-                        <td class="cosa">{{x.estado}}</td></td>
+                        <td class="cosa">{{x.get_estado_display}}</td></td>
 					</tr>
 				{% empty %}
 					<tr>
