@@ -218,6 +218,7 @@ let type_actions = {
 	},
 	'benefi': {
 		'nuevo_bene': '/mi-perfil/',
+		'editar_bene': '/mi-perfil/',
 	}
 }
 

@@ -628,9 +628,18 @@ class MiPerfil(TemplateView):
 			else:
 				data['response'] = {'title':'Ocurrió un error!', 'data': 'Beneficiado ya se encuentra registrado.', 'type_response': 'danger'}
 
-		if action == 'editar_info':
-			perfil = Perfil.objects.get(usuario = self.request.user.username)
-			print(perfil)
+		if action == 'editar_bene':
+			beneficiado = Beneficiado.objects.get(cedula = request.POST.get('id'))
+			beneficiado.telefono = request.POST['telefono_bene']
+			beneficiado.zona = Zona.objects.get(id = request.POST['zona_bene'])
+			if request.POST.get('embarazada_bene') == 'on':
+				beneficiado.embarazada = True
+			else:
+				beneficiado.embarazada = False
+			if request.FILES.get("c_residencia_bene"):
+				beneficiado.c_residencia = request.FILES.get("c_residencia_bene")
+			beneficiado.direccion = request.POST['direccion_bene']
+			beneficiado.save()
 			data['response'] = {'title':'Exito!', 'data': 'Beneficiado registrado correctamente.', 'type_response': 'success'}
 
 		
