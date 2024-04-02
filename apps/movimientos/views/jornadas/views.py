@@ -230,7 +230,7 @@ class EditarJornada(ValidarUsuario, SuccessMessageMixin, UpdateView):
 					# Formatear el objeto datetime al formato deseado 'DD/MM/YYYY'
 					fecha_formateada = fecha_datetime.strftime("%d/%m/%Y")
 					mensaje = 'Su solicitud de jornada fue aprobada para la fecha:'
-					html_content = render_to_string('templates/email/email_jornada_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos,'fecha':fecha_formateada,'mensaje':mensaje})
+					html_content = render_to_string('email/email_jornada_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos,'fecha':fecha_formateada,'mensaje':mensaje})
 					# Configurar el correo electrónico
 					subject, from_email, to = 'SU JORNADA HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
 					text_content = mensaje
@@ -383,7 +383,7 @@ class ActualizarJornada(ValidarUsuario, SuccessMessageMixin, View):
 								# Formatear el objeto datetime al formato deseado 'DD/MM/YYYY'
 								fecha_formateada = fecha_datetime.strftime("%d/%m/%Y")
 								mensaje = 'Su solicitud de jornada fue actualizada para la fecha:'
-								html_content = render_to_string('templates/email/email_jornada_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos,'fecha':fecha_formateada,'mensaje':mensaje})
+								html_content = render_to_string('email/email_jornada_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos,'fecha':fecha_formateada,'mensaje':mensaje})
 								# Configurar el correo electrónico
 								subject, from_email, to = 'SU JORNADA HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
 								text_content = mensaje

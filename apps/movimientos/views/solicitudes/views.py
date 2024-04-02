@@ -347,7 +347,7 @@ class MedicamentoEnEsperaEntrega(ValidarUsuario, SuccessMessageMixin, View):
 							solicitud.proceso_actual = Solicitud.FaseProceso.AT_CLIENTE
 							solicitud.save()
 							# Cargar la plantilla HTML
-							html_content = render_to_string('templates/email/email_solicitud_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+							html_content = render_to_string('email/email_solicitud_apro.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
 							# Configurar el correo electrónico
 							subject, from_email, to = 'SU SOLICITUD HA SIDO PROCESADA CON EXITO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
 							text_content = 'Puede ir a la sede a retirar los medicamentos solicitados.'
@@ -501,7 +501,7 @@ class RegistrarPerfilFisico(LoginRequiredMixin, View):
 					# enviando el correo de registro
 
 					# Cargar la plantilla HTML
-					html_content = render_to_string('templates/email/email_registro.html', {'correo': request.POST['email'],'user': f'{request.POST["nacionalidad"]}{request.POST["cedula"]}','nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
+					html_content = render_to_string('email/email_registro.html', {'correo': request.POST['email'],'user': f'{request.POST["nacionalidad"]}{request.POST["cedula"]}','nombres': request.POST['nombres'], 'apellidos': request.POST['apellidos']})
 					# Configurar el correo electrónico
 					subject, from_email, to = 'REGISTRO EXITOSO', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', request.POST['email']
 					text_content = 'ESTE ES UN MENSAJE DE BIENVENIDA.'
