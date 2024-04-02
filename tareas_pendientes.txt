@@ -17,7 +17,7 @@ TAREAS & CORRECIONES DENNYS
     # CORRECIONES
         - Agregar campos adicionales en los modelos de usuario y beneficiados (listo)
         - En el inicio que en vez de que diga Bienvenido, Diga: Bienvenid@, con el @ por si es hombre o mujer (listo)
-        - Que el número de teléfono de los beneficiados no sea obligatorio, ya que si es menor de edad y no tiene teléfono, no lo pondría.
+        - Que el número de teléfono de los beneficiados no sea obligatorio, ya que si es menor de edad y no tiene teléfono, no lo pondría. (Listo)
         - Que me deje colocar la ñ en la dirección 
     # TAREAS
         - AJUSTE DE INVENTARIO FISICA
