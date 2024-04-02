@@ -32,7 +32,7 @@ def check_solicitudes_en_espera(get_response):
 
             usuario = User.objects.filter(username=f'{solicitud.perfil.nacionalidad}{solicitud.perfil.cedula}').first()
             # Cargar la plantilla HTML
-            html_content = render_to_string('templates/email/email_solicitud_sin_retirar.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
+            html_content = render_to_string('email/email_solicitud_sin_retirar.html', {'correo': usuario.email, 'nombres': usuario.perfil.nombres, 'apellidos':  usuario.perfil.apellidos})
             # Configurar el correo electrónico
             subject, from_email, to = 'SU SOLICITUD HA SIDO CANCELADA', 'FARMACIA COMUNITARIA ASIC LEONIDAS RAMOS', usuario.email
             text_content = 'Su solicitud ha sido cancelada por no retirar los medicamentos.'

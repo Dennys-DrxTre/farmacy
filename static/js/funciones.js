@@ -36,7 +36,7 @@ function Texto_Numeros(e) {
 	if (e.keyCode) code = e.keyCode;
 	else if (e.which) code = e.which;
 	var character = String.fromCharCode(code);
-	var AllowRegex  = /^[A-Za-z0-9\s\.,-]+$/g;
+	var AllowRegex  = /^[A-Za-z0-9\s\.,ñ-]+$/g;
 	if (AllowRegex.test(character)) return true;     
 	return false; 
 }
