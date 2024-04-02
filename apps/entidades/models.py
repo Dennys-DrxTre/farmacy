@@ -39,14 +39,15 @@ class Persona(models.Model):
 	cedula = models.CharField(max_length=8, blank=False, null=False)
 	nombres = models.CharField(max_length=50, blank=False, null=False)
 	apellidos = models.CharField(max_length=50, blank=False, null=False)
-	telefono = models.CharField(max_length=11, blank=False, null=False)
+	telefono = models.CharField(max_length=11, blank=True, null=True)
 	genero = models.CharField(max_length=2, blank=False, null=False, choices=Genero.choices)
 	f_nacimiento = models.DateField(auto_now_add = False, auto_now=False, blank=False, null=False)
 	embarazada = models.BooleanField(blank=False, null=False)
 	c_residencia = models.FileField(upload_to='constancias_residencias/', blank=True, null=True)
 	zona  = models.ForeignKey(Zona, on_delete=models.PROTECT, blank=False, null=False)
 	direccion = models.TextField(blank=False, null=False)
-	
+	patologia = models.TextField(blank=True, null=True)
+
 	class Meta:
 		abstract = True
 
@@ -132,7 +133,15 @@ class Comunidad(models.Model):
 		return item
 
 class Beneficiado(Persona):
+
+	class Parentesco(models.TextChoices):
+		ESPOSO = 'EO', 'Esposo'
+		ESPOSA = 'EA', 'Esposa'
+		HIJO = 'HO', 'Hijo'
+		HIJA = 'HA', 'Hija'
+
 	perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT, related_name='beneficiados')
+	parentesco = models.CharField(max_length=2, blank=True, null=True, choices=Parentesco.choices)
 
 	def __str__(self):
 		return f'{self.cedula}-{self.nombres}'
