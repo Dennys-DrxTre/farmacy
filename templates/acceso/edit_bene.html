@@ -14,7 +14,7 @@
                     <div class="row g-2 mb-3">
                         <div class="col">
                             <label for="">Telefono</label>
-                            <input type="text" name="telefono_bene" class="form-control" maxlength="11" minlength="11" required required onkeypress="return Solo_Numero(event)">
+                            <input type="text" name="telefono_bene" class="form-control" maxlength="11" minlength="11" onkeypress="return Solo_Numero(event)">
                         </div>
                         {% if not mi_dato.genero == 'MA' %}
                             <div class="col">
