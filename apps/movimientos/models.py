@@ -246,3 +246,67 @@ class DetalleIngreso(models.Model):
 	def toJSON(self):
 		item = model_to_dict(self)
 		return item
+	
+class ContabilidadFisica(models.Model):
+
+	class Status(models.TextChoices):
+		EN_PROCRESO = 'PR', 'En Proceso'
+		APROBADO = 'AP', 'Aprobado'
+		RECHAZADO = 'RE', 'Rechazado'
+
+	class FaseProceso(models.TextChoices):
+		ADMINISTRADOR = 'AD', 'Administrador'
+		ALMACENISTA = 'AL', 'Almacenista'
+		FINALIZADO = 'FI', 'Finalizado'
+
+	fecha = models.DateField(auto_now=False, auto_now_add=True)
+	proceso_actual = models.CharField(max_length=2, choices= FaseProceso.choices, default=FaseProceso.ALMACENISTA)
+	estado = models.CharField(max_length=2, choices=Status.choices, default=Status.EN_PROCRESO, blank=False, null=False)
+
+	class Meta:
+		verbose_name = 'Contabilidad Fisica'
+		verbose_name_plural = 'Contabilidades Fisica'
+		ordering = ['pk']
+
+	def __str__(self):
+		return str(self.pk)
+	
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item
+	
+class DetContabilidadFisica(models.Model):
+	contabilidad = models.ForeignKey(ContabilidadFisica, on_delete=models.CASCADE, related_name='detalle')
+	producto = models.ForeignKey(Producto, on_delete=models.CASCADE, blank=True, null=True)
+	cantidad_contada = models.IntegerField(default=0)
+	cantidad_inventario = models.IntegerField(default=0)
+
+	class Meta:
+		verbose_name = 'Detalle Contabilidad Fisica'
+		verbose_name_plural = 'Detalle Contabilidades Fisica'
+		ordering = ['pk']
+
+	def __str__(self):
+		return str(self.pk)
+	
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item
+	
+class InventarioContFisica(models.Model):
+	detcontabilidad = models.ForeignKey(DetContabilidadFisica, on_delete=models.CASCADE, related_name='detalle_inventario')
+	inventario = models.ForeignKey(Inventario, on_delete=models.CASCADE)
+	cantidad_contada = models.IntegerField(default=0)
+	cantidad_inventario = models.IntegerField(default=0)
+
+	class Meta:
+		verbose_name = 'Inventario Contabilidad Fisica'
+		verbose_name_plural = 'Inventario Contabilidades Fisica'
+		ordering = ['pk']
+
+	def __str__(self):
+		return str(self.pk)
+
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item

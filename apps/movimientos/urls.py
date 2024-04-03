@@ -28,6 +28,8 @@ from .views.jornadas.views import (
     ActualizarJornada
 )
 
+from .views.contabilidad_fisica.views import ListadoContabilidadFisica
+
 from .reportes import (
     TodasLasJornadas,
     TodasLasSolicitudes
@@ -75,6 +77,9 @@ urlpatterns = [
     path('jornada-completada/<int:pk>/', JornadaCompletada.as_view(), name='jornada_completada'),
     path('rechazar-jornada-de-medicamento/', RechazarSolicitudJornada.as_view(), name='rechazar_jornada_medicamento'),
     path('actualizar-jornada-de-medicamento/', ActualizarJornada.as_view(), name='actualizar_jornada_medicamento'),
+
+    # INVENTARIO FISICO
+    path('listado-de-ajustes-de-inventario-fisico/', ListadoContabilidadFisica.as_view(), name='listado_contabilidad_fisica'),
 
     # reportes
     path('reporte/listado-de-jornada-zona/<int:pk>/', TodasLasJornadas.as_view(), name='l_jornada'),
