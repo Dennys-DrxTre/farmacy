@@ -251,6 +251,7 @@ class ContabilidadFisica(models.Model):
 
 	class Status(models.TextChoices):
 		EN_PROCRESO = 'PR', 'En Proceso'
+		CONTABILIZADO = 'CO', 'Contabilizado'
 		APROBADO = 'AP', 'Aprobado'
 		RECHAZADO = 'RE', 'Rechazado'
 
@@ -309,4 +310,5 @@ class InventarioContFisica(models.Model):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		item['producto'] = {'nombre': self.inventario.producto.nombre, 'lote':self.inventario.lote, 'f_vencimiento':self.inventario.f_vencimiento}
 		return item

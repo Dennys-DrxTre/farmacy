@@ -28,11 +28,16 @@ from .views.jornadas.views import (
     ActualizarJornada
 )
 
-from .views.contabilidad_fisica.views import ListadoContabilidadFisica
+from .views.contabilidad_fisica.views import (
+    ListadoContabilidadFisica,
+    DetalleContabilidadFisica,
+    RegistrarContabilidadFisica,
+    BuscarProductosValidadosView
+)
 
 from .reportes import (
     TodasLasJornadas,
-    TodasLasSolicitudes
+    TodasLasSolicitudes,
 )
 
 urlpatterns = [
@@ -80,6 +85,9 @@ urlpatterns = [
 
     # INVENTARIO FISICO
     path('listado-de-ajustes-de-inventario-fisico/', ListadoContabilidadFisica.as_view(), name='listado_contabilidad_fisica'),
+    path('registrar-inventario-fisico/', RegistrarContabilidadFisica.as_view(), name='registrar_contabilidad'),
+    path('buscar-productos-validados/', BuscarProductosValidadosView.as_view(), name='buscar_productos_validados'),
+    path('detalle-de-inventario-fisico/<int:pk>/', DetalleContabilidadFisica.as_view(), name='detalle_contabilidad'),
 
     # reportes
     path('reporte/listado-de-jornada-zona/<int:pk>/', TodasLasJornadas.as_view(), name='l_jornada'),

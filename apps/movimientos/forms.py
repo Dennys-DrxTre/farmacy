@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ingreso, Solicitud, TipoMov, Jornada
+from .models import Ingreso, Solicitud, TipoMov, Jornada, ContabilidadFisica
 from apps.entidades.models import Beneficiado, User, Zona, Perfil, Comunidad
 from django.forms import DateInput
 from django.utils import timezone
@@ -85,3 +85,8 @@ class ComunidadForm(forms.ModelForm):
 	class Meta:
 		model = Comunidad
 		fields = '__all__'
+
+class ContabilidadForm(forms.ModelForm):
+	class Meta:
+		model = ContabilidadFisica
+		fields = ['estado']

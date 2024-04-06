@@ -8,6 +8,8 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.db import transaction
 from django.contrib import messages
+from django.db.models import Q
+from datetime import date, datetime
 from django.views.generic import (
 	TemplateView,
 	ListView,
@@ -166,7 +168,11 @@ class BuscarProductosView(ValidarUsuario, View):
 			for i in productos.exclude(pk__in=ids_exclude)[0:10]:
 				item = i.toJSON()
 				item['text'] = '{}'.format(i.nombre)
+				item['tipo_insumo'] = i.tipo_insumo.nombre
 				item['id'] = i.pk
+				item['inv'] = []
+				for inventario in Inventario.objects.filter(Q(comprometido__gt=0) | Q(stock__gt=0), producto_id=i.pk).order_by('f_vencimiento'):
+					item['inv'].append(inventario.toJSON())
 				data.append(item)
 
 		elif action == 'search_productos_table':
@@ -176,7 +182,11 @@ class BuscarProductosView(ValidarUsuario, View):
 			for i in productos.exclude(pk__in=ids_exclude):
 				item = i.toJSON()
 				item['text'] = '{}'.format(i.nombre)
+				item['tipo_insumo'] = i.tipo_insumo.nombre
 				item['id'] = i.pk
+				item['inv'] = []
+				for inventario in Inventario.objects.filter(Q(comprometido__gt=0) | Q(stock__gt=0), producto_id=i.pk).order_by('f_vencimiento'):
+					item['inv'].append(inventario.toJSON()) 
 				data.append(item)
 		else:
 			data['response'] = {'title':'Ocurrió un error!', 'data': 'Ha ocurrido un error en la solicitud', 'type_response': 'danger'}

@@ -106,4 +106,6 @@ class Inventario(models.Model):
 
 	def toJSON(self):
 		item = model_to_dict(self)
+		item['nombre'] = self.producto.nombre
+		item['cantidad_contada'] = 0
 		return item
