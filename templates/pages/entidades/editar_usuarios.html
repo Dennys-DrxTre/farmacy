@@ -90,6 +90,10 @@
 
             <div class="row">
                 <div class="col">
+                    <label for="">Patología</label>
+                    {{form.patologia|add_class:'form-control'|attr:'rows:5'|attr:'style:resize:none'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'}}
+                </div>
+                <div class="col">
                     <label for="">Direccion</label>
                     {{form.direccion|add_class:'form-control'|attr:'rows:5'|attr:'style:resize:none'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'}}
                 </div>

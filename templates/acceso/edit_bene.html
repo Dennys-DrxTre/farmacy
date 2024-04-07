@@ -12,6 +12,16 @@
                 </div>
                 <div class="modal-body">
                     <div class="row g-2 mb-3">
+                        <div class="col">   
+                            <label for="">Parentesco</label>
+                            <select name="parentesco" class="form-control">
+                                <option value="HO">Hijo</optin>
+                                <option value="HA">Hija</option>
+                                <option value="EO">Esposo</option>
+                                <option value="EA">Esposa</option>
+
+                            </select>
+                        </div>
                         <div class="col">
                             <label for="">Telefono</label>
                             <input type="text" name="telefono_bene" class="form-control" maxlength="11" minlength="11" onkeypress="return Solo_Numero(event)">
@@ -32,7 +42,7 @@
                                     <label for="">Zona</label>
                                     <select name="zona_bene" id="id_zona_bene" class="form-control" required>
                                         {% for z in zonas %}
-                                        <option value="{{z.id}}">{{z.zona_residencia}}</option>
+                                            <option value="{{z.id}}">{{z.zona_residencia}}</option>
                                         {% endfor %}
                                     </select>
                                     
@@ -45,6 +55,10 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col">
+                            <label for="">Patología</label>
+                            <textarea name="patologia_bene" cols="30" rows="3" class="form-control" required style="resize: none;" onkeypress="return Texto_Numeros(event)"></textarea>
+                        </div>
                         <div class="col">
                             <label for="">Ubicación</label>
                             <textarea name="direccion_bene" cols="30" rows="3" class="form-control" required style="resize: none;" onkeypress="return Texto_Numeros(event)"></textarea>

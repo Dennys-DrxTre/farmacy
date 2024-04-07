@@ -63,9 +63,9 @@
                                         <a href="{% url 'detalle_ingreso' ingreso.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalle de ingreso">
                                             <i class="fa fa-info"></i>
                                         </a>
-                                        <!-- <a href="#" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Actualizar anuncio">
-                                            <i class="fa fa-edit"></i>
-                                        </a> -->
+                                        <a href="{% url 'det_ingreso' ingreso.pk %}" target="_blank" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver reporte">
+                                            <i class="fa fa-book"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -157,7 +157,7 @@ class Beneficiado(Persona):
 		else:
 			item['c_residencia'] = None
 		item['genero'] = self.get_genero_display()
-		item['zona'] = {'id':self.perfil.zona.pk, 'nombre': self.perfil.zona.zona_residencia}
+		item['zona'] = {'id':self.zona.pk, 'nombre': self.zona.zona_residencia}
 		return item
 
 # personalizar landing

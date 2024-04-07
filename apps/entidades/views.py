@@ -164,6 +164,7 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 					c_residencia=request.FILES.get("c_residencia"),
 					zona=Zona.objects.get(id=request.POST["zona"]),
 					direccion=request.POST["direccion"],
+					patologia=request.POST["patologia"],
 					rol=request.POST["rol"],
 					usuario=usuario
 				)
@@ -180,6 +181,7 @@ class RegistrarPerfil(LoginRequiredMixin, View):
 				beneficiado.telefono = f'{request.POST["codigo_tlf"]}{request.POST["telefono"]}'
 				beneficiado.genero = request.POST["genero"]
 				beneficiado.f_nacimiento = request.POST["f_nacimiento"]
+				beneficiado.patologia = request.POST["patologia"]
 				if request.POST["genero"] == 'MA':
 					beneficiado.embarazada = False
 				else:
@@ -267,6 +269,7 @@ class EditarUsuario(SuccessMessageMixin, UpdateView):
 		bene.zona = form.cleaned_data['zona']
 		bene.c_residencia = form.cleaned_data['c_residencia']
 		bene.direccion = form.cleaned_data['direccion']
+		bene.patologia = form.cleaned_data['patologia']
 		bene.save()
 
 		return super().form_valid(form)
@@ -567,6 +570,7 @@ class ActualizarInfo(LoginRequiredMixin, View):
 			if request.FILES.get("c_residencia"):
 				perfil.c_residencia = request.FILES.get("c_residencia")
 			perfil.direccion = request.POST['direccion']
+			perfil.patologia = request.POST['patologia']
 			perfil.save()
 
 			data['response'] = {'title':'Exito!', 'data': 'Perfil actualizado correctamente.', 'type_response': 'success'}
@@ -595,7 +599,7 @@ class MiPerfil(TemplateView):
 			user = User.objects.get(username = self.request.user.username)
 			perfil = Perfil.objects.get(usuario = user)
 			data = []
-			for i in Beneficiado.objects.filter(perfil = perfil):
+			for i in Beneficiado.objects.filter(perfil = perfil).exclude(cedula=perfil.cedula):
 				item = i.toJSON()
 				data.append(item)
 			# Convertir la lista de datos en un JsonResponse
@@ -613,6 +617,7 @@ class MiPerfil(TemplateView):
 				bene.f_nacimiento = request.POST['f_nacimiento']
 				bene.telefono = request.POST['telefono']
 				bene.genero = request.POST['genero']
+				bene.parentesco = request.POST['parentesco']
 				if request.POST.get('embarazada') == 'on':
 					bene.embarazada = True
 				else:
@@ -621,6 +626,7 @@ class MiPerfil(TemplateView):
 				if request.FILES.get("c_residencia"):
 					bene.c_residencia = request.FILES.get("c_residencia")
 				bene.direccion = request.POST['direccion']
+				bene.patologia = request.POST['patologia']
 				bene.rol = 'PA'
 				bene.save()
 				data['response'] = {'title':'Exito!', 'data': 'Beneficiado registrado correctamente.', 'type_response': 'success'}
@@ -629,9 +635,11 @@ class MiPerfil(TemplateView):
 				data['response'] = {'title':'Ocurrió un error!', 'data': 'Beneficiado ya se encuentra registrado.', 'type_response': 'danger'}
 
 		if action == 'editar_bene':
+
 			beneficiado = Beneficiado.objects.get(cedula = request.POST.get('id'))
 			beneficiado.telefono = request.POST['telefono_bene']
-			beneficiado.zona = Zona.objects.get(id = request.POST['zona_bene'])
+			beneficiado.zona = Zona.objects.get(id = int(request.POST.get('zona_bene')))
+			beneficiado.parentesco = request.POST['parentesco']
 			if request.POST.get('embarazada_bene') == 'on':
 				beneficiado.embarazada = True
 			else:
@@ -639,9 +647,10 @@ class MiPerfil(TemplateView):
 			if request.FILES.get("c_residencia_bene"):
 				beneficiado.c_residencia = request.FILES.get("c_residencia_bene")
 			beneficiado.direccion = request.POST['direccion_bene']
+			beneficiado.patologia = request.POST['patologia_bene']
 			beneficiado.save()
-			data['response'] = {'title':'Exito!', 'data': 'Beneficiado registrado correctamente.', 'type_response': 'success'}
 
+			data['response'] = {'title':'Exito!', 'data': 'Beneficiado registrado correctamente.', 'type_response': 'success'}
 		
 		return JsonResponse(data, safe=False)
 	
@@ -652,7 +661,7 @@ class MiPerfil(TemplateView):
 		beneficiados = Beneficiado.objects.filter(perfil = perfil)
 		# Aquí puedes agregar cualquier dato que desees pasar a la plantilla
 		context['mi_dato'] = perfil
-		context['zonas'] = Zona.objects.exclude(zona_residencia= perfil.zona)
+		context['zonas'] = Zona.objects.all()
 		context['bene'] = beneficiados
 		context['form'] = BeneficiadoForm()
 		return context
@@ -663,4 +672,5 @@ class MenuReportes(TemplateView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		context['zonas'] = Zona.objects.all()
+		context['j_c'] = Perfil.objects.filter(rol = 'JC')
 		return context

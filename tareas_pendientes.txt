@@ -1,16 +1,17 @@
 TAREAS & CORRECIONES JOSE
     # CORRECIONES
-        - Colocar el ojito para visualizar la contraseña que estoy escribiendo en el login
-        - Colocar el parentesco en los beneficiados: Hijo, Hija, Esposo, Esposa. Puede ser un select (EN TODOS LOS FORMUALARIOS DONDE APAREZCA)
-        - Colocar un input para colocar la patología, tanto en el registro de usuario, como en el de beneficiados (EN TODOS LOS FORMUALARIOS DONDE APAREZCA)
-        - EDICION DE USUARIOS (CORREGIR CAMPO C RESIDENCIA)
+        - Colocar el ojito para visualizar la contraseña que estoy escribiendo en el login ()LISTO
+        - Colocar el parentesco en los beneficiados: Hijo, Hija, Esposo, Esposa. Puede ser un select (EN TODOS LOS FORMUALARIOS DONDE APAREZCA) (LISTO)
+        - Colocar un input para colocar la patología, tanto en el registro de usuario, como en el de beneficiados (EN TODOS LOS FORMUALARIOS DONDE APAREZCA) (LISTO)
+        - EDICION DE USUARIOS (CORREGIR CAMPO C RESIDENCIA) (falta no tenia luz xD)
 
     # TAREAS
         - REPORTES EN CADA MODULOS {
-            reportes de solicitudes realizas, tanto por comunidad como ,
-            detales de ingresos, por rango de fechas,
-            detalles de solicitudes,
-            solicitudes por estados,
+            reportes de solicitudes realizas, tanto por comunidad como , (listo)
+            detales de ingresos, (listo)
+            por rango de fechas, (listo)
+            detalles de solicitudes,(listo)
+            solicitudes por estados, (listo)
         }
 	    - MODULO DE EGRESOS (SALIDA DE MEDICAMENTOS)
 TAREAS & CORRECIONES DENNYS

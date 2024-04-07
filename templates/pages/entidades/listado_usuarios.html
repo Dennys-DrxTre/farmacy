@@ -197,6 +197,10 @@
                     </div>
                     <div class="row">
                         <div class="col">
+                            <label for="">Patología</label>
+                            {{form.patologia|add_class:'form-control'|attr:'style:resize:none'|attr:'rows:3'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'}}
+                        </div>
+                        <div class="col">
                             <label for="">Ubicación</label>
                             {{form.direccion|add_class:'form-control'|attr:'style:resize:none'|attr:'rows:3'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'}}
                         </div>

@@ -41,3 +41,20 @@ $( async function () {
     
 
 });
+
+$('#btn_pass_show').click(function() {
+	// Obtiene el input de contraseña
+	var passwordInput = $('#password2');
+	// Verifica si el tipo de input es 'password'
+	if (passwordInput.attr('type') === 'password') {
+		// Cambia el tipo de input a 'text' para mostrar la contraseña
+		passwordInput.attr('type', 'text');
+		// Cambia el icono del ojo a cerrado
+		$(this).html('<i class="fa fa-eye-slash"></i>');
+	} else {
+		// Cambia el tipo de input a 'password' para ocultar la contraseña
+		passwordInput.attr('type', 'password');
+		// Cambia el icono del ojo a abierto
+		$(this).html('<i class="fa fa-eye"></i>');
+	}
+});

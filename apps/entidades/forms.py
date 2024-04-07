@@ -14,7 +14,7 @@ class PerfilForm(forms.ModelForm):
 	codigo_tlf = forms.ChoiceField(choices=Perfil.CodigoTlf.choices)
 	class Meta:
 		model = Perfil
-		fields = ['nacionalidad', 'cedula', 'nombres', 'apellidos', 'telefono', 'genero', 'f_nacimiento', 'embarazada', 'c_residencia', 'zona', 'direccion', 'rol']
+		fields = ['nacionalidad', 'cedula', 'nombres', 'apellidos', 'telefono', 'genero', 'f_nacimiento', 'embarazada', 'c_residencia', 'zona', 'direccion', 'rol', 'patologia']
 
 	def clean_password2(self):
 		# Check that the two password entries match

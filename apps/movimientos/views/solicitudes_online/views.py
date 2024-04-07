@@ -127,6 +127,7 @@ class RegistrarBeneficiado(LoginRequiredMixin, View):
 				beneficiado.f_nacimiento = request.POST['f_nacimiento'] 
 				beneficiado.zona_id = request.POST['zona'] 
 				beneficiado.direccion = request.POST['direccion']
+				beneficiado.parentesco = request.POST['parentesco']
 				beneficiado.perfil_id = request.user.perfil.pk
 				beneficiado.save()
 				data['response'] = {'title':'Exito!', 'data': 'El beneficiado se registro correctamente', 'type_response': 'success'}

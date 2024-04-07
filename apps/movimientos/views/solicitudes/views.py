@@ -421,6 +421,8 @@ class RegistrarBeneficiadoFisico(LoginRequiredMixin, View):
 				beneficiado.f_nacimiento = request.POST['f_nacimiento'] 
 				beneficiado.zona_id = request.POST['zona'] 
 				beneficiado.direccion = request.POST['direccion']
+				beneficiado.parentesco = request.POST['parentesco']
+				beneficiado.patologia = request.POST['patologia']
 				beneficiado.perfil_id = request.POST['perfil']
 				beneficiado.save()
 				data['response'] = {'title':'Exito!', 'data': 'El beneficiado se registro correctamente', 'type_response': 'success'}
@@ -471,6 +473,7 @@ class RegistrarPerfilFisico(LoginRequiredMixin, View):
 						perfil.c_residencia = request.FILES.get("c_residencia")
 					perfil.zona_id = request.POST["zona"]
 					perfil.direccion = request.POST["direccion"]
+					perfil.patologia = request.POST["patologia"]
 					perfil.rol = request.POST["rol"]
 					perfil.usuario = User.objects.get(username = usuario.username)
 					perfil.save()
@@ -496,6 +499,7 @@ class RegistrarPerfilFisico(LoginRequiredMixin, View):
 						beneficiado.c_residencia = request.FILES.get("c_residencia")
 					beneficiado.zona_id = request.POST["zona"]
 					beneficiado.direccion = request.POST["direccion"]
+					beneficiado.patologia = request.POST["patologia"]
 					beneficiado.save()
 
 					# enviando el correo de registro

@@ -44,6 +44,7 @@ class PerfilForm(forms.ModelForm):
 	c_residencia = forms.FileField(required=False)
 	zona = forms.ModelChoiceField(queryset=Zona.objects.all())
 	direccion = forms.CharField(widget=forms.Textarea)
+	patologia = forms.CharField(widget=forms.Textarea)
 
 	class Meta:
 		model = User

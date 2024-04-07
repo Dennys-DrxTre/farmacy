@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 from django.db.models import Q
 
 from apps.entidades.utils import link_callback
-from .models import Jornada, Solicitud
+from .models import Jornada, Solicitud, DetalleIngreso, Ingreso, DetalleSolicitud
 from apps.entidades.mixins import ValidarUsuario
 
 class TodasLasJornadas(View):
@@ -44,6 +44,64 @@ class TodasLasJornadas(View):
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, safe=False)
 		
+class TodasLasJornadasFecha(View):
+	# permission_required = 'anuncios.requiere_secretria'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, fecha1, fecha2, *args, **kwargs):
+		try:
+			jornada = Jornada.objects.filter(fecha_solicitud__gte=fecha1, fecha_solicitud__lte=fecha2).order_by('-id')
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'report_title': f'Listado de solicitudes de jornadas desde: {fecha1} hasta: {fecha2}',
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'jornada': jornada,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/todas_jornadas_fecha.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Jornada.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)
+		
+class JornadasJefe(View):
+	# permission_required = 'anuncios.requiere_secretria'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, pk, *args, **kwargs):
+		try:
+			jornada = Jornada.objects.filter(jefe_comunidad__cedula = pk).order_by('-id')
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'report_title': 'Listado de Jornadas por jefe de comunidad',
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'jornada': jornada,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/jornada_jc.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Jornada.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)
+		
 class TodasLasSolicitudes(View):
 	# permission_required = 'anuncios.requiere_secretria'
 
@@ -64,6 +122,128 @@ class TodasLasSolicitudes(View):
 				'request':request,
 			}
 			template_path= get_template('reportes/todas_solicitudes.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Solicitud.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)
+		
+class TodasLasSolicitudesFecha(View):
+	# permission_required = 'anuncios.requiere_secretria'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, fecha1, fecha2, *args, **kwargs):
+		try:
+			solicitudes = Solicitud.objects.filter(fecha_soli__gte = fecha1, fecha_soli__lte=fecha2).order_by('-id')
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'report_title': f'Listado de solicitudes desde: {fecha1} hasta: {fecha2}',
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'solicitudes': solicitudes,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/todas_solicitudes_fecha.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Solicitud.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)
+		
+class SolicitudesEstado(View):
+	# permission_required = 'anuncios.requiere_secretria'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, est, *args, **kwargs):
+		try:
+			solicitudes = Solicitud.objects.filter(estado = est).order_by('-id')
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'est': est,
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'solicitudes': solicitudes,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/solicitud_estado.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Solicitud.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)
+		
+class ReportDetalleIngreso(View):
+	# permission_required = 'anuncios.requiere_secretria'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, pk, *args, **kwargs):
+		try:
+			ingreso = Ingreso.objects.get(id = DetalleIngreso.objects.get(id = pk).ingreso.pk)
+			det_ingre = DetalleIngreso.objects.filter(ingreso__id = ingreso.pk )
+
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'report_title': 'Detalle de ingreso',
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'ingreso': ingreso,
+				'detalle': det_ingre,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/det_ingreso.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Solicitud.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)
+		
+class ReportDetalleSolicitud(View):
+	# permission_required = 'anuncios.requiere_secretria'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, pk, *args, **kwargs):
+		try:
+			solicitud = Solicitud.objects.get(id = pk)
+			det_soli = DetalleSolicitud.objects.filter(solicitud = solicitud.id)
+
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'report_title': 'Detalle de solicitud',
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'solicitud': solicitud,
+				'det': det_soli,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/det_solicitud.html')
 			html = template_path.render(context)
 			response = HttpResponse(content_type='application/pdf')
 			pisa.CreatePDF(html, dest=response, link_callback=link_callback)

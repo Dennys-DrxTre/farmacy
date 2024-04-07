@@ -38,6 +38,12 @@ from .views.contabilidad_fisica.views import (
 from .reportes import (
     TodasLasJornadas,
     TodasLasSolicitudes,
+    SolicitudesEstado,
+    JornadasJefe,
+    ReportDetalleIngreso,
+    ReportDetalleSolicitud,
+    TodasLasSolicitudesFecha, 
+    TodasLasJornadasFecha
 )
 
 urlpatterns = [
@@ -91,6 +97,13 @@ urlpatterns = [
 
     # reportes
     path('reporte/listado-de-jornada-zona/<int:pk>/', TodasLasJornadas.as_view(), name='l_jornada'),
+    path('reporte/listado-de-jornada-jefe-comunidad/<int:pk>/', JornadasJefe.as_view() ),
     path('reporte/listado-de-solicitudes/', TodasLasSolicitudes.as_view(), name='t_solicitudes'),
+    path('reporte/listado-de-solicitudes-por-estado/<str:est>/', SolicitudesEstado.as_view(), name='solicitudes_est'),
+    path('reporte/detalle-de-ingreso/<int:pk>/', ReportDetalleIngreso.as_view(), name='det_ingreso'),
+    path('reporte/detalle-de-solicitud/<int:pk>/', ReportDetalleSolicitud.as_view(), name='det_solicitud'),
+    path('reporte/listado-de-solicitudes/<str:fecha1>/<str:fecha2>/', TodasLasSolicitudesFecha.as_view()),
+    path('reporte/listado-de-jornada-desde/<str:fecha1>/<str:fecha2>/', TodasLasJornadasFecha.as_view()),
+    
 
 ]

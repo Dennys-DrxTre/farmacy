@@ -248,16 +248,28 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col col-md-6">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_zona">Parentesco</label>
+                                    {{ form_b.parentesco|add_class:'form-control'|attr:'required' }}
+                                </div>
+                            </div>
+                            <div class="col">
                                 <div class="form-group">
                                     <label class="form-label" for="id_zona">Zona</label>
                                     {{ form_b.zona|add_class:'form-control'|attr:'placeholder:Introduzca la zona' }}
                                 </div>
                             </div>
-                            <div class="col col-md-6">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_direccion">Patologia</label>
+                                    {{ form_b.patologia|add_class:'form-control'|attr:'placeholder:Introduzca la patologia'|attr:'rows:3'|attr:'onkeypress:return Texto_Numeros(event)'|attr:'style:resize:none' }}
+                                </div>
+                            </div>
+                            <div class="col">
                                 <div class="form-group">
                                     <label class="form-label" for="id_direccion">Direccion</label>
-                                    {{ form_b.direccion|add_class:'form-control'|attr:'placeholder:Introduzca la direccion'|attr:'rows:3'|attr:'onkeypress:return Texto_Numeros(event)' }}
+                                    {{ form_b.direccion|add_class:'form-control'|attr:'placeholder:Introduzca la direccion'|attr:'rows:3'|attr:'onkeypress:return Texto_Numeros(event)'|attr:'style:resize:none' }}
                                 </div>
                             </div>
                         </div>
@@ -360,13 +372,19 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col col-md-6">
+                            <div class="col">
                                 <div class="form-group">
                                     <label class="form-label" for="id_zona">Zona</label>
                                     {{ form_p.zona|add_class:'form-control'|attr:'placeholder:Introduzca la zona' }}
                                 </div>
                             </div>
-                            <div class="col col-md-6">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_direccion">Patología</label>
+                                    {{ form_p.patologia|add_class:'form-control'|attr:'placeholder:Introduzca la patologia'|attr:'rows:3'|attr:'onkeypress:return Texto_Numeros(event)' }}
+                                </div>
+                            </div>
+                            <div class="col">
                                 <div class="form-group">
                                     <label class="form-label" for="id_direccion">Direccion</label>
                                     {{ form_p.direccion|add_class:'form-control'|attr:'placeholder:Introduzca la direccion'|attr:'rows:3'|attr:'onkeypress:return Texto_Numeros(event)' }}

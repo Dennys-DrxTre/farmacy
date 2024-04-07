@@ -22,10 +22,10 @@ let getData = async () => {
             {"data": "genero"},
             {"data": "f_nacimiento"},
             {"data": "embarazada"},
-
+            {"data": "id"},
         ],
         [
-            /**{
+            {
                 targets: [-1],
                 class: 'text-center',
                 orderable: false,
@@ -33,8 +33,8 @@ let getData = async () => {
                     let buttons = '<a href="#" rel="edit" class="btn btn-icon btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Beneficiado"><i class="fa fa-edit"></i></a>';
                     return buttons
                 }
-            },*/{
-                targets: [-1],
+            },{
+                targets: [-2],
                 class: 'text-center',
                 orderable: true,
                 render: function (data, type, row) {
@@ -47,18 +47,15 @@ let getData = async () => {
                     }
                 }
             }
-            
-            
         ],
         '/mi-perfil/'
     );
-
 }
 
 $( async function () {
     await getData();
 
-	form_edit_info.addEventListener('submit', async (e) => {
+    form_edit_info.addEventListener('submit', async (e) => {
         e.preventDefault();
         let parameters = new FormData(form_edit_info);
 
@@ -68,7 +65,6 @@ $( async function () {
             $("#form_edit_info")[0].reset(); 
             window.location.reload();
         });
-        
     });
 
     form_nuevo_bene.addEventListener('submit', async (e) => {
@@ -80,7 +76,6 @@ $( async function () {
             $('#modal_nuevo_bene').modal('hide');   
             $("#form_nuevo_bene")[0].reset(); 
         });
-        
     });
 
     // REGISTER USUARIO
@@ -96,49 +91,37 @@ $( async function () {
 
     $('#listado_beneficiados tbody').on('click', 'a[rel="edit"]', function () {
         $('#form_edit_bene')[0].reset();
+        $('#modal_edit_bene').modal('show');   
         var tr = tblCate.cell($(this).closest('td, li')).index();
         var data = tblCate.row(tr.row).data();
 
         $('input[name="action"]').val('editar_bene');
         $('input[name="id"]').val(data.cedula);
         $('input[name="telefono_bene"]').val(data.telefono);
+        $('select[name="parentesco"]').val(data.parentesco);
+        $('select[name="zona_bene"]').val(data.zona.id);
+        $('textarea[name="direccion_bene"]').val(data.direccion);
+        $('textarea[name="patologia_bene"]').val(data.patologia);
+        $('input[name="c_residencia_bene"]').val(data.c_residencia);
+        
 
         if(data.embarazada == 'True'){
             $('input[name="embarazada_bene"]').prop('checked', true)
         }else{
             $('input[name="embarazada_bene"]').prop('checked', false)
         }
-        console.log(data.c_residencia)
-        function changeFileName() {
-            const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer();
-            dataTransfer.items.add(new File([data.c_residencia], 'new-file-name'));
-            const inputElement = document.getElementById('c_resi');
-            inputElement.files = dataTransfer.files;
-           }
-           
-        $('textarea[name="direccion_bene"]').val(data.direccion);
 
-        $("#id_zona_bene option").each(function() {
-            if ($(this).text() == "texto_deseado") {
-                $(this).prop("selected", true);
-                return false; // Salir del bucle después de encontrar el elemento
-            }
-        });
+    });
 
-        form_edit_bene.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            let parameters = new FormData(form_edit_bene);
-            
-            await SendDataJsonForm(type_actions['benefi'][action.value], parameters, async () => {  
-                await getData();
-                $('#modal_edit_bene').modal('hide');   
-                $("#form_edit_bene")[0].reset(); 
-            });
-            
-        });
+    form_edit_bene.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        let parameters = new FormData(form_edit_bene);
         
-
-        $('#modal_edit_bene').modal('show');
+        await SendDataJsonForm(type_actions['benefi'][action.value], parameters, async () => {  
+            await getData();
+            $('#modal_edit_bene').modal('hide');   
+            $("#form_edit_bene")[0].reset(); 
+        });
     });
 
     $('#id_genero').change(function () {
