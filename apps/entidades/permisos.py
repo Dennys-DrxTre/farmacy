@@ -65,6 +65,8 @@ permisos_usuarios = {
         'add_landingpage',
         'delete_landingpage',
         'view_landingpage',
+        'change_contabilidadfisica',
+        'view_contabilidadfisica'
     ],
     'AL': [
         'ver_inicio',
@@ -112,8 +114,11 @@ permisos_usuarios = {
         'view_solicitud',
         'add_zona',
         'change_zona',
-        'view_zona'
-        ],
+        'view_zona',
+        'add_contabilidadfisica',
+        'change_contabilidadfisica',
+        'view_contabilidadfisica'
+    ],
     'AT': [
         'cambiar_password',
         'cambiar_estado_jornada',

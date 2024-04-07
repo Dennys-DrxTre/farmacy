@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from apps.movimientos.email_utils import EmailThread
-from apps.entidades.mixins import ValidarUsuario
+from apps.entidades.mixins import ValidarUsuario, RedirectIfExistsContabilidadMixin
 from django.db.models import Q
 
 from django.views.generic import (
@@ -128,9 +128,10 @@ class RegistrarMiJornada(ValidarUsuario, TemplateView):
 		context["form_c"] = ComunidadForm()
 		return context
 	
-class EditarJornada(ValidarUsuario, SuccessMessageMixin, UpdateView):
+class EditarJornada(ValidarUsuario, SuccessMessageMixin, RedirectIfExistsContabilidadMixin, UpdateView):
 	permission_required = 'movimientos.change_jornada'
 	template_name = 'pages/jornadas/modificar_jornada.html'
+	redirect_url = '/solicitudes-de-jornadas/'
 	model = Jornada
 	form_class = JornadaEditForm
 	success_massage = 'La jornada ha sido modificada correctamente'
@@ -272,8 +273,9 @@ class EditarJornada(ValidarUsuario, SuccessMessageMixin, UpdateView):
 		context['jefe_comunidad'] = self.get_object().jefe_comunidad.pk
 		return context
 	
-class JornadaCompletada(ValidarUsuario, SuccessMessageMixin, View):
+class JornadaCompletada(ValidarUsuario, SuccessMessageMixin, RedirectIfExistsContabilidadMixin, View):
 	permission_required = 'entidades.cambiar_estado_jornada'
+	redirect_url = '/solicitudes-de-jornadas/'
 	success_massage = 'La jornada ha sido completada correctamente'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None

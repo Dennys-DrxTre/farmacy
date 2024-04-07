@@ -141,8 +141,10 @@
                                             
                                             {% if h.tipo_mov.operacion == '+' %}
                                                 <td><span class="badge badge-success">+{{ h.cantidad }}</span></td>
-                                            {% else %}
+                                            {% elif h.tipo_mov.operacion == '-' %}
                                                 <td><span class="badge badge-danger">-{{ h.cantidad }}</span></td>
+                                            {% elif h.tipo_mov.operacion == '=' %}
+                                                <td><span class="badge badge-dark">{{ h.cantidad }}</span></td>
                                             {% endif %}
                                                 
                                         </tr>

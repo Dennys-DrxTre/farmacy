@@ -21,7 +21,7 @@ from django.db.models import Q
 
 from ...forms import BeneficiadoForm, SolicitudEditForm, SolicitudPresencialForm, PerfilForm
 from apps.entidades.permisos import permisos_usuarios
-from apps.entidades.mixins import ValidarUsuario
+from apps.entidades.mixins import ValidarUsuario, RedirectIfExistsContabilidadMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ...models import Solicitud, TipoMov, DetalleSolicitud, Historial, DetalleIventarioSolicitud
@@ -53,9 +53,10 @@ class DetalleSolicitudMed(ValidarUsuario, DetailView):
 		context["sub_title"] = "Detalle de Solicitud"
 		return context
 
-class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, UpdateView):
+class EditarSolicitud(ValidarUsuario, SuccessMessageMixin, RedirectIfExistsContabilidadMixin, UpdateView):
 	permission_required = 'movimientos.change_solicitud'
 	template_name = 'pages/movimientos/solicitudes/editar_solicitud_de_med.html'
+	redirect_url = '/solictudes-de-medicamentos/'
 	model = Solicitud
 	form_class = SolicitudEditForm
 	success_massage = 'La solicitud ha sido modificada correctamente'
@@ -245,8 +246,9 @@ class RegistrarSolicitudPresencial(ValidarUsuario, TemplateView):
 		context['perfiles'] = Perfil.objects.all()
 		return context
 
-class VerificarDatosSolicitudMed(ValidarUsuario, SuccessMessageMixin, View):
+class VerificarDatosSolicitudMed(ValidarUsuario, SuccessMessageMixin, RedirectIfExistsContabilidadMixin, View):
 	permission_required = 'entidades.cambiar_estado_solicitudes'
+	redirect_url = '/solictudes-de-medicamentos/'
 	success_massage = 'Los datos de la solicitud de medicamento ha sido verificada'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None
@@ -278,8 +280,9 @@ class VerificarDatosSolicitudMed(ValidarUsuario, SuccessMessageMixin, View):
 			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
 		return redirect('listado_solicitudes_medicamentos')
 
-class MedicamentoEntregado(ValidarUsuario, SuccessMessageMixin, View):
+class MedicamentoEntregado(ValidarUsuario, SuccessMessageMixin, RedirectIfExistsContabilidadMixin, View):
 	permission_required = 'entidades.cambiar_estado_solicitudes'
+	redirect_url = '/solictudes-de-medicamentos/'
 	success_massage = 'El medicamento ha sido entregado correctamente'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None
@@ -328,8 +331,9 @@ class MedicamentoEntregado(ValidarUsuario, SuccessMessageMixin, View):
 			messages.error(request, 'Ocurrió un error al procesar la solicitud.')
 		return redirect('listado_solicitudes_medicamentos')
 
-class MedicamentoEnEsperaEntrega(ValidarUsuario, SuccessMessageMixin, View):
+class MedicamentoEnEsperaEntrega(ValidarUsuario, SuccessMessageMixin, RedirectIfExistsContabilidadMixin, View):
 	permission_required = 'entidades.cambiar_estado_solicitudes'
+	redirect_url = '/solictudes-de-medicamentos/'
 	success_massage = 'El medicamento ha sido entregado correctamente'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None

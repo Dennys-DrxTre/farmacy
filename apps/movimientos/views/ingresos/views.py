@@ -17,7 +17,7 @@ from django.views.generic import (
 	DetailView,
 	View
 )
-from apps.entidades.mixins import ValidarUsuario
+from apps.entidades.mixins import ValidarUsuario, RedirectIfExistsContabilidadMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ...forms import IngresoForm
@@ -52,8 +52,9 @@ class DetalleIngresoView(ValidarUsuario, DetailView):
 		context["sub_title"] = "Detalles del ingreso"
 		return context
 	
-class RegistrarIngreso(ValidarUsuario, TemplateView):
+class RegistrarIngreso(ValidarUsuario,RedirectIfExistsContabilidadMixin ,TemplateView):
 	permission_required = 'movimientos.add_ingreso'
+	redirect_url = '/listado-de-ingresos/'
 	template_name = 'pages/movimientos/ingresos/registrar_ingreso.html'
 	# permission_required = 'anuncios.requiere_secretria'
 	object = None
