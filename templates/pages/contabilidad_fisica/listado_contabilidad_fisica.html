@@ -20,9 +20,9 @@
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h5 id="page_title">{{ sub_title }}</h5>
                 <div class="cart-tools">
-                    <!-- <a href="#" id="btn_filter" class="btn btn-icon btn-light-dark ml-10" rel="btn_open_modal_report" data-bs-toggle="tooltip" data-bs-placement="top" title="Reportes">
-                        <i class="fas fa-file-pdf"></i>
-                    </a> -->
+                    <a href="{% url 'r_inventario_fisico' %}" target="_blank" id="btn_filter" class="btn btn-icon btn-outline-danger ml-10">
+                        <i class="fa fa-file-text mr-1"></i> Generar Reporte
+                    </a>
                     <a href="{% url 'registrar_contabilidad' %}" class="btn btn-icon btn-info" data-bs-toggle="tooltip" title="Registrar Inventario Fisico">
                         <i class="fa fa-plus text-white"></i>
                     </a>
@@ -72,9 +72,29 @@
                                         <a href="{% url 'detalle_contabilidad' c.pk %}" rel="detail" class="btn btn-info" data-bs-toggle="tooltip" title="Detalle de inventario fisico">
                                             <i class="fa fa-info"></i>
                                         </a>
-                                        <a href="#" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar Inventario fisico">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
+                                        
+                                        {% if request.user.perfil.rol == 'AD' %}
+                                            {% if c.estado == 'CO' %}
+                                                <a href="{% url 'modificar_contabilidad' c.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar Inventario fisico">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            {% endif %}
+                                            
+                                            {% if c.estado == 'CO' or c.estado == 'PR' %}
+                                                <a href="#" rel="ban" class="btn btn-danger" data-bs-toggle="tooltip" title="Rechazar Jornada">
+                                                    <i class="fa fa-ban"></i>
+                                                </a>
+                                            {% endif %}
+                                                
+                                        {% elif request.user.perfil.rol == 'AL' %}
+                                            {% if c.estado == 'PR' %}
+                                                <a href="{% url 'modificar_contabilidad' c.pk %}" rel="edit" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar Inventario fisico">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                            
+
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -98,7 +118,7 @@
 </div>
 
 <div class="modal fade" id="modal_rechazo" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true" style="display: none;">
-    <form action="/rechazar-jornada-de-medicamento/" method="post" id="form_motivo_rechazo">
+    <form action="/rechazar-inventario-fisico/" method="post" id="form_motivo_rechazo">
         {% csrf_token %}
         <input type="hidden" name="pk" id="pk">
         <div class="modal-dialog modal-lg" role="document">

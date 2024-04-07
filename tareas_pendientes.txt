@@ -21,5 +21,6 @@ TAREAS & CORRECIONES DENNYS
         - Que el número de teléfono de los beneficiados no sea obligatorio, ya que si es menor de edad y no tiene teléfono, no lo pondría. (Listo)
         - Que me deje colocar la ñ en la dirección (Listo)
     # TAREAS
-        - AJUSTE DE INVENTARIO FISICA (MIDDLEWERE)(VALIDAR DETALLE)
+        - AJUSTE DE INVENTARIO FISICA (LISTO)
+            - VERIFICAR EL MIXIN
         - MODULO DE RESPALDO Y RECUPERACION

@@ -90,4 +90,4 @@ class ComunidadForm(forms.ModelForm):
 class ContabilidadForm(forms.ModelForm):
 	class Meta:
 		model = ContabilidadFisica
-		fields = ['estado']
+		fields = ['estado', 'motivo_rechazo']

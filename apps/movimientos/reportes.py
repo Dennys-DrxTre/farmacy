@@ -9,10 +9,9 @@ import datetime
 from datetime import date
 from django.http import JsonResponse
 from django.shortcuts import redirect
-from django.db.models import Q
 
 from apps.entidades.utils import link_callback
-from .models import Jornada, Solicitud, DetalleIngreso, Ingreso, DetalleSolicitud
+from .models import Jornada, Solicitud, DetalleIngreso, Ingreso, DetalleSolicitud ,Producto
 from apps.entidades.mixins import ValidarUsuario
 
 class TodasLasJornadas(View):

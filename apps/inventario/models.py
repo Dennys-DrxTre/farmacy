@@ -1,6 +1,7 @@
 from datetime import date
 from django.db import models
 from django.forms import model_to_dict
+from django.db.models import Q
 
 # ubicacion del producto
 class Almacen(models.Model):
@@ -63,12 +64,16 @@ class Producto(models.Model):
 	total_stock = models.IntegerField(default=0, null = False, blank= False)
 	comprometido = models.IntegerField(default=0, verbose_name='Comprometido')
 
+	def filtrar_inventario_reporte(self):
+		filtro = self.inventario.filter(Q(comprometido__gt=0) | Q(stock__gt=0), producto_id=self.pk)
+		return filtro
+
 	def contar_productos(self):
 		self.total_stock = 0
 		self.comprometido = 0
-		for s in self.inventario.filter(f_vencimiento__gt=date.today(), stock__gt=0):
+		for s in self.inventario.filter(stock__gt=0):
 			self.total_stock += s.stock
-		for c in self.inventario.filter(f_vencimiento__gt=date.today(), comprometido__gt=0):
+		for c in self.inventario.filter(comprometido__gt=0):
 			self.comprometido += c.comprometido
 		self.save()
 

@@ -263,6 +263,7 @@ class ContabilidadFisica(models.Model):
 	fecha = models.DateField(auto_now=False, auto_now_add=True)
 	proceso_actual = models.CharField(max_length=2, choices= FaseProceso.choices, default=FaseProceso.ALMACENISTA)
 	estado = models.CharField(max_length=2, choices=Status.choices, default=Status.EN_PROCRESO, blank=False, null=False)
+	motivo_rechazo = models.TextField(blank=True, null=True)
 
 	class Meta:
 		verbose_name = 'Contabilidad Fisica'
@@ -310,5 +311,6 @@ class InventarioContFisica(models.Model):
 
 	def toJSON(self):
 		item = model_to_dict(self)
-		item['producto'] = {'nombre': self.inventario.producto.nombre, 'lote':self.inventario.lote, 'f_vencimiento':self.inventario.f_vencimiento}
+		item['producto'] = {'nombre': self.inventario.producto.nombre, 'lote':self.inventario.lote, 'f_vencimiento':self.inventario.f_vencimiento,'id':self.inventario.pk}
+		item['estado'] = self.detcontabilidad.contabilidad.estado
 		return item
