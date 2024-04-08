@@ -30,6 +30,7 @@ class Inicio(ValidarUsuario, TemplateView):
 
 	def get(self, request, *args, **kwargs):
 		context = {}
+
 		cantidad_usuarios = Perfil.objects.all().count()
 		cantidad_productos = Producto.objects.all().count()
 		cantidad_solicitudes = Solicitud.objects.all().count()

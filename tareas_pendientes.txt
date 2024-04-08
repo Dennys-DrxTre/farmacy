@@ -1,26 +1,13 @@
 TAREAS & CORRECIONES JOSE
     # CORRECIONES
-        - Colocar el ojito para visualizar la contraseña que estoy escribiendo en el login ()LISTO
-        - Colocar el parentesco en los beneficiados: Hijo, Hija, Esposo, Esposa. Puede ser un select (EN TODOS LOS FORMUALARIOS DONDE APAREZCA) (LISTO)
-        - Colocar un input para colocar la patología, tanto en el registro de usuario, como en el de beneficiados (EN TODOS LOS FORMUALARIOS DONDE APAREZCA) (LISTO)
-        - EDICION DE USUARIOS (CORREGIR CAMPO C RESIDENCIA) (falta no tenia luz xD)
+        - No carga el logo en de la farmacia en reportes en el Pythonanywhere
 
     # TAREAS
-        - REPORTES EN CADA MODULOS {
-            reportes de solicitudes realizas, tanto por comunidad como , (listo)
-            detales de ingresos, (listo)
-            por rango de fechas, (listo)
-            detalles de solicitudes,(listo)
-            solicitudes por estados, (listo)
-        }
-	    - MODULO DE EGRESOS (SALIDA DE MEDICAMENTOS)
+        - Reportes listados de productos con stock mínimo y el reporte de movimientos de inventario
+	    - LISTADO, DETALLE DE EGRESO
+
 TAREAS & CORRECIONES DENNYS
-    # CORRECIONES
-        - Agregar campos adicionales en los modelos de usuario y beneficiados (listo)
-        - En el inicio que en vez de que diga Bienvenido, Diga: Bienvenid@, con el @ por si es hombre o mujer (listo)
-        - Que el número de teléfono de los beneficiados no sea obligatorio, ya que si es menor de edad y no tiene teléfono, no lo pondría. (Listo)
-        - Que me deje colocar la ñ en la dirección (Listo)
+
     # TAREAS
-        - AJUSTE DE INVENTARIO FISICA (LISTO)
-            - VERIFICAR EL MIXIN
+        - REGISTRO DE EGRESO
         - MODULO DE RESPALDO Y RECUPERACION
