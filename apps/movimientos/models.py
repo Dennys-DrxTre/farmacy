@@ -246,6 +246,39 @@ class DetalleIngreso(models.Model):
 	def toJSON(self):
 		item = model_to_dict(self)
 		return item
+
+class Egreso(models.Model):
+	fecha = models.DateField(auto_now=False, auto_now_add=False)
+	descripcion= models.TextField()
+	tipo_egreso = models.ForeignKey(TipoMov, on_delete=models.PROTECT)
+
+	class Meta:
+		verbose_name = 'Egreso'
+		verbose_name_plural = 'Egresos'
+		ordering = ['pk']
+
+	def __str__(self):
+		return str(self.pk)
+	
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item
+	
+class DetalleEgreso(models.Model):
+	egreso = models.ForeignKey(Egreso, on_delete=models.CASCADE, related_name='detalle')
+	inventario = models.ForeignKey(Inventario, on_delete=models.PROTECT)
+	cantidad = models.IntegerField()
+
+	class Meta:
+		verbose_name = 'Detalle de egreso'
+		verbose_name_plural = 'Detalles de egreso'
+
+	def __str__(self):
+		return str(self.pk)
+	
+	def toJSON(self):
+		item = model_to_dict(self)
+		return item
 	
 class ContabilidadFisica(models.Model):
 
