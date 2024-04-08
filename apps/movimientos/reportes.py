@@ -251,3 +251,32 @@ class ReportDetalleSolicitud(View):
 			return redirect('vista')
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, safe=False)
+		
+class ReporteInventarioFisico(View, ValidarUsuario):
+	permission_required = 'movimientos.view_contabilidadfisica'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, *args, **kwargs):
+		try:
+			productos = Producto.objects.filter(Q(comprometido__gt=0) | Q(total_stock__gt=0))
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'report_title': 'Inventario Fisico',
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'productos': productos,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/reporte_contabilidad_fisica.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Producto.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)

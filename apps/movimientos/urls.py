@@ -45,7 +45,8 @@ from .reportes import (
     ReportDetalleIngreso,
     ReportDetalleSolicitud,
     TodasLasSolicitudesFecha, 
-    TodasLasJornadasFecha
+    TodasLasJornadasFecha,
+    ReporteInventarioFisico
 )
 
 urlpatterns = [
@@ -108,6 +109,6 @@ urlpatterns = [
     path('reporte/detalle-de-solicitud/<int:pk>/', ReportDetalleSolicitud.as_view(), name='det_solicitud'),
     path('reporte/listado-de-solicitudes/<str:fecha1>/<str:fecha2>/', TodasLasSolicitudesFecha.as_view()),
     path('reporte/listado-de-jornada-desde/<str:fecha1>/<str:fecha2>/', TodasLasJornadasFecha.as_view()),
-    
+    path('reporte/reporte-inventario-fisico/', ReporteInventarioFisico.as_view(), name='r_inventario_fisico'),
 
 ]

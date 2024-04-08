@@ -6,7 +6,7 @@ rol = String(rol.value)
 const formatearFecha = (fecha) => {
     let date = new Date(fecha);
     // Obtener el día, mes y año
-    let dia = date.getDate();
+    let dia = date.getDate() + 1;
     let mes = date.getMonth() + 1; // Los meses en JavaScript comienzan desde 0
     let ano = date.getFullYear();
    
@@ -210,7 +210,6 @@ $(function () {
         ],
         'AL': [
             { 'id':'PR', 'text': 'En Proceso' },
-            { 'id':'RE', 'text': 'Rechazado' },
             { 'id':'CO', 'text': 'Contabilizado' },
         ],
     }
