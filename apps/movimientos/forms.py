@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ingreso, Solicitud, TipoMov, Jornada, ContabilidadFisica
+from .models import Ingreso, Solicitud, TipoMov, Jornada, ContabilidadFisica, Egreso
 from apps.entidades.models import Beneficiado, User, Zona, Perfil, Comunidad
 from django.forms import DateInput
 from django.utils import timezone
@@ -8,6 +8,12 @@ class IngresoForm(forms.ModelForm):
 	tipo_ingreso = forms.ModelChoiceField(queryset=TipoMov.objects.filter(operacion=TipoMov.Operacion.SUMA))	
 	class Meta:
 		model = Ingreso
+		fields = '__all__'
+
+class EgresoForm(forms.ModelForm):
+	tipo_egreso = forms.ModelChoiceField(queryset=TipoMov.objects.filter(operacion=TipoMov.Operacion.RESTA))	
+	class Meta:
+		model = Egreso
 		fields = '__all__'
 
 class MiSolicitudForm(forms.ModelForm):

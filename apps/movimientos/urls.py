@@ -37,6 +37,8 @@ from .views.contabilidad_fisica.views import (
     RechazarContabilidadFisica
 )
 
+from .views.egresos.views import RegistrarEgreso, BuscarProductosEgresoView
+
 from .reportes import (
     TodasLasJornadas,
     TodasLasSolicitudes,
@@ -99,6 +101,10 @@ urlpatterns = [
     path('buscar-productos-validados/', BuscarProductosValidadosView.as_view(), name='buscar_productos_validados'),
     path('detalle-de-inventario-fisico/<int:pk>/', DetalleContabilidadFisica.as_view(), name='detalle_contabilidad'),
     path('rechazar-inventario-fisico/', RechazarContabilidadFisica.as_view(), name='rechazar_contabilidad'),
+
+    # EGRESO
+    path('registrar-egreso/', RegistrarEgreso.as_view(), name='registrar_egreso'),
+    path('buscar-productos-egresos/', BuscarProductosEgresoView.as_view(), name='buscar_productos_egreso'),
 
     # reportes
     path('reporte/listado-de-jornada-zona/<int:pk>/', TodasLasJornadas.as_view(), name='l_jornada'),

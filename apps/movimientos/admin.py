@@ -12,7 +12,9 @@ from .models import (
     DetalleIventarioJornada,
     ContabilidadFisica,
     DetContabilidadFisica,
-    InventarioContFisica
+    InventarioContFisica,
+    Egreso,
+    DetalleEgreso
 )
 # Register your models here.
 
@@ -95,6 +97,18 @@ class InventarioContFisicaAdmin(admin.ModelAdmin):
     ordering = ('pk',)
     # readonly_fields = ('date_of_birth',)
 
+class EgresoAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'fecha', 'descripcion', 'tipo_egreso')
+    list_filter = ('tipo_egreso',)
+    search_fields = ('pk', 'tipo_egreso')
+    ordering = ('pk', 'fecha')
+
+class DetEgresoAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'egreso', 'inventario', 'cantidad')
+    list_filter = ('inventario',)
+    search_fields = ('pk',)
+    ordering = ('pk',)
+
 admin.site.register(Solicitud, SolicitudAdmin)
 admin.site.register(DetalleSolicitud, DetSolicitudAdmin)
 admin.site.register(Jornada, JornadaAdmin)
@@ -108,3 +122,5 @@ admin.site.register(DetalleIventarioJornada, DetInventarioJornadaAdmin)
 admin.site.register(ContabilidadFisica, ContabilidadFisicaAdmin)
 admin.site.register(DetContabilidadFisica, DetContabilidadFisicaAdmin)
 admin.site.register(InventarioContFisica, InventarioContFisicaAdmin)
+admin.site.register(Egreso, EgresoAdmin)
+admin.site.register(DetalleEgreso, DetEgresoAdmin)

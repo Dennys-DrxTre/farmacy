@@ -2,6 +2,7 @@ from datetime import date
 from django.db import models
 from django.forms import model_to_dict
 from django.db.models import Q
+from django.utils.formats import date_format
 
 # ubicacion del producto
 class Almacen(models.Model):
@@ -112,5 +113,6 @@ class Inventario(models.Model):
 	def toJSON(self):
 		item = model_to_dict(self)
 		item['nombre'] = self.producto.nombre
+		item['fecha_vencimiento'] = date_format(self.f_vencimiento, "d/m/Y")
 		item['cantidad_contada'] = 0
 		return item
