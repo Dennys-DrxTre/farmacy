@@ -51,6 +51,8 @@ from .reportes import (
     ReporteInventarioFisico
 )
 
+from apps.movimientos.views.db.views import RestoreDBView, BackupDB, DataBaseView
+
 urlpatterns = [
     # INGRESOS
     path('listado-de-ingresos/', ListadoIngresos.as_view(), name='listado_ingresos'),
@@ -116,5 +118,10 @@ urlpatterns = [
     path('reporte/listado-de-solicitudes/<str:fecha1>/<str:fecha2>/', TodasLasSolicitudesFecha.as_view()),
     path('reporte/listado-de-jornada-desde/<str:fecha1>/<str:fecha2>/', TodasLasJornadasFecha.as_view()),
     path('reporte/reporte-inventario-fisico/', ReporteInventarioFisico.as_view(), name='r_inventario_fisico'),
+
+    # BASE DE DATOS
+    path('segutidad-de-base-de-datos/', DataBaseView.as_view(), name='database_view'),
+    path('respaldar-base-de-datos/', BackupDB.as_view(), name='backupdb_view'),
+    path('recuperar-base-de-datos/', RestoreDBView.as_view(), name='recoverdb_view'),
 
 ]

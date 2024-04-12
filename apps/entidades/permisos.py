@@ -66,7 +66,9 @@ permisos_usuarios = {
         'delete_landingpage',
         'view_landingpage',
         'change_contabilidadfisica',
-        'view_contabilidadfisica'
+        'view_contabilidadfisica',
+        'respaldar_db',
+        'recuperar_db'
     ],
     'AL': [
         'ver_inicio',

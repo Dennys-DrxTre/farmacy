@@ -5,6 +5,7 @@ TAREAS & CORRECIONES JOSE
     # TAREAS
         - Reportes listados de productos con stock mínimo y el reporte de movimientos de inventario
 	    - LISTADO, DETALLE DE EGRESO
+        - agregar permisos a los reportes
 
 TAREAS & CORRECIONES DENNYS
 

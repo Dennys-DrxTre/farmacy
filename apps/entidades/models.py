@@ -78,6 +78,8 @@ class Perfil(Persona):
 		verbose_name_plural = 'perfiles'
 		permissions = [
 			('cambiar_password', 'cambiar contraseña a usuarios'),
+			('respaldar_db', 'Respaldar Base de datos'),
+			('recuperar_db', 'Recuperar Base de datos'),
 			('cambiar_estado_usuarios', 'cambiar estado de usuarios'),
 			('cambiar_estado_jornada', 'cambiar estatus de jornadas'),
 			('cambiar_estado_solicitudes', 'cambiar status de solicitudes'),
