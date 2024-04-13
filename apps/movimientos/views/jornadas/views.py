@@ -216,6 +216,8 @@ class EditarJornada(ValidarUsuario, SuccessMessageMixin, RedirectIfExistsContabi
 							inventario = inventarios_proximos.first()
 							cantidad_restante = self.descontar_stock(inventario, cantidad_restante, detalle)
 						else:
+							detalle.cant_aprobada = 0
+							detalle.save()
 							# Si no hay inventarios próximos a vencer, se detiene el proceso
 							break
 					producto.contar_productos()

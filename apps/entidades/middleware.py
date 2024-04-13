@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.template.loader import render_to_string
 from apps.movimientos.email_utils import EmailThread
+from django.db.models import Q
 
 from apps.movimientos.models import Solicitud, DetalleSolicitud, DetalleIventarioSolicitud, TipoMov, Historial
 from apps.inventario.models import Inventario, Producto
@@ -13,6 +14,8 @@ class TemplateErrorMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        for p in Producto.objects.filter(Q(comprometido__gt=0) | Q(total_stock__gt=0)):
+            p.contar_productos()
         response = self.get_response(request)
         if response.status_code == 404:
             response = HttpResponseRedirect('/inicio/')

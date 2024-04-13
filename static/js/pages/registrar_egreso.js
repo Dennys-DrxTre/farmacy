@@ -114,19 +114,19 @@ let vents = {
                     orderable: false,
                     render: function (data, type, row, meta) {                        
                         if (data) {
-                            var selectOptions = `<option value="${data}">${row.lote}</option>`;
+                            var selectOptions =`<option value="${data}">${row.lote}</option>`;
                             for (var i = 0; i < row.others.inv.lotes.length; i++) {
                                 if (!(data == row.others.inv.lotes[i].id)) {
-                                    selectOptions += '<option value="' + row.others.inv.lotes[i].id + '">' + row.others.inv.lotes[i].text + '</option>';
+                                    selectOptions +='<option value="'+row.others.inv.lotes[i].id+'">'+row.others.inv.lotes[i].text+'</option>';
                                 }
                             }
                         }else{                        // Añade una opción vacía al principio
-                            var selectOptions = '<option value="">Selecciona una opción</option>';
+                            var selectOptions ='<option value="">Selecciona una opción</option>';
                             for (var i = 0; i < row.others.inv.lotes.length; i++) {
-                                selectOptions += '<option value="' + row.others.inv.lotes[i].id + '">' + row.others.inv.lotes[i].text + '</option>';
+                                selectOptions +='<option value="'+row.others.inv.lotes[i].id+'">'+row.others.inv.lotes[i].text+'</option>';
                             }
                         }
-                        return '<select class="form-control lotes" required>' + selectOptions + '</select>';
+                        return '<select class="form-control lotes" required>'+selectOptions+'</select>';
                     }
                 },
                 {
