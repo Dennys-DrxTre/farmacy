@@ -47,7 +47,8 @@ class BackupDB(ValidarUsuario, View):
 			sysout = sys.stdout
 			buffer = io.StringIO()
 			sys.stdout = buffer
-			management.call_command('dumpdata', indent=4)
+			# Agrega los parámetros de exclusión aquí
+			management.call_command('dumpdata', indent=4, exclude=['contenttypes', 'auth.Permission'])
 			output = buffer.getvalue().encode('utf-8') # Byte-encoded output
 			sys.stdout = sysout
 

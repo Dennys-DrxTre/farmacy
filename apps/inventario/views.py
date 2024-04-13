@@ -38,7 +38,6 @@ class DetalleProductoView(ValidarUsuario, DetailView):
 		inventario = Inventario.objects.filter(
 			Q(comprometido__gt=0) | Q(stock__gt=0), 
 			producto_id=producto.pk, 
-			f_vencimiento__gt=date.today()
 		).order_by('f_vencimiento')
 		if inventario:
 			context["inventario"] = inventario

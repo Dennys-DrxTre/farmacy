@@ -1,11 +1,17 @@
 const SendJSONPetition = async (url, parameters) => {
 	try {
         // show_spinner();
+		btn_confirm_security.disabled = true;
+        btn_confirm_security.innerHTML = 'Cargando ...';
+        
 		const response = await fetch (url, {
 			method: "POST",
 			body: parameters,
 		});
 		const data = await response.json();
+
+		btn_confirm_security.disabled = false;
+        btn_confirm_security.innerHTML = 'Confirmar';
 
         notifier.show(data['response']['title'], data['response']['data'], data['response']['type_response'], '', 4000);
         // hide_spinner();

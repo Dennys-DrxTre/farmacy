@@ -7,8 +7,3 @@ TAREAS & CORRECIONES JOSE
 	    - LISTADO, DETALLE DE EGRESO
         - agregar permisos a los reportes
 
-TAREAS & CORRECIONES DENNYS
-
-    # TAREAS
-        - REGISTRO DE EGRESO
-        - MODULO DE RESPALDO Y RECUPERACION

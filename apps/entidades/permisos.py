@@ -68,7 +68,9 @@ permisos_usuarios = {
         'change_contabilidadfisica',
         'view_contabilidadfisica',
         'respaldar_db',
-        'recuperar_db'
+        'recuperar_db',
+        'add_egreso',
+        'view_egreso'
     ],
     'AL': [
         'ver_inicio',
@@ -119,7 +121,9 @@ permisos_usuarios = {
         'view_zona',
         'add_contabilidadfisica',
         'change_contabilidadfisica',
-        'view_contabilidadfisica'
+        'view_contabilidadfisica',
+        'add_egreso',
+        'view_egreso'
     ],
     'AT': [
         'cambiar_password',
