@@ -128,3 +128,24 @@ class BuscarProductosEgresoView(ValidarUsuario, View):
 		# except Exception as e:
 		# 	data['error'] = str(e)
 		return JsonResponse(data, safe=False)
+	
+class ListadoEgreso(ValidarUsuario, ListView):
+	permission_required = 'movimientos.view_egreso'
+	context_object_name = 'egresos'
+	template_name = 'pages/movimientos/egreso/listado_egresos.html'
+	# permission_required = 'anuncios.requiere_secretria'
+	model= Egreso
+	ordering = ['-id']
+	
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["sub_title"] = "Listado de egresos"
+		return context
+
+
+class DetalleEgresoView(ValidarUsuario, DetailView):
+	permission_required = 'movimientos.view_egreso'
+	template_name = 'pages/movimientos/egreso/detalle_egreso.html'
+	# permission_required = 'anuncios.requiere_secretria'
+	model = Egreso
+	context_object_name = 'egreso'

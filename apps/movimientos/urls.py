@@ -37,7 +37,7 @@ from .views.contabilidad_fisica.views import (
     RechazarContabilidadFisica
 )
 
-from .views.egresos.views import RegistrarEgreso, BuscarProductosEgresoView
+from .views.egresos.views import RegistrarEgreso, BuscarProductosEgresoView, ListadoEgreso, DetalleEgresoView
 
 from .reportes import (
     TodasLasJornadas,
@@ -48,7 +48,9 @@ from .reportes import (
     ReportDetalleSolicitud,
     TodasLasSolicitudesFecha, 
     TodasLasJornadasFecha,
-    ReporteInventarioFisico
+    ReporteInventarioFisico,
+    ReportDetalleEgreso,
+    HistorialMovimiento
 )
 
 from apps.movimientos.views.db.views import RestoreDBView, BackupDB, DataBaseView
@@ -105,6 +107,8 @@ urlpatterns = [
     path('rechazar-inventario-fisico/', RechazarContabilidadFisica.as_view(), name='rechazar_contabilidad'),
 
     # EGRESO
+    path('listado-de-egresos/', ListadoEgreso.as_view(), name='lista_egreso'),
+    path('detalle-de-egreso/<int:pk>/', DetalleEgresoView.as_view(), name='detalle_egreso'),
     path('registrar-egreso/', RegistrarEgreso.as_view(), name='registrar_egreso'),
     path('buscar-productos-egresos/', BuscarProductosEgresoView.as_view(), name='buscar_productos_egreso'),
 
@@ -118,7 +122,9 @@ urlpatterns = [
     path('reporte/listado-de-solicitudes/<str:fecha1>/<str:fecha2>/', TodasLasSolicitudesFecha.as_view()),
     path('reporte/listado-de-jornada-desde/<str:fecha1>/<str:fecha2>/', TodasLasJornadasFecha.as_view()),
     path('reporte/reporte-inventario-fisico/', ReporteInventarioFisico.as_view(), name='r_inventario_fisico'),
-
+    path('reporte/detalle-de-egreso/<int:pk>/', ReportDetalleEgreso.as_view(), name='det_egreso'),
+    path('reporte/historial-de-movimientos/', HistorialMovimiento.as_view(), name='historial'),
+    
     # BASE DE DATOS
     path('segutidad-de-base-de-datos/', DataBaseView.as_view(), name='database_view'),
     path('respaldar-base-de-datos/', BackupDB.as_view(), name='backupdb_view'),

@@ -118,9 +118,9 @@
 			</p >
 		</div>
         <p style="font-size: 12px;">
-            <span>Fecha del ingreso: {{ingreso.fecha|date:'d/m/Y'}}</span> <br>
-            <span>Tipo de ingreso: {{ingreso.tipo_ingreso}}</span> <br>
-            <span>Descripción: {{ingreso.descripcion}}</span>
+            <span>Fecha del egreso: {{egreso.fecha|date:'d/m/Y'}}</span> <br>
+            <span>Tipo de egreso: {{egreso.tipo_egreso}}</span> <br>
+            <span>Descripción: {{egreso.descripcion}}</span>
         </p>
 		<table id="invoice">
 			<thead>
@@ -135,9 +135,9 @@
 				{% for x in detalle %}
 					<tr>
 						<td>{{ x.inventario.producto }}</td>
-                        <td>{{ x.lote }}</td>
+                        <td>{{ x.inventario.lote }}</td>
                         <td>{{ x.cantidad }}</td>
-                        <td>{{ x.f_vencimiento|date:'d/m/Y' }}</td>
+                        <td>{{ x.inventario.f_vencimiento|date:'d/m/Y' }}</td>
 					</tr>
 				{% empty %}
 					<tr>

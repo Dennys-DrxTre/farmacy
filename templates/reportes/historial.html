@@ -21,7 +21,7 @@
 			@frame report_body {
 				left: 15pt;
 				width: 560pt;
-				top: 90pt;
+				top: 80pt;
 				height: 670pt;
 			}
 			@frame footer_frame {
@@ -110,38 +110,35 @@
     <div class="fecha_frame" id="fecha_frame">
         <span style="border: 1px solid black;">EMISION: {{date}}</span>
     </div>
-
 	<div class="report_body" id="content">
 		<div class="report_info" id="info">
 			<p style="font-size: 12px;">
 				<span style="font-weight: 700;">{{report_title|upper}}</span> <br>
+			
 			</p >
 		</div>
-        <p style="font-size: 12px;">
-            <span>Fecha del ingreso: {{ingreso.fecha|date:'d/m/Y'}}</span> <br>
-            <span>Tipo de ingreso: {{ingreso.tipo_ingreso}}</span> <br>
-            <span>Descripción: {{ingreso.descripcion}}</span>
-        </p>
 		<table id="invoice">
 			<thead>
 				<tr>
-					<th>PRODUCTO</th>
-					<th>LOTE</th>
-					<th>CANTIDAD</th>
 					<th>FECHA V.</th>
+					<th>T. MOV.</th>
+					<th>EMPLEADO</th>
+					<th>PRODUCTO</th>
+					<th>CANTIDAD</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for x in detalle %}
+				{% for x in movi %}
 					<tr>
-						<td>{{ x.inventario.producto }}</td>
-                        <td>{{ x.lote }}</td>
-                        <td>{{ x.cantidad }}</td>
-                        <td>{{ x.f_vencimiento|date:'d/m/Y' }}</td>
+						<td class="cosa">{{x.fecha_mov|date:'d/m/Y'}} </td>
+						<td class="cosa">{{ x.tipo_mov }} </td>
+						<td class="cosa">{{ x.empleado.nombres }} {{ x.empleado.apellidos }}</td>
+						<td class="cosa">{{x.producto.producto.nombre}} </td>
+						<td class="cosa">{{x.cantidad}} </td>
 					</tr>
 				{% empty %}
 					<tr>
-						<td colspan="4" valign="middle" class="cosa">SIN REGISTROS</td>
+						<td colspan="8" valign="middle" class="cosa">SIN REGISTROS</td>
 					</tr>
 				{% endfor %}
 			</tbody>

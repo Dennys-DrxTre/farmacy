@@ -3,7 +3,5 @@ TAREAS & CORRECIONES JOSE
         - No carga el logo en de la farmacia en reportes en el Pythonanywhere
 
     # TAREAS
-        - Reportes listados de productos con stock mínimo y el reporte de movimientos de inventario
-	    - LISTADO, DETALLE DE EGRESO
         - agregar permisos a los reportes
 

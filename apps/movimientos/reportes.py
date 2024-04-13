@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 
 from apps.entidades.utils import link_callback
-from .models import Jornada, Solicitud, DetalleIngreso, Ingreso, DetalleSolicitud ,Producto
+from .models import Jornada, Solicitud, DetalleIngreso, Ingreso, DetalleSolicitud ,Producto, Egreso, DetalleEgreso, Historial
 from apps.entidades.mixins import ValidarUsuario
 
 class TodasLasJornadas(View):
@@ -220,6 +220,38 @@ class ReportDetalleIngreso(View):
 		except Exception as e:
 			return JsonResponse({'error': str(e)}, safe=False)
 		
+class ReportDetalleEgreso(View):
+	# permission_required = 'anuncios.requiere_secretria'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, pk, *args, **kwargs):
+		try:
+			egreso = Egreso.objects.get(id = DetalleEgreso.objects.get(id = pk).egreso.pk)
+			det_egre = DetalleEgreso.objects.filter(egreso__id = egreso.pk )
+
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'report_title': 'Detalle de egreso',
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'egreso': egreso,
+				'detalle': det_egre,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/det_egreso.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Solicitud.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)
+		
 class ReportDetalleSolicitud(View):
 	# permission_required = 'anuncios.requiere_secretria'
 
@@ -272,6 +304,35 @@ class ReporteInventarioFisico(View, ValidarUsuario):
 				'request':request,
 			}
 			template_path= get_template('reportes/reporte_contabilidad_fisica.html')
+			html = template_path.render(context)
+			response = HttpResponse(content_type='application/pdf')
+			pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+			return response
+		except Producto.DoesNotExist:
+			return redirect('vista')
+		except Exception as e:
+			return JsonResponse({'error': str(e)}, safe=False)
+		
+class HistorialMovimiento(View, ValidarUsuario):
+	#permission_required = 'movimientos.view_contabilidadfisica'
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, *args, **kwargs):
+		try:
+			histo = Historial.objects.all()
+			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+			context = {
+				'report_title': 'Movimientos del inventario',
+				'logo_img': '{}'.format('static/images/logo.jpg'),
+				'user': f'{request.user.get_full_name()}',
+				'movi': histo,
+				'date': formato_fecha,
+				'request':request,
+			}
+			template_path= get_template('reportes/historial.html')
 			html = template_path.render(context)
 			response = HttpResponse(content_type='application/pdf')
 			pisa.CreatePDF(html, dest=response, link_callback=link_callback)

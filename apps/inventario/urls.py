@@ -17,7 +17,8 @@ from .views import (
 )
 
 from .reportes import (
-    TodosLosProductos
+    TodosLosProductos,
+    ProductoStockMinimo
 )
 
 urlpatterns = [
@@ -41,4 +42,5 @@ urlpatterns = [
 
     # reportes
     path('reporte/listado-de-productos/', TodosLosProductos.as_view(), name='l_productos'),
+    path('reporte/listado-de-productos-con-stock-minimo/', ProductoStockMinimo.as_view(), name='productos_sm'),
 ]
