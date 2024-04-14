@@ -122,6 +122,7 @@
 				<tr>
 					<th>FECHA V.</th>
 					<th>T. MOV.</th>
+					<th>OPERACION </th>
 					<th>EMPLEADO</th>
 					<th>PRODUCTO</th>
 					<th>CANTIDAD</th>
@@ -132,6 +133,13 @@
 					<tr>
 						<td class="cosa">{{x.fecha_mov|date:'d/m/Y'}} </td>
 						<td class="cosa">{{ x.tipo_mov }} </td>
+						<td class="cosa">
+							{% if x.tipo_mov.get_operacion_display == '=' %}
+								Igual
+							{% else %}
+								{{ x.tipo_mov.get_operacion_display }}
+							{% endif %}
+						</td>
 						<td class="cosa">{{ x.empleado.nombres }} {{ x.empleado.apellidos }}</td>
 						<td class="cosa">{{x.producto.producto.nombre}} </td>
 						<td class="cosa">{{x.cantidad}} </td>

@@ -73,20 +73,23 @@ class RestoreDBView(ValidarUsuario, TemplateView):
 			file_input = request.FILES['file_input']
 			filename = file_input.name
 
-			# Guarda el archivo recibido en el servidor
-			with open(filename, 'wb+') as file:
+			# Define la ruta completa del archivo, incluyendo la carpeta deseada
+			file_path = os.path.join(settings.BASE_DIR, filename)
+
+			# Guarda el archivo recibido en el servidor en la carpeta especificada
+			with open(file_path, 'wb+') as file:
 				for chunk in file_input.chunks():
 					file.write(chunk)
 
-			# Usa el comando 'loaddata' para cargar los datos en la base de datos
-			process = subprocess.Popen(['python', 'manage.py', 'loaddata', filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-			stdout, stderr = process.communicate()
-
-			if len(stderr) > 0:
-				data['response'] = {'title':'Ocurrió un error!', 'data': f"Error Inesperado:{stderr.decode(sys.getdefaultencoding(), errors='replace')}", 'type_response': 'danger'}
-			else:
+			if settings.DEBUG:
+				# Usa el comando 'loaddata' para cargar los datos en la base de datos
+				management.call_command('loaddata', filename, verbosity=0)
 				os.remove(filename)
-				data['response'] = {'title':'Exito!', 'data': 'Se ha cargado la base de datos con exito', 'type_response': 'success'}
+			else:
+				# Usa el comando 'loaddata' para cargar los datos en la base de datos
+				management.call_command('loaddata', file_path, verbosity=0)
+				os.remove(file_path)
+			data['response'] = {'title':'Exito!', 'data': 'Se ha cargado la base de datos con exito', 'type_response': 'success'}
 
 		except Exception as e:
 			data['error'] = str(e)

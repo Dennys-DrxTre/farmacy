@@ -197,7 +197,7 @@ class ReportDetalleIngreso(View):
 	
 	def get(self, request, pk, *args, **kwargs):
 		try:
-			ingreso = Ingreso.objects.get(id = DetalleIngreso.objects.get(id = pk).ingreso.pk)
+			ingreso = Ingreso.objects.get(id = pk)
 			det_ingre = DetalleIngreso.objects.filter(ingreso__id = ingreso.pk )
 
 			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
@@ -229,7 +229,7 @@ class ReportDetalleEgreso(View):
 	
 	def get(self, request, pk, *args, **kwargs):
 		try:
-			egreso = Egreso.objects.get(id = DetalleEgreso.objects.get(id = pk).egreso.pk)
+			egreso = Egreso.objects.get(id = pk)
 			det_egre = DetalleEgreso.objects.filter(egreso__id = egreso.pk )
 
 			formato_fecha = datetime.datetime.now().strftime("%d/%m/%Y")
