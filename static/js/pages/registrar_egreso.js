@@ -23,7 +23,7 @@ let vents = {
     get_ids: function () {
         var ids =  [];
         $.each(this.items.det, function (key, value) {
-            ids.push(value.inventario);
+            ids.push(value.id_lote);
         });
         return ids;
     },
@@ -115,11 +115,6 @@ let vents = {
                     render: function (data, type, row, meta) {                        
                         if (data) {
                             var selectOptions =`<option value="${data}">${row.lote}</option>`;
-                            for (var i = 0; i < row.others.inv.lotes.length; i++) {
-                                if (!(data == row.others.inv.lotes[i].id)) {
-                                    selectOptions +='<option value="'+row.others.inv.lotes[i].id+'">'+row.others.inv.lotes[i].text+'</option>';
-                                }
-                            }
                         }else{                        // Añade una opción vacía al principio
                             var selectOptions ='<option value="">Selecciona una opción</option>';
                             for (var i = 0; i < row.others.inv.lotes.length; i++) {
@@ -318,16 +313,33 @@ $(function () {
             notifier.show('Ocurrio un error!', 'Debe al menos tener un producto en el egreso', 'danger', '', 4000);
             return false;
         }
+    
+        const rastreador = {};
+        let repetido = false;
+    
+        for (const item of vents.items.det) {
+            if (rastreador[item.id_lote]) {
+                notifier.show('Ocurrio un error!', 'El lote se repite, solo puede seleccionar un lote diferente por producto', 'danger', '', 4000);
+                repetido = true;
+                break; // Detiene la ejecución del bucle
+            } else {
+                rastreador[item.id_lote] = true;
+            }
+        }
+    
+        if (repetido) {
+            return false; // Detiene el envío del formulario si se encontró un lote repetido
+        }
+    
         vents.items.descripcion = $('textarea[name="descripcion"]').val();
         vents.items.fecha = $('input[name="fecha"]').val();
         vents.items.tipo_egreso = $('select[name="tipo_egreso"]').val();
-
+    
         var parameters = new FormData();
         parameters.append('vents', JSON.stringify(vents.items));
-        console.log(vents.items);
-
+    
         btn_submit.disabled = true;
-
+    
         await SendDataJsonBuyForm(window.location.pathname, parameters, function () {
             window.location.replace('/listado-de-egresos/');
         })

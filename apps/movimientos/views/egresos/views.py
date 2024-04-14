@@ -93,6 +93,7 @@ class BuscarProductosEgresoView(ValidarUsuario, View):
 		# try:
 		action = request.POST.get('action')
 		ids_exclude = json.loads(request.POST.get('ids'))
+		ids_exclude = [elemento for elemento in ids_exclude if elemento != '']
 		if action == 'search_productos':
 			data = []
 			productos = Producto.objects.filter(nombre__icontains=request.POST.get('term'))
