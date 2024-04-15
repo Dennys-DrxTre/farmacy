@@ -14,12 +14,16 @@ from django.db.models import Q
 from .utils import link_callback
 from .models import Perfil, Beneficiado
 from .mixins import ValidarUsuario
+from django.contrib import messages
 
 class TodosPerfiles(View):
 	# permission_required = 'anuncios.requiere_secretria'
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, *args, **kwargs):
@@ -49,6 +53,9 @@ class TodosBeneficiados(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, *args, **kwargs):

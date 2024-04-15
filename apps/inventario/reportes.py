@@ -14,12 +14,15 @@ from django.db.models import Q
 from apps.entidades.utils import link_callback
 from .models import Inventario, Producto
 from apps.entidades.mixins import ValidarUsuario
-
+from django.contrib import messages
 class TodosLosProductos(View):
 	# permission_required = 'anuncios.requiere_secretria'
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD', 'AL']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, *args, **kwargs):
@@ -49,6 +52,9 @@ class ProductoStockMinimo(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD', 'AL']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, *args, **kwargs):

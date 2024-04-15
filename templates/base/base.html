@@ -80,7 +80,7 @@
                          </li>
                     {% endif %}
 
-                        {% if request.user.perfil.rol == "AD" %}
+                        {% if request.user.perfil.rol == "AD" or request.user.perfil.rol == "AL" %}
 
                             <li class="menu-item-has-children dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-archive"></i>Reportes</a>

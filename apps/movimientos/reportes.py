@@ -9,7 +9,7 @@ import datetime
 from datetime import date
 from django.http import JsonResponse
 from django.shortcuts import redirect
-
+from django.contrib import messages
 from apps.entidades.utils import link_callback
 from .models import Jornada, Solicitud, DetalleIngreso, Ingreso, DetalleSolicitud ,Producto, Egreso, DetalleEgreso, Historial
 from apps.entidades.mixins import ValidarUsuario
@@ -19,6 +19,9 @@ class TodasLasJornadas(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, pk, *args, **kwargs):
@@ -48,6 +51,9 @@ class TodasLasJornadasFecha(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, fecha1, fecha2, *args, **kwargs):
@@ -77,6 +83,9 @@ class JornadasJefe(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, pk, *args, **kwargs):
@@ -106,6 +115,9 @@ class TodasLasSolicitudes(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, *args, **kwargs):
@@ -135,6 +147,9 @@ class TodasLasSolicitudesFecha(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, fecha1, fecha2, *args, **kwargs):
@@ -164,6 +179,9 @@ class SolicitudesEstado(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, est, *args, **kwargs):
@@ -193,6 +211,9 @@ class ReportDetalleIngreso(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('listado_ingresos')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, pk, *args, **kwargs):
@@ -225,6 +246,9 @@ class ReportDetalleEgreso(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('lista_egreso')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, pk, *args, **kwargs):
@@ -257,6 +281,9 @@ class ReportDetalleSolicitud(View):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('listado_solicitudes_medicamentos')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, pk, *args, **kwargs):
@@ -289,6 +316,9 @@ class ReporteInventarioFisico(View, ValidarUsuario):
 
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD','AL']:
+			messages.error(self.request, 'No tienes permisos para acceder a este reporte.')
+			return redirect('reportes')
 		return super().dispatch(request, *args, **kwargs)
 	
 	def get(self, request, *args, **kwargs):

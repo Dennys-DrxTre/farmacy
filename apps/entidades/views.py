@@ -584,7 +584,7 @@ class ActualizarInfo(LoginRequiredMixin, View):
 	
 # PERFIL DE USUARIO
 	
-class MiPerfil(TemplateView):
+class MiPerfil(LoginRequiredMixin, TemplateView):
 	template_name = 'acceso/perfil.html'
 
 	@method_decorator(csrf_exempt)
@@ -667,8 +667,14 @@ class MiPerfil(TemplateView):
 		context['form'] = BeneficiadoForm()
 		return context
 	
-class MenuReportes(TemplateView):
+class MenuReportes(LoginRequiredMixin, TemplateView):
 	template_name = 'reportes/menu_reportes.html'
+
+	def dispatch(self, request, *args, **kwargs):
+		if not request.user.perfil.rol in ['AD','AL']:
+			messages.error(self.request, 'No tienes permisos para acceder a esta página.')
+			return redirect('vista')
+		return super().dispatch(request, *args, **kwargs)
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
