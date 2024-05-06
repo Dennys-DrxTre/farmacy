@@ -14,6 +14,7 @@
     {% endfor %}
 {% endif %}
 <div class="row">
+    {% if request.user.perfil.rol == "AD" %}
     <div class="col-lg-3 col-md-6">
         <div class="card">
             <div class="card-body">
@@ -38,6 +39,8 @@
             </div>
         </div>
     </div>
+    {% endif %}
+    {% if request.user.perfil.rol == "AD" or request.user.perfil.rol == "AL" %}
     <div class="col-lg-3 col-md-6">
         <div class="card">
             <div class="card-body">
@@ -50,6 +53,8 @@
             </div>
         </div>
     </div>
+    {% endif %}
+    {% if request.user.perfil.rol == "AD" %}
     <div class="col-lg-3 col-md-6">
         <div class="card">
             <div class="card-body">
@@ -117,6 +122,8 @@
             </div>
         </div>
     </div>
+    {% endif %}
+    {% if request.user.perfil.rol == "AD" or request.user.perfil.rol == "AL" %}
     <div class="col-lg-3 col-md-6">
         <div class="card">
             <div class="card-body">
@@ -141,8 +148,10 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 <hr>
+{% if request.user.perfil.rol == "AD" %}
 <div class="row">
     <div class="col-md-5">
         <div class="card">
@@ -189,7 +198,7 @@
         </div>
     </div>
 </div>
-
+{% endif %}
 {% endblock %}
 
 
