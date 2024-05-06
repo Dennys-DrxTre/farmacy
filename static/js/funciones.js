@@ -3,42 +3,42 @@ function PagePrevious() {
 }
 
 //Solo numeros
-function Solo_Numero(e){
-	var keynum = window.event ? window.event.keyCode : e.which;
-	if ((keynum == 8) || (keynum == 46))
-	return true;
-	return /\d/.test(String.fromCharCode(keynum));
+function Solo_Numero(e) {
+	var input = e.target;
+	var value = input.value;
+	var filteredValue = value.replace(/[^0-9]/g, '');
+	if (value !== filteredValue) {
+		input.value = filteredValue;
+	}
 }
   
 //Solo texto
 function Solo_Texto(e) {
-	var code;
-	if (!e) var e = window.event;
-	if (e.keyCode) code = e.keyCode;
-	else if (e.which) code = e.which;
-	var character = String.fromCharCode(code);
-	var AllowRegex  = /^[\ba-zA-Z\s]$/;
-	if (AllowRegex.test(character)) return true;     
-	return false; 
+    var input = e.target;
+    var value = input.value;
+    var filteredValue = value.replace(/[^a-zA-Z\s]/g, '');
+    if (value !== filteredValue) {
+        input.value = filteredValue;
+    }
 }
   //Solo numeros sin puntos 
-function Solo_Numero_ci(e){
-	var keynum = window.event ? window.event.keyCode : e.which;
-	if ((keynum == 8))
-	return true;
-	return /\d/.test(String.fromCharCode(keynum));
+function Solo_Numero_ci(e) {
+    var input = e.target;
+    var value = input.value;
+    var filteredValue = value.replace(/[^0-9]/g, '');
+    if (value !== filteredValue) {
+        input.value = filteredValue;
+    }
 }
   
   // solo numeros y letras sin caracteres especiales
 function Texto_Numeros(e) {
-	var code;
-	if (!e) var e = window.event;
-	if (e.keyCode) code = e.keyCode;
-	else if (e.which) code = e.which;
-	var character = String.fromCharCode(code);
-	var AllowRegex  = /^[A-Za-z0-9\s\.,ñ-]+$/g;
-	if (AllowRegex.test(character)) return true;     
-	return false; 
+    var input = e.target;
+    var value = input.value;
+    var filteredValue = value.replace(/[^A-Za-z0-9\s.,ñ-]/g, '');
+    if (value !== filteredValue) {
+        input.value = filteredValue;
+    }
 }
 
 $(function() {

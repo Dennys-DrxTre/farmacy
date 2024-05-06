@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Mi solicitud de medicamento
+    Detalle de jornada
 {% endblock title %}
 
 {% block extra_css %}    	
@@ -68,14 +68,10 @@
                     <div class="row mt-4">
                         <div class="col">
                             <h4 class="card-title">Fecha Jornada</h4>
-                            {% if jornada.estado == 'AP' %}
-                                {% if jornada.fecha_jornada %}
+                            {% if jornada.fecha_jornada %}
                                 <p class="card-text">{{ jornada.fecha_jornada|date:'d/m/Y' }}</p>
-                                {% else %}
-                                <p class="card-text"> En Espera</p>
-                                {% endif %}
                             {% else %}
-                            <p class="card-text"> En Espera</p>
+                                <p class="card-text"> En Espera</p>
                             {% endif %}
                         </div>
                         <div class="col">

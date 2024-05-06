@@ -108,7 +108,7 @@
                         <div class="stat-heading">Listado de jornadas por jefes de comunidad</div>
                         <select name="" id="id_jc" class="form-control mb-3 mt-3">
                             {% for x in j_c %}
-                                <option value="{{x.pk}}">{{x.cedula}}| {{x.nombres}} {{x.apellidos}}</option>
+                                <option value="{{x.cedula}}">{{x.cedula}}| {{x.nombres}} {{x.apellidos}}</option>
                             {% endfor %}
                         </select>
                         <div class="stat-text"><button class="btn btn-primary" type="button" id="btn_ver_jc">Ver</button></div>

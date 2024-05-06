@@ -119,7 +119,7 @@
                                                 {{form.nacionalidad|add_class:'form-control'|attr:'required'}}
                                             </div>
                                         </div>
-                                        {{form.cedula|add_class:'form-control'|attr:'required'|attr:'onkeypress:return Solo_Numero_ci(event)'}}
+                                        {{form.cedula|add_class:'form-control'|attr:'required'|attr:'oninput:return Solo_Numero_ci(event)'}}
                                     </div>
                                 </div>
                             </div>
@@ -128,7 +128,7 @@
                             <div class="input-group">
                                 <div class="col-6 p-0">
                                     <label for="" class="form-control-label">Nombres</label>
-                                    {{form.nombres|add_class:'form-control'|attr:'required'|attr:'onkeypress:return Solo_Texto(event)'}}
+                                    {{form.nombres|add_class:'form-control'|attr:'required'|attr:'oninput:return Solo_Texto(event)'}}
                                 </div>
                                 <div class="col-6 p-0">
                                     <label for="">Apellidos</label>
@@ -202,7 +202,7 @@
                         </div>
                         <div class="col">
                             <label for="">Ubicación</label>
-                            {{form.direccion|add_class:'form-control'|attr:'style:resize:none'|attr:'rows:3'|attr:'required'|attr:'onkeypress:return Texto_Numeros(event)'}}
+                            {{form.direccion|add_class:'form-control'|attr:'style:resize:none'|attr:'rows:3'|attr:'required'|attr:'oninput:return Texto_Numeros(event)'}}
                         </div>
                     </div>
                     <hr>

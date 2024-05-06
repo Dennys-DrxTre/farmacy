@@ -59,12 +59,8 @@
                                     <td>{{ jornada.pk }}</td>
                                     <td>{{ jornada.fecha_solicitud|date:'d/m/Y' }}</td>
                                     
-                                    {% if jornada.estado == 'AP' %}
-                                        {% if jornada.fecha_jornada %}
-                                            <td>{{ jornada.fecha_jornada|date:'d/m/Y' }}</td>
-                                        {% else %}
-                                            <td> En Espera</td>
-                                        {% endif %}
+                                    {% if jornada.fecha_jornada %}
+                                        <td>{{ jornada.fecha_jornada|date:'d/m/Y' }}</td>
                                     {% else %}
                                         <td> En Espera</td>
                                     {% endif %}
