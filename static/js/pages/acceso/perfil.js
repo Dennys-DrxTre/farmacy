@@ -1,6 +1,7 @@
 let form_edit_info = document.getElementById('form_edit_info');
 let form_nuevo_bene = document.getElementById('form_nuevo_bene');
 let form_edit_bene = document.getElementById('form_edit_bene');
+let display_embarazada = document.getElementById('display_embarazada');
 
 let getData = async () => {
     // PROVIDERS LIST
@@ -38,7 +39,7 @@ let getData = async () => {
                 class: 'text-center',
                 orderable: true,
                 render: function (data, type, row) {
-                    if(data == 'True'){
+                    if(data == true){
                         return 'SI';
                     } else if(row['genero'] == 'Masculino'){ 
                         return 'NO APLICA';
@@ -102,13 +103,16 @@ $( async function () {
         $('select[name="zona_bene"]').val(data.zona.id);
         $('textarea[name="direccion_bene"]').val(data.direccion);
         $('textarea[name="patologia_bene"]').val(data.patologia);
-        $('input[name="c_residencia_bene"]').val(data.c_residencia);
-        
 
-        if(data.embarazada == 'True'){
-            $('input[name="embarazada_bene"]').prop('checked', true)
+        if (data.genero == 'Femenino') {
+            display_embarazada.style.display = 'block';
+            if(data.embarazada == true){
+                $('input[name="embarazada_bene"]').prop('checked', true)
+            }else{
+                $('input[name="embarazada_bene"]').prop('checked', false)
+            }
         }else{
-            $('input[name="embarazada_bene"]').prop('checked', false)
+            display_embarazada.style.display = 'none';
         }
 
     });

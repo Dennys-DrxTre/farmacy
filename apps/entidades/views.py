@@ -619,7 +619,8 @@ class MiPerfil(LoginRequiredMixin, TemplateView):
 				bene.telefono = request.POST['telefono']
 				bene.genero = request.POST['genero']
 				bene.parentesco = request.POST['parentesco']
-				if request.POST.get('embarazada') == 'on':
+				
+				if request.POST.get('embarazada') == 'True':
 					bene.embarazada = True
 				else:
 					bene.embarazada = False
